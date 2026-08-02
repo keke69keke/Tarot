@@ -2,6 +2,7 @@ import SwiftUI
 
 public struct MysticMusicPlayerBar: View {
     @StateObject private var audioService = MysticAudioService.shared
+    @StateObject private var externalAudio = ExternalAudioService.shared
     @State private var showingTrackSelector = false
     
     public init() {}
@@ -34,7 +35,38 @@ public struct MysticMusicPlayerBar: View {
                 }
             }
             .buttonStyle(.plain)
-            
+
+            // External Source Menu (Apple Music / Spotify)
+            Menu {
+                Button {
+                    // Request authorization if needed, then attempt playback
+                    externalAudio.requestAppleMusicAuthorization { granted in
+                        if granted {
+                            externalAudio.playAppleMusic()
+                        }
+                    }
+                } label: {
+                    Label("Apple Music", systemImage: "music.note.house.fill")
+                }
+
+                Button {
+                    // Open Spotify app (will open app if installed)
+                    externalAudio.openSpotifyURL("spotify:")
+                } label: {
+                    Label("Abrir en Spotify", systemImage: "music.note.list")
+                }
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "music.note.list")
+                        .font(.system(size: 14))
+                        .foregroundStyle(.secondary)
+                    Text("Fuente")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .buttonStyle(.plain)
+
             Spacer()
             
             // Play / Pause Button

@@ -13,3 +13,9 @@
 scratch/
 
 test_bundle_repo.swift
+
+# Generated card artwork and PDF intermediates
+output_cards/
+*.orig.bak
+*_cropped.pdf
+Hello-Kitty-Tarot-6x13.pdf

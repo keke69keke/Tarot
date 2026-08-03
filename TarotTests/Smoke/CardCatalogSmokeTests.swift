@@ -45,6 +45,21 @@ final class CardCatalogSmokeTests: XCTestCase {
         }
     }
 
+    func testHelloKittyDeckImageResourcesExistInBundle() throws {
+        let repo = try BundleCardRepository(bundle: .tarotContent)
+        let cards = repo.allCards()
+        for card in cards {
+            let helloName = "helloKitty_\(card.imageName)"
+            let url = Bundle.tarotContent.url(forResource: helloName, withExtension: "png")
+            XCTAssertNotNil(url, "La imagen \(helloName).png debe existir en el bundle TarotContent para el mazo Hello Kitty")
+        }
+    }
+
+    func testHelloKittyDeckTypeIsAvailable() {
+        XCTAssertTrue(DeckType.allCases.contains(.helloKitty), "El mazo Hello Kitty debe estar disponible en DeckType")
+        XCTAssertEqual(DeckType.helloKitty.textureStyle, .softPastel, "Hello Kitty debe usar el estilo de textura softPastel")
+    }
+
     func testPredefinedSpreadsHaveCorrectPositionCounts() {
         XCTAssertEqual(SpreadType.dailyCard.positions.count, 1)
         XCTAssertEqual(SpreadType.threeCard.positions.count, 3)

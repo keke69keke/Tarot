@@ -148,9 +148,13 @@ public struct SpreadDiagramView: View {
 
                         // Position 1: Desafío (Crossed 90° over Center)
                         if spread.drawnCards.count > 1 {
-                            cardCell(index: 1, size: CGSize(width: 82, height: 118))
-                                .rotationEffect(.degrees(90))
+                            cardCell(
+                                index: 1,
+                                size: CGSize(width: 82, height: 118),
+                                cardRotation: .degrees(90)
+                            )
                                 .shadow(color: Color.black.opacity(0.5), radius: 10)
+                                .zIndex(1)
                         }
                     }
 
@@ -630,7 +634,11 @@ public struct SpreadDiagramView: View {
     }
 
     // MARK: - Individual Card Cell Helper with Gold Glow Aura & Badge
-    private func cardCell(index: Int, size: CGSize) -> some View {
+    private func cardCell(
+        index: Int,
+        size: CGSize,
+        cardRotation: Angle = .zero
+    ) -> some View {
         let drawn = spread.drawnCards[index]
         let isRevealed = revealedIndices.contains(index)
 
@@ -688,6 +696,7 @@ public struct SpreadDiagramView: View {
                     .opacity(isRevealed ? 0 : 1)
                     .rotation3DEffect(.degrees(isRevealed ? 180 : 0), axis: (x: 0, y: 1, z: 0), perspective: 0.4)
                 }
+                .rotationEffect(cardRotation)
 
                 // Position Tag Label with Foil Border
                 Text(drawn.position.displayName)

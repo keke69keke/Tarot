@@ -5,18 +5,20 @@ import SwiftUI
 public class CardRepositoryImpl: CardRepository {
     
     // MARK: - Dependencies
-    private let allCardsCache: [Card]
-
+    private lazy var allCardsCache: [Card] = {
+        return loadAllCards()
+    }()
     
     // MARK: Initialization
     public init() {
-        self.allCardsCache = []
+        // Intentionally empty - allCardsCache is lazily loaded when first accessed
     }
     
     // MARK: Private Methods
     
-    /// Loads the complete deck of 78 cards into memory.
+    /// Loads the complete deck of 78 cards into memory with proper initialization.
     private func loadAllCards() -> [Card] {
+        // TODO: Implement actual loading logic here when you provide the card data source
         return []
     }
     
@@ -36,15 +38,14 @@ public class CardRepositoryImpl: CardRepository {
     }
 
     public func search(query: String) -> [Card] {
-        guard !query.isEmpty && query.count >= 2 else {
+        guard !query.isEmpty || query.count >= 2 else {
             return []
         }
         
-        let lowercasedQuery = query.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let lowercasedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         
         if lowercasedQuery.isEmpty {
-            return allCardsCache.filter { $0.name.lowercased().contains(lowercasedQuery) || 
-                                    $0.suit?.rawValue.lowercased().contains(lowercasedQuery) == true }
+            return allCardsCache.filter { $0.name.lowercased().contains(lowercasedQuery) || ($0.suit?.rawValue.lowercased().contains(lowercasedQuery)) == true }
         }
         
         let threshold = 2
@@ -66,8 +67,7 @@ public class CardRepositoryImpl: CardRepository {
         let keywords = allCardsCache.flatMap { $0.uprightMeaning.keywords + $0.reversedMeaning.keywords }
         guard !keywords.isEmpty else { return [] }
         
-        for card in allCardsCache where (card.uprightMeaning.keywords.contains(where: { $0.lowercased().contains(lowercasedQuery) }) || 
-                                         card.reversedMeaning.keywords.contains(where: { $0.lowercased().contains(lowercasedQuery) })) {
+        for card in allCardsCache where (card.uprightMeaning.keywords.contains(where: { $0.lowercased().contains(lowercasedQuery) }) || card.reversedMeaning.keywords.contains(where: { $0.lowercased().contains(lowercasedQuery) })) {
             matches.append(card)
         }
         
@@ -114,11 +114,11 @@ public class CardRepositoryImpl: CardRepository {
     
     /// Performs a fuzzy search across card names and meanings.
     public func advancedSearch(query: String) -> [Card] {
-        guard !query.isEmpty && query.count >= 3 else {
+        guard !query.isEmpty || query.count >= 3 else {
             return []
         }
         
-        let lowercasedQuery = query.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+        let lowercasedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         
         var matches: [Card] = []
         
@@ -133,8 +133,7 @@ public class CardRepositoryImpl: CardRepository {
         let keywords = allCardsCache.flatMap { $0.uprightMeaning.keywords + $0.reversedMeaning.keywords }
         guard !keywords.isEmpty else { return [] }
         
-        for card in allCardsCache where (card.uprightMeaning.keywords.contains(where: { $0.lowercased().contains(lowercasedQuery) }) || 
-                                         card.reversedMeaning.keywords.contains(where: { $0.lowercased().contains(lowercasedQuery) })) {
+        for card in allCardsCache where (card.uprightMeaning.keywords.contains(where: { $0.lowercased().contains(lowercasedQuery) }) || card.reversedMeaning.keywords.contains(where: { $0.lowercased().contains(lowercasedQuery) })) {
             matches.append(card)
         }
         
@@ -156,14 +155,14 @@ public class CardRepositoryImpl: CardRepository {
         guard min <= max else { return [] }
         
         var matches: [Card] = []
-        
+
         for card in allCardsCache {
-            if let numStr = card.number, let num = Int(numStr), num >= min, num <= max {
+            if let numStr = card.number, let num = Int(numStr), num >= min && num <= max {
                 matches.append(card)
             }
         }
-        
-        return matches.sorted(by: { 
+
+        return matches.sorted(by: {
             let n1 = Int($0.number ?? "") ?? 0
             let n2 = Int($1.number ?? "") ?? 0
             return n1 < n2

@@ -42,6 +42,14 @@ final class CardCatalogSmokeTests: XCTestCase {
             let cleanName = card.imageName.replacingOccurrences(of: ".png", with: "")
             let url = Bundle.tarotContent.url(forResource: cleanName, withExtension: "png")
             XCTAssertNotNil(url, "La imagen \(cleanName).png debe existir en el bundle TarotContent")
+            if let url {
+                let imageData = try Data(contentsOf: url)
+                XCTAssertGreaterThan(
+                    imageData.count,
+                    10_000,
+                    "La imagen \(cleanName).png debe contener una ilustración real, no un placeholder"
+                )
+            }
         }
     }
 

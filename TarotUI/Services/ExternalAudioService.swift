@@ -18,8 +18,25 @@ public final class ExternalAudioService: ObservableObject {
         #if canImport(MediaPlayer)
         updateAppleMusicStatus()
         #endif
+        updateSpotifyAvailability()
+    }
+
+    public func refreshAvailability() {
+        #if canImport(MediaPlayer)
+        updateAppleMusicStatus()
+        #endif
+        updateSpotifyAvailability()
+    }
+
+    private func updateSpotifyAvailability() {
         #if canImport(UIKit)
-        spotifyAvailable = UIApplication.shared.canOpenURL(URL(string: "spotify:")!)
+        if let spotifyURL = URL(string: "spotify:") {
+            spotifyAvailable = UIApplication.shared.canOpenURL(spotifyURL)
+        } else {
+            spotifyAvailable = false
+        }
+        #else
+        spotifyAvailable = false
         #endif
     }
 
@@ -71,16 +88,16 @@ public final class ExternalAudioService: ObservableObject {
         #endif
     }
 
-    /// Convenience: try to play a Spotify track by opening its spotify:track:... URI or https URL
+    /// Convenience: try to play a Spotify track by opening its spotify:track:... URI or https URL.
     public func playSpotifyTrack(uriOrUrl: String) {
-        // Prefer app URI
+        #if canImport(UIKit)
         if let appUrl = URL(string: uriOrUrl), UIApplication.shared.canOpenURL(appUrl) {
             UIApplication.shared.open(appUrl, options: [:], completionHandler: nil)
             return
         }
-        // Fallback to https open
         if let webUrl = URL(string: uriOrUrl), UIApplication.shared.canOpenURL(webUrl) {
             UIApplication.shared.open(webUrl, options: [:], completionHandler: nil)
         }
+        #endif
     }
 }

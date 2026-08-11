@@ -1,18 +1,17 @@
 import SwiftUI
 import TarotCore
 import TarotData
-
+import TarotDI
 
 public struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
     @StateObject private var model: TarotViewModel
     @State private var showWelcome = true
 
-    public init(container: AppContainer) { _model = StateObject(wrappedValue: TarotViewModel(container: container)) }
+    public init(container: any AppContainerProtocol) { _model = StateObject(wrappedValue: TarotViewModel(container: container)) }
 
     public var body: some View {
         ZStack {
-            // ── Background ──────────────────────────────────────
             Color.tarotBackground.ignoresSafeArea()
 
             LinearGradient(
@@ -23,25 +22,8 @@ public struct ContentView: View {
                 endPoint: .bottomTrailing
             )
             .blendMode(.overlay)
-            .ignoresSafeArea()
 
-            // Lavender ambient glow
-            Circle()
-                .fill(Color(red: 0.72, green: 0.55, blue: 0.95).opacity(colorScheme == .dark ? 0.16 : 0.10))
-                .frame(width: 340, height: 340)
-                .blur(radius: 68)
-                .offset(x: -140, y: -200)
-
-            // Deep violet accent glow
-            Circle()
-                .fill(Color(red: 0.42, green: 0.12, blue: 0.55).opacity(colorScheme == .dark ? 0.15 : 0.09))
-                .frame(width: 260, height: 260)
-                .blur(radius: 40)
-                .offset(x: 160, y: -140)
-
-            // ── Main UI ─────────────────────────────────────────
-            // TabView fills the screen fully, respecting safe areas so
-            // nothing is clipped on iPhone (no framed/rounded wrapper).
+            // Main UI
             TabView {
                 ForEach(model.settings.activeTabs) { tab in
                     Group {
@@ -64,7 +46,6 @@ public struct ContentView: View {
             }
             .opacity(showWelcome ? 0 : 1)
 
-            // ── Welcome Splash ───────────────────────────────────
             if showWelcome {
                 WelcomeView(colorScheme: colorScheme, userName: model.settings.userName) {
                     withAnimation(.easeInOut(duration: 0.65)) {

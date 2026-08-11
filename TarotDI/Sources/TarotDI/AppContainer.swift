@@ -1,10 +1,19 @@
-import SwiftUI
-import TarotContent
+import Foundation
 import TarotCore
-import TarotNotifications
 import TarotData
+import TarotNotifications
+import TarotContent
 
-@MainActor public final class AppContainer: ObservableObject {
+public protocol AppContainerProtocol: ObservableObject {
+    var cards: BundleCardRepository { get }
+    var journal: CoreDataJournalRepository { get }
+    var settings: UserDefaultsSettingsRepository { get }
+    var daily: DeterministicDailyCardService { get }
+    var notifications: LocalNotificationService { get }
+    var spreadSynthesizer: SpreadSynthesizerProtocol { get }
+}
+
+public final class AppContainer: AppContainerProtocol {
     public let cards: BundleCardRepository
     public let journal: CoreDataJournalRepository
     public let settings: UserDefaultsSettingsRepository

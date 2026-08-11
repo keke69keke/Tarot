@@ -1,7 +1,7 @@
 import SwiftUI
 import TarotCore
 import TarotData
-
+import TarotDI
 
 @MainActor final class TarotViewModel: ObservableObject {
     @Published var selectedSpread: SpreadType = .threeCard
@@ -16,10 +16,10 @@ import TarotData
     @Published var readingIntention: String = ""
     @Published var useSignificator: Bool = false
     @Published var significatorCard: Card?
-    let container: AppContainer
+    let container: any AppContainerProtocol
     private let drawUseCase: DrawCardsUseCaseProtocol
 
-    init(container: AppContainer) {
+    init(container: any AppContainerProtocol) {
         self.container = container
         settings = container.settings.load()
         dailyCard = container.daily.dailyCard(for: .now)

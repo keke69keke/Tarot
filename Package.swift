@@ -78,7 +78,7 @@ let package = Package(
         // MARK: - TarotApp
         .executableTarget(
             name: "TarotApp",
-            dependencies: ["TarotUI"],
+            dependencies: ["TarotUI", "TarotDI"],
             path: "TarotApp",
             exclude: ["Info.plist", "Assets.xcassets"]
         ),
@@ -89,6 +89,13 @@ let package = Package(
             dependencies: ["TarotCore"],
             path: "TarotNotifications",
             exclude: ["README.md"]
+        ),
+
+        // MARK: - TarotDI
+        .target(
+            name: "TarotDI",
+            dependencies: ["TarotCore", "TarotData", "TarotNotifications"],
+            path: "TarotDI/Sources/TarotDI"
         ),
 
         // MARK: - TarotContent

@@ -1,5 +1,6 @@
 import SwiftUI
 import TarotUI
+import TarotDI
 
 @main
 struct TarotIPhoneApp: App {
@@ -9,7 +10,7 @@ struct TarotIPhoneApp: App {
 }
 
 private struct AppRoot: View {
-    @State private var container: AppContainer?
+    @State private var container: (any AppContainerProtocol)?
     @State private var errorMessage: String?
 
     init() {
@@ -64,4 +65,3 @@ private struct AppRoot: View {
         }
     }
 }
-

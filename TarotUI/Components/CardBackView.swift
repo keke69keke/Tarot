@@ -155,17 +155,6 @@ struct CardBackView: View {
         }
     }
 
-    private func platformImage(named name: String) -> PlatformImage? {
-        let cleanName = (name as NSString).deletingPathExtension
-        if let resourceURL = Bundle.tarotContent.url(forResource: cleanName, withExtension: "png") {
-            #if canImport(UIKit)
-            if let img = UIImage(contentsOfFile: resourceURL.path) { return img }
-            #elseif canImport(AppKit)
-            if let img = NSImage(contentsOf: resourceURL) { return img }
-            #endif
-        }
-        return nil
-    }
 }
 
 /// Fallback Illustration when Card Image is not available

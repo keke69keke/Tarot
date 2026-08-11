@@ -1,11 +1,5 @@
 import Foundation
 import Combine
-#if os(iOS)
-import MediaPlayer
-#endif
-#if canImport(UIKit)
-import UIKit
-#endif
 
 @MainActor
 public final class ExternalAudioService: ObservableObject {
@@ -29,15 +23,11 @@ public final class ExternalAudioService: ObservableObject {
     }
 
     private func updateSpotifyAvailability() {
-        #if canImport(UIKit)
         if let spotifyURL = URL(string: "spotify:") {
-            spotifyAvailable = UIApplication.shared.canOpenURL(spotifyURL)
+            spotifyAvailable = PlatformApp.canOpenURL(spotifyURL)
         } else {
             spotifyAvailable = false
         }
-        #else
-        spotifyAvailable = false
-        #endif
     }
 
     public func updateAppleMusicStatus() {
@@ -62,7 +52,6 @@ public final class ExternalAudioService: ObservableObject {
         #endif
     }
 
-    /// Try to play a catalog item (Apple Music store ID). Requires the user to have Music access and/or an active Apple Music subscription for catalog playback.
     public func playAppleMusicCatalogItem(storeID: String) {
         #if os(iOS)
         let player = MPMusicPlayerController.systemMusicPlayer
@@ -86,24 +75,18 @@ public final class ExternalAudioService: ObservableObject {
         #endif
     }
 
-    /// Open a Spotify URL (track/album/playlist). If Spotify is installed this will hand off playback to the Spotify app.
     public func openSpotifyURL(_ urlString: String) {
         guard let url = URL(string: urlString) else { return }
-        #if canImport(UIKit)
-        UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        #endif
+        PlatformApp.openURL(url)
     }
 
-    /// Convenience: try to play a Spotify track by opening its spotify:track:... URI or https URL.
     public func playSpotifyTrack(uriOrUrl: String) {
-        #if canImport(UIKit)
-        if let appUrl = URL(string: uriOrUrl), UIApplication.shared.canOpenURL(appUrl) {
-            UIApplication.shared.open(appUrl, options: [:], completionHandler: nil)
+        if let appUrl = URL(string: uriOrUrl), PlatformApp.canOpenURL(appUrl) {
+            PlatformApp.openURL(appUrl)
             return
         }
-        if let webUrl = URL(string: uriOrUrl), UIApplication.shared.canOpenURL(webUrl) {
-            UIApplication.shared.open(webUrl, options: [:], completionHandler: nil)
+        if let webUrl = URL(string: uriOrUrl), PlatformApp.canOpenURL(webUrl) {
+            PlatformApp.openURL(webUrl)
         }
-        #endif
     }
 }

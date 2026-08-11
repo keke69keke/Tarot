@@ -1,7 +1,5 @@
 import Foundation
 
-// Removed duplicate DrawCardsUseCase definition; use the one in DrawCardsUseCase.swift instead.
-
 public struct SaveToJournalUseCase {
     private let repository: any JournalRepository // Assuming this protocol exists
     public init(repository: any JournalRepository) { self.repository = repository }

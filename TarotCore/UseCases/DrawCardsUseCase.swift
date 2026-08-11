@@ -1,5 +1,4 @@
 // MARK: - Protocols
-// ❌ REMOVED: Any duplicate CardRepository protocol definition
 
 public protocol DrawCardsUseCaseProtocol {
     func execute(for spread: Spread) async throws -> ReadingResult

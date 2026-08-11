@@ -20,7 +20,7 @@ public enum CardGroup: Hashable {
     case minorArcana(suit: CardSuit)
 }
 
-// MARK: - CardOrientation (FIX: Add Codable)
+// MARK: - CardOrientation
 public enum CardOrientation: String, Codable {
     case upright
     case reversed

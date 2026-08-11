@@ -58,10 +58,59 @@ public struct Interpretation: Codable {
     /// Generates a high-level summary string based on the drawn cards and their positions.
     /// This is used when an explicit summary isn't provided during initialization.
     static func generateDefaultSummary(from cards: [DrawnCard]) -> String {
-        // TODO: Implement complex logic here to synthesize meaning from multiple cards.
-        // For now, we create a placeholder that confirms synergy support.
-        let cardNames = cards.map { $0.card.name }.joined(separator: ", ")
-        let positions = cards.map { $0.position.name }.joined(separator: " in ")
-        return "This interpretation is based on the spread of \(cards.count) cards: \(cardNames). The overall narrative suggests a dynamic interplay between these energies, specifically highlighting themes related to '\(cards.first?.card.name ?? "Unknown")' and its influence across various positions like \(positions). A deeper dive into the contextual meanings will reveal how each card contributes to the overarching story."
+        guard !cards.isEmpty else {
+            return "No se han revelado cartas en esta lectura."
+        }
+
+        let count = cards.count
+        let cardNames = cards.map { $0.card.name }
+        let majorArcana = cards.filter { $0.card.arcanaType == .major }
+        let reversedCards = cards.filter { $0.isReversed }
+
+        var summary = ""
+
+        // Opening based on spread size
+        switch count {
+        case 1:
+            summary = "Una sola carta ha hablado: \(cardNames.first ?? "desconocida"). Su mensaje es directo y poderoso, resonando en el núcleo de tu pregunta. "
+        case 2...3:
+            summary = "Esta tirada concise de \(count) cartas que dialogan entre sí. "
+            if !majorArcana.isEmpty {
+                summary += "La presencia de los Arcanos Mayores eleva la lectura a un plano profundamente significativo. "
+            }
+        case 4...6:
+            summary = "El despliegue de \(count) cartas teje una narrativa matizada. Cada posición ilumina un aspecto distinto de tu situación, creando un tapiz de significados entrelazados. "
+        default:
+            summary = "\(count) cartas se han alineado para revelar una historia compleja. Esta lectura extensa examina múltiples capas de tu realidad, desde las causas ocultas hasta los desenlaces probables. "
+        }
+
+        // Highlight major arcana if present
+        if !majorArcana.isEmpty {
+            let majorNames = majorArcana.map { $0.card.name }
+            if majorNames.count == 1 {
+                summary += "\(majorNames.first ?? "Un Arcano Mayor") emerge como fuerza dominante, señalando una lección kármica o momento de profunda transformación. "
+            } else {
+                summary += "Los Arcanos Mayores \(majorNames.joined(separator: " y ")) convergen, indicando que estás atravesando un ciclo de crecimiento espiritual de gran magnitud. "
+            }
+        }
+
+        // Mention reversed cards
+        if !reversedCards.isEmpty {
+            let reversedNames = reversedCards.map { $0.card.name }
+            summary += "Las cartas invertidas (\(reversedNames.joined(separator: ", "))) sugieren energías bloqueadas o internas que requieren tu atención consciente. "
+        }
+
+        // Position-based insights
+        if cards.count >= 3 {
+            let positions = cards.prefix(3).map { $0.position.displayName }
+            summary += "En las posiciones clave observamos: "
+            summary += positions.enumerated().map { "\($0.element) revela \(cardNames[$0.offset])" }.joined(separator: ", ")
+            summary += ". "
+        }
+
+        // Closing guidance
+        summary += "La interacción entre estas cartas sugiere un momento de transición y revelation. Profundiza en cada posición y aspecto para descubrir cómo estas energías se entrelazan en tu situación particular."
+
+        return summary
     }
 }

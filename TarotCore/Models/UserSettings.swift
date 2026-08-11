@@ -37,6 +37,9 @@ public struct UserSettings {
     /// Inactive tabs hidden from the bottom navigation menu
     public var inactiveTabs: [AppTab] = [.ask, .horoscope, .library, .chat]
 
+    /// User display name used for personalized greetings in the UI.
+    public var userName: String = ""
+    
     public init(
         allowReversedCards: Bool = true,
         selectedLanguage: Language = .spanish,
@@ -47,7 +50,8 @@ public struct UserSettings {
         notificationsEnabled: Bool = false,
         openAIKey: String = "",
         activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal, .settings],
-        inactiveTabs: [AppTab] = [.ask, .horoscope, .library, .chat]
+        inactiveTabs: [AppTab] = [.ask, .horoscope, .library, .chat],
+        userName: String = ""
     ) {
         self.allowReversedCards = allowReversedCards
         self.selectedLanguage = selectedLanguage
@@ -59,6 +63,7 @@ public struct UserSettings {
         self.openAIKey = openAIKey
         self.activeTabs = activeTabs
         self.inactiveTabs = inactiveTabs
+        self.userName = userName
     }
 }
 

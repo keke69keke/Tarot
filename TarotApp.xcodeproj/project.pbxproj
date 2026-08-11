@@ -12,7 +12,13 @@
 		A1ICON000000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1ICON000000000000000000 /* Assets.xcassets */; };
 		BB35DF15301CDBA100111978 /* SystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = BB35DF14301CDBA100111978 /* SystemPackage */; };
 		BB35DF18301CDC2300111978 /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = BB35DF17301CDC2300111978 /* Atomics */; };
-		BBCDDA3B301B465A00EC8A82 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = BBCDDA3A301B465A00EC8A82 /* Algorithms */; };
+BBCDDA3B301B465A00EC8A82 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = BBCDDA3A301B465A00EC8A82 /* Algorithms */; };
+		WIDGET000000000000000001 /* TarotWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = WIDGET000000000000000002 /* TarotWidget.swift */; };
+		WIDGET000000000000000003 /* TarotWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = WIDGET000000000000000004 /* TarotWidgetBundle.swift */; };
+WIDGET000000000000000005 /* WidgetKit in Frameworks */ = {isa = PBXBuildFile; fileRef = WIDGET000000000000000017 /* WidgetKit.framework */; };
+		WIDGET000000000000000007 /* SwiftUI in Frameworks */ = {isa = PBXBuildFile; fileRef = WIDGET000000000000000018 /* SwiftUI.framework */; };
+		WIDGET000000000000000009 /* TarotCore in Frameworks */ = {isa = PBXBuildFile; productRef = WIDGET00000000000000000A /* TarotCore */; };
+		WIDGET00000000000000000B /* TarotContent in Frameworks */ = {isa = PBXBuildFile; productRef = WIDGET00000000000000000C /* TarotContent */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,22 +26,15 @@
 		A10000000000000000000005 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A10000000000000000000006 /* Tarot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tarot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1ICON000000000000000000 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		BB5398FA301C9D1900BB2F8B /* DrawnCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawnCard.swift; sourceTree = "<group>"; };
-		BB5398FB301C9D3100BB2F8B /* Spread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spread.swift; sourceTree = "<group>"; };
-		BB5398FC301C9D4300BB2F8B /* ReadingResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingResult.swift; sourceTree = "<group>"; };
-		BB5398FD301C9D8900BB2F8B /* DrawCardsUseCaseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawCardsUseCaseProtocol.swift; sourceTree = "<group>"; };
-		BB5398FE301C9F9100BB2F8B /* TarotReadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarotReadingView.swift; sourceTree = "<group>"; };
-		BB5398FF301CA2BD00BB2F8B /* ReadingHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingHistoryView.swift; sourceTree = "<group>"; };
-		BB539900301CA36D00BB2F8B /* DrawCardsUseCaseImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawCardsUseCaseImpl.swift; sourceTree = "<group>"; };
-		BB539901301CA43800BB2F8B /* TarotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarotApp.swift; sourceTree = "<group>"; };
-		BBCDDA3E301B7B5D00EC8A82 /* TarotReadingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarotReadingViewModel.swift; sourceTree = "<group>"; };
-		BBCDDA42301B7C9100EC8A82 /* DrawnCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawnCard.swift; sourceTree = "<group>"; };
-		BBCDDA44301B7CF200EC8A82 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
-		BBCDDA45301B7E4D00EC8A82 /* SpreadSynthesizerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpreadSynthesizerProtocol.swift; sourceTree = "<group>"; };
-		BBCDDA47301B7EAC00EC8A82 /* CardRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardRepositoryImpl.swift; sourceTree = "<group>"; };
-		BBCDDA48301B7F9700EC8A82 /* SpreadGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpreadGenerator.swift; sourceTree = "<group>"; };
-		BBCDDA49301B801100EC8A82 /* SpreadPosition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpreadPosition.swift; sourceTree = "<group>"; };
-		BBCDDA4A301C4DAD00EC8A82 /* SpreadSynthesizerImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpreadSynthesizerImpl.swift; sourceTree = "<group>"; };
+		BB24596A30232AE300DE706D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		BB447D6D3022EAC700E70BCC /* DefaultSpreadSynthesizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultSpreadSynthesizer.swift; sourceTree = "<group>"; };
+F5DFF9773024946100FD4A7E /* TarotApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarotApp.swift; sourceTree = "<group>"; };
+		WIDGET000000000000000002 /* TarotWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarotWidget.swift; sourceTree = "<group>"; };
+		WIDGET000000000000000004 /* TarotWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarotWidgetBundle.swift; sourceTree = "<group>"; };
+		WIDGET00000000000000000D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+WIDGET00000000000000000E /* TarotWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TarotWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		WIDGET000000000000000017 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		WIDGET000000000000000018 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,9 +43,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				BBCDDA3B301B465A00EC8A82 /* Algorithms in Frameworks */,
-				BB35DF15301CDBA100111978 /* SystemPackage in Frameworks */,
+BB35DF15301CDBA100111978 /* SystemPackage in Frameworks */,
 				A10000000000000000000003 /* TarotUI in Frameworks */,
 				BB35DF18301CDC2300111978 /* Atomics in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		WIDGET000000000000000013 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				WIDGET000000000000000005 /* WidgetKit in Frameworks */,
+				WIDGET000000000000000007 /* SwiftUI in Frameworks */,
+				WIDGET000000000000000009 /* TarotCore in Frameworks */,
+				WIDGET00000000000000000B /* TarotContent in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,8 +68,10 @@
 			children = (
 				A10000000000000000000009 /* TarotApp */,
 				A1000000000000000000000A /* Products */,
-				BBCDDA3C301B7B4A00EC8A82 /* Presentation */,
-				BBCDDA3F301B7C4600EC8A82 /* Core */,
+				WIDGET00000000000000000F /* TarotWidget */,
+				BB447D6D3022EAC700E70BCC /* DefaultSpreadSynthesizer.swift */,
+				BB24596A30232AE300DE706D /* ContentView.swift */,
+				F5DFF9773024946100FD4A7E /* TarotApp.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,82 +85,23 @@
 			path = TarotApp;
 			sourceTree = "<group>";
 		};
-		A1000000000000000000000A /* Products */ = {
+A1000000000000000000000A /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				A10000000000000000000006 /* Tarot.app */,
+				WIDGET00000000000000000E /* TarotWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		BBCDDA3C301B7B4A00EC8A82 /* Presentation */ = {
+		WIDGET00000000000000000F /* TarotWidget */ = {
 			isa = PBXGroup;
 			children = (
-				BBCDDA3D301B7B5D00EC8A82 /* ViewModels */,
+				WIDGET000000000000000002 /* TarotWidget.swift */,
+				WIDGET000000000000000004 /* TarotWidgetBundle.swift */,
+				WIDGET00000000000000000D /* Info.plist */,
 			);
-			path = Presentation;
-			sourceTree = "<group>";
-		};
-		BBCDDA3D301B7B5D00EC8A82 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				BBCDDA3E301B7B5D00EC8A82 /* TarotReadingViewModel.swift */,
-				BB5398FE301C9F9100BB2F8B /* TarotReadingView.swift */,
-				BB5398FF301CA2BD00BB2F8B /* ReadingHistoryView.swift */,
-			);
-			path = ViewModels;
-			sourceTree = "<group>";
-		};
-		BBCDDA3F301B7C4600EC8A82 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				BBCDDA40301B7C5E00EC8A82 /* Models */,
-				BBCDDA41301B7C7300EC8A82 /* Services */,
-				BBCDDA43301B7CCF00EC8A82 /* Protocols */,
-				BBCDDA46301B7EAC00EC8A82 /* Implementations */,
-			);
-			path = Core;
-			sourceTree = "<group>";
-		};
-		BBCDDA40301B7C5E00EC8A82 /* Models */ = {
-			isa = PBXGroup;
-			children = (
-				BBCDDA42301B7C9100EC8A82 /* DrawnCard.swift */,
-				BBCDDA44301B7CF200EC8A82 /* Card.swift */,
-				BBCDDA49301B801100EC8A82 /* SpreadPosition.swift */,
-			);
-			path = Models;
-			sourceTree = "<group>";
-		};
-		BBCDDA41301B7C7300EC8A82 /* Services */ = {
-			isa = PBXGroup;
-			children = (
-				BBCDDA45301B7E4D00EC8A82 /* SpreadSynthesizerProtocol.swift */,
-				BBCDDA48301B7F9700EC8A82 /* SpreadGenerator.swift */,
-				BB5398FA301C9D1900BB2F8B /* DrawnCard.swift */,
-				BB5398FB301C9D3100BB2F8B /* Spread.swift */,
-				BB5398FC301C9D4300BB2F8B /* ReadingResult.swift */,
-				BB5398FD301C9D8900BB2F8B /* DrawCardsUseCaseProtocol.swift */,
-			);
-			path = Services;
-			sourceTree = "<group>";
-		};
-		BBCDDA43301B7CCF00EC8A82 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Protocols;
-			sourceTree = "<group>";
-		};
-		BBCDDA46301B7EAC00EC8A82 /* Implementations */ = {
-			isa = PBXGroup;
-			children = (
-				BBCDDA47301B7EAC00EC8A82 /* CardRepositoryImpl.swift */,
-				BBCDDA4A301C4DAD00EC8A82 /* SpreadSynthesizerImpl.swift */,
-				BB539900301CA36D00BB2F8B /* DrawCardsUseCaseImpl.swift */,
-				BB539901301CA43800BB2F8B /* TarotApp.swift */,
-			);
-			path = Implementations;
+			path = TarotWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -174,8 +127,29 @@
 				BB35DF17301CDC2300111978 /* Atomics */,
 			);
 			productName = Tarot;
-			productReference = A10000000000000000000006 /* Tarot.app */;
+productReference = A10000000000000000000006 /* Tarot.app */;
 			productType = "com.apple.product-type.application";
+		};
+		WIDGET000000000000000010 /* TarotWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = WIDGET000000000000000011 /* Build configuration list for PBXNativeTarget "TarotWidget" */;
+			buildPhases = (
+				WIDGET000000000000000012 /* Sources */,
+				WIDGET000000000000000013 /* Frameworks */,
+				WIDGET000000000000000014 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+name = TarotWidget;
+			packageProductDependencies = (
+				WIDGET00000000000000000A /* TarotCore */,
+				WIDGET00000000000000000C /* TarotContent */,
+			);
+			productName = TarotWidget;
+			productReference = WIDGET00000000000000000E /* TarotWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -185,9 +159,12 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 2630;
-				LastUpgradeCheck = 2660;
-				TargetAttributes = {
+				LastUpgradeCheck = 2700;
+TargetAttributes = {
 					A1000000000000000000000B = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					WIDGET000000000000000010 = {
 						CreatedOnToolsVersion = 26.3;
 					};
 				};
@@ -210,8 +187,9 @@
 			productRefGroup = A1000000000000000000000A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			targets = (
+targets = (
 				A1000000000000000000000B /* Tarot */,
+				WIDGET000000000000000010 /* TarotWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -223,7 +201,7 @@
 			files = (
 				A1ICON000000000000000001 /* Assets.xcassets in Resources */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
@@ -236,7 +214,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		WIDGET000000000000000012 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				WIDGET000000000000000001 /* TarotWidget.swift in Sources */,
+				WIDGET000000000000000003 /* TarotWidgetBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		WIDGET000000000000000014 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
 		A10000000000000000000012 /* Debug */ = {
@@ -325,19 +322,24 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TarotApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Nicole´s Tarot";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gvstii.tarotapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -345,31 +347,86 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TarotApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Nicole´s Tarot";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gvstii.tarotapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		WIDGET000000000000000015 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CGS6FL7L59;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TarotWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gvstii.tarotapp.TarotWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		WIDGET000000000000000016 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CGS6FL7L59;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TarotWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.gvstii.tarotapp.TarotWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A1000000000000000000000C /* Build configuration list for PBXNativeTarget "Tarot" */ = {
+A1000000000000000000000C /* Build configuration list for PBXNativeTarget "Tarot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A10000000000000000000014 /* Debug */,
 				A10000000000000000000015 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		WIDGET000000000000000011 /* Build configuration list for PBXNativeTarget "TarotWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				WIDGET000000000000000015 /* Debug */,
+				WIDGET000000000000000016 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -435,10 +492,20 @@
 			package = BB35DF16301CDC2300111978 /* XCRemoteSwiftPackageReference "swift-atomics" */;
 			productName = Atomics;
 		};
-		BBCDDA3A301B465A00EC8A82 /* Algorithms */ = {
+BBCDDA3A301B465A00EC8A82 /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = BBCDDA39301B465A00EC8A82 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
 			productName = Algorithms;
+		};
+		WIDGET00000000000000000A /* TarotCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A10000000000000000000011 /* XCLocalSwiftPackageReference "." */;
+			productName = TarotCore;
+		};
+		WIDGET00000000000000000C /* TarotContent */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A10000000000000000000011 /* XCLocalSwiftPackageReference "." */;
+			productName = TarotContent;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

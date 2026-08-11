@@ -32,7 +32,7 @@ public struct UserSettings {
     public var openAIKey: String = ""
 
     /// Active tabs in the bottom navigation menu
-    public var activeTabs: [AppTab] = [.reading, .daily, .reference, .book, .journal, .settings]
+    public var activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal, .settings]
     
     /// Inactive tabs hidden from the bottom navigation menu
     public var inactiveTabs: [AppTab] = [.ask, .horoscope, .library, .chat]
@@ -46,7 +46,7 @@ public struct UserSettings {
         dailyNotificationHour: Int = 8,
         notificationsEnabled: Bool = false,
         openAIKey: String = "",
-        activeTabs: [AppTab] = [.reading, .daily, .reference, .book, .journal, .settings],
+        activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal, .settings],
         inactiveTabs: [AppTab] = [.ask, .horoscope, .library, .chat]
     ) {
         self.allowReversedCards = allowReversedCards
@@ -207,7 +207,7 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable {
     case library = "library"
     case reference = "reference"
     case daily = "daily"
-    case book = "book"
+    case learn = "learn"
     case journal = "journal"
     case settings = "settings"
     case chat = "chat"
@@ -222,7 +222,7 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable {
         case .library: return "Biblioteca"
         case .reference: return "Referencia"
         case .daily: return "Hoy"
-        case .book: return "Aprender"
+        case .learn: return "Aprender"
         case .journal: return "Diario"
         case .settings: return "Ajustes"
         case .chat: return "Arcana IA"
@@ -237,7 +237,7 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable {
         case .library: return "books.vertical"
         case .reference: return "magnifyingglass"
         case .daily: return "sun.max"
-        case .book: return "book.pages"
+        case .learn: return "graduationcap"
         case .journal: return "book.closed"
         case .settings: return "gearshape"
         case .chat: return "brain.head.profile"

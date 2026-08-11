@@ -67,7 +67,7 @@ let package = Package(
             path: "TarotTests/Smoke"
         ),
 
-        // MARK: - TarotUI
+// MARK: - TarotUI
         .target(
             name: "TarotUI",
             dependencies: ["TarotCore", "TarotData", "TarotContent", "TarotNotifications"],
@@ -80,7 +80,7 @@ let package = Package(
             name: "TarotApp",
             dependencies: ["TarotUI"],
             path: "TarotApp",
-            exclude: ["Core", "Presentation", "Info.plist"]
+            exclude: ["Info.plist", "Assets.xcassets"]
         ),
 
         // MARK: - TarotNotifications

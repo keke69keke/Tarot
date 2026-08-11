@@ -39,45 +39,30 @@ public struct MysticMusicPlayerBar: View {
             // External Source Menu (Apple Music / Spotify)
             Menu {
                 Button {
-                    if externalAudio.appleMusicAuthorized {
-                        externalAudio.playAppleMusic()
-                    } else {
-                        externalAudio.requestAppleMusicAuthorization { granted in
-                            if granted {
-                                externalAudio.playAppleMusic()
-                            }
+                    // Request authorization if needed, then attempt playback
+                    externalAudio.requestAppleMusicAuthorization { granted in
+                        if granted {
+                            externalAudio.playAppleMusic()
                         }
                     }
                 } label: {
-                    Label(
-                        externalAudio.appleMusicAuthorized ? "Reproducir en Apple Music" : "Autorizar Apple Music",
-                        systemImage: "music.note.house.fill"
-                    )
+                    Label("Apple Music", systemImage: "music.note.house.fill")
                 }
 
                 Button {
+                    // Open Spotify app (will open app if installed)
                     externalAudio.openSpotifyURL("spotify:")
                 } label: {
-                    Label(
-                        externalAudio.spotifyAvailable ? "Abrir en Spotify" : "Spotify no instalado",
-                        systemImage: "music.note.list"
-                    )
+                    Label("Abrir en Spotify", systemImage: "music.note.list")
                 }
-                .disabled(!externalAudio.spotifyAvailable)
             } label: {
                 HStack(spacing: 6) {
                     Image(systemName: "music.note.list")
                         .font(.system(size: 14))
                         .foregroundStyle(.secondary)
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text("Fuente")
-                            .font(.system(size: 12))
-                            .foregroundStyle(.secondary)
-                        Text(externalAudio.appleMusicAuthorized ? "Apple Music autorizado" : "Apple Music no autorizado")
-                            .font(.system(size: 9))
-                            .foregroundStyle(.secondary.opacity(0.75))
-                            .lineLimit(1)
-                    }
+                    Text("Fuente")
+                        .font(.system(size: 12))
+                        .foregroundStyle(.secondary)
                 }
             }
             .buttonStyle(.plain)
@@ -116,9 +101,6 @@ public struct MysticMusicPlayerBar: View {
                 .stroke(Color.tarotGold.opacity(0.3), lineWidth: 0.8)
         )
         .padding(.horizontal)
-        .onAppear {
-            externalAudio.refreshAvailability()
-        }
     }
 }
 

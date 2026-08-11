@@ -67,8 +67,14 @@ public struct SpreadDiagramView: View {
                 soulMirrorLayout
             case .alchemyPath:
                 alchemyPathLayout
-            case .moonCycle:
+case .moonCycle:
                 moonCycleLayout
+            case .pyramid:
+                pyramidLayout
+            case .yesNo:
+                yesNoLayout
+            case .lineage:
+                lineageLayout
             default:
                 standardGridLayout
             }
@@ -585,7 +591,7 @@ public struct SpreadDiagramView: View {
         }
     }
 
-    private func moonPhaseCard(index: Int, phase: String, yOffset: CGFloat) -> some View {
+private func moonPhaseCard(index: Int, phase: String, yOffset: CGFloat) -> some View {
         VStack(spacing: 8) {
             if spread.drawnCards.count > index {
                 cardCell(index: index, size: CGSize(width: 82, height: 122))
@@ -596,6 +602,91 @@ public struct SpreadDiagramView: View {
                 .multilineTextAlignment(.center)
         }
         .offset(y: yOffset)
+    }
+
+    // MARK: - Phase 5: La Pirámide (6 Cards — Spiritual Growth)
+    private var pyramidLayout: some View {
+        VStack(spacing: 16) {
+            spreadHeader(title: "✦ La Pirámide", subtitle: "Base → Maestría → Vértice · Crecimiento Espiritual")
+
+            VStack(spacing: 14) {
+                // Vértice (culmen)
+                if spread.drawnCards.count > 5 {
+                    cardCell(index: 5, size: CGSize(width: 108, height: 160))
+                }
+                // Nivel medio (2 cartas)
+                HStack(spacing: 40) {
+                    if spread.drawnCards.count > 3 { cardCell(index: 3, size: CGSize(width: 96, height: 144)) }
+                    if spread.drawnCards.count > 4 { cardCell(index: 4, size: CGSize(width: 96, height: 144)) }
+                }
+                // Base (3 cartas)
+                HStack(spacing: 18) {
+                    if spread.drawnCards.count > 0 { cardCell(index: 0, size: CGSize(width: 80, height: 120)) }
+                    if spread.drawnCards.count > 1 { cardCell(index: 1, size: CGSize(width: 80, height: 120)) }
+                    if spread.drawnCards.count > 2 { cardCell(index: 2, size: CGSize(width: 80, height: 120)) }
+                }
+            }
+            .padding(.vertical, 20)
+        }
+    }
+
+    // MARK: - Phase 5: Lectura de Sí/No (3 Cards — Clear Answer)
+    private var yesNoLayout: some View {
+        VStack(spacing: 16) {
+            spreadHeader(title: "✦ Lectura de Sí / No", subtitle: "Situación → Influencia → Respuesta")
+
+            HStack(alignment: .center, spacing: 20) {
+                VStack(spacing: 8) {
+                    if spread.drawnCards.count > 0 { cardCell(index: 0, size: CGSize(width: 92, height: 138)) }
+                    Text("Situación").font(.caption.weight(.bold)).foregroundStyle(Color.tarotGold)
+                }
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Color.tarotGold.opacity(0.6))
+                VStack(spacing: 8) {
+                    if spread.drawnCards.count > 1 { cardCell(index: 1, size: CGSize(width: 92, height: 138)) }
+                    Text("Influencia").font(.caption.weight(.bold)).foregroundStyle(Color.tarotGold)
+                }
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundStyle(Color.tarotGold.opacity(0.6))
+                VStack(spacing: 8) {
+                    if spread.drawnCards.count > 2 {
+                        cardCell(index: 2, size: CGSize(width: 92, height: 138))
+                            .overlay(alignment: .center) {
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .stroke(Color.tarotGold.opacity(0.7), lineWidth: 2)
+                            }
+                    }
+                    Text("Respuesta").font(.caption.weight(.bold)).foregroundStyle(Color.tarotGold)
+                }
+            }
+            .padding(.vertical, 20)
+        }
+    }
+
+    // MARK: - Phase 5: El Linaje (7 Cards — Heritage & Purpose)
+    private var lineageLayout: some View {
+        VStack(spacing: 16) {
+            spreadHeader(title: "✦ El Linaje", subtitle: "Herencia, Patrones Familiares y Propósito")
+
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 12) {
+                    if spread.drawnCards.count > 0 { cardCell(index: 0, size: CGSize(width: 120, height: 178)) }
+                    HStack(spacing: 24) {
+                        if spread.drawnCards.count > 1 { cardCell(index: 1, size: CGSize(width: 96, height: 142)) }
+                        if spread.drawnCards.count > 2 { cardCell(index: 2, size: CGSize(width: 96, height: 142)) }
+                    }
+                    if spread.drawnCards.count > 3 { cardCell(index: 3, size: CGSize(width: 108, height: 160)) }
+                    if spread.drawnCards.count > 4 { cardCell(index: 4, size: CGSize(width: 108, height: 160)) }
+                    HStack(spacing: 24) {
+                        if spread.drawnCards.count > 5 { cardCell(index: 5, size: CGSize(width: 96, height: 142)) }
+                        if spread.drawnCards.count > 6 { cardCell(index: 6, size: CGSize(width: 96, height: 142)) }
+                    }
+                }
+                .padding(.vertical, 20)
+            }
+        }
     }
 
     // MARK: - Shared Header Helper

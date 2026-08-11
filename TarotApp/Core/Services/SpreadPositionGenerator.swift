@@ -22,8 +22,8 @@ public struct SpreadPositionGenerator {
     ///   - spreadDescription: An optional detailed explanation of the spread's meaning.
     ///   - positionNames: An array of strings defining each position.
     /// - Returns: A fully initialized `Spread` instance.
-    public static func generate(name: String, description: String? = nil, from positionNames: [String]) -> Spread {
+public static func generate(name: String, description: String? = nil, from positionNames: [String]) -> Spread {
         let positions = generate(from: positionNames)
-        return Spread(name: name, description: description, positions: positions)
+        return Spread(standardPositions: positions)
     }
 }

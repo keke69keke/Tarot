@@ -1,6 +1,6 @@
 import Foundation
 import Combine
-#if canImport(MediaPlayer)
+#if os(iOS)
 import MediaPlayer
 #endif
 #if canImport(UIKit)
@@ -15,14 +15,14 @@ public final class ExternalAudioService: ObservableObject {
     @Published public private(set) var spotifyAvailable: Bool = false
 
     private init() {
-        #if canImport(MediaPlayer)
+        #if os(iOS)
         updateAppleMusicStatus()
         #endif
         updateSpotifyAvailability()
     }
 
     public func refreshAvailability() {
-        #if canImport(MediaPlayer)
+        #if os(iOS)
         updateAppleMusicStatus()
         #endif
         updateSpotifyAvailability()
@@ -40,24 +40,31 @@ public final class ExternalAudioService: ObservableObject {
         #endif
     }
 
-    #if canImport(MediaPlayer)
     public func updateAppleMusicStatus() {
+        #if os(iOS)
         let status = MPMediaLibrary.authorizationStatus()
         appleMusicAuthorized = (status == .authorized)
+        #else
+        appleMusicAuthorized = false
+        #endif
     }
 
     public func requestAppleMusicAuthorization(completion: @escaping (Bool) -> Void) {
+        #if os(iOS)
         MPMediaLibrary.requestAuthorization { status in
-            DispatchQueue.main.async { [weak self] in
+            DispatchQueue.main.async { [weak self = self] in
                 self?.appleMusicAuthorized = (status == .authorized)
                 completion(status == .authorized)
             }
         }
+        #else
+        completion(false)
+        #endif
     }
 
     /// Try to play a catalog item (Apple Music store ID). Requires the user to have Music access and/or an active Apple Music subscription for catalog playback.
     public func playAppleMusicCatalogItem(storeID: String) {
-        #if canImport(MediaPlayer)
+        #if os(iOS)
         let player = MPMusicPlayerController.systemMusicPlayer
         let descriptor = MPMusicPlayerStoreQueueDescriptor(storeIDs: [storeID])
         player.setQueue(with: descriptor)
@@ -66,19 +73,18 @@ public final class ExternalAudioService: ObservableObject {
     }
 
     public func playAppleMusic() {
-        #if canImport(MediaPlayer)
+        #if os(iOS)
         let player = MPMusicPlayerController.systemMusicPlayer
         player.play()
         #endif
     }
 
     public func pauseAppleMusic() {
-        #if canImport(MediaPlayer)
+        #if os(iOS)
         let player = MPMusicPlayerController.systemMusicPlayer
         player.pause()
         #endif
     }
-    #endif
 
     /// Open a Spotify URL (track/album/playlist). If Spotify is installed this will hand off playback to the Spotify app.
     public func openSpotifyURL(_ urlString: String) {

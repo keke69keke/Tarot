@@ -2,8 +2,8 @@ import Foundation
 import CoreGraphics
 
 /// Defines a specific location within a spread (e.g., "The Past", "The Goal").
-public struct SpreadPosition: Identifiable, Hashable {
-    public let id = UUID()
+public struct SpreadPosition: Codable, Identifiable, Hashable {
+public let id: UUID
     public let type: SpreadPositionType?
     public var name: String
     public var displayName: String
@@ -12,6 +12,7 @@ public struct SpreadPosition: Identifiable, Hashable {
 
     // Custom initializer for easy creation
     public init(name: String, displayName: String? = nil, description: String? = nil, layoutCoordinate: CGPoint? = nil) {
+        self.id = UUID()
         self.type = SpreadPositionType(rawValue: name)
         self.name = name
         self.displayName = displayName ?? name
@@ -21,11 +22,37 @@ public struct SpreadPosition: Identifiable, Hashable {
 
     // Compatibility initializer for older tests and modules.
     public init(id: SpreadPositionType, displayName: String, layoutCoordinate: CGPoint = .zero, description: String? = nil) {
+        self.id = UUID()
         self.type = id
         self.name = id.rawValue
         self.displayName = displayName
         self.description = description
         self.layoutCoordinate = layoutCoordinate
+    }
+
+    // MARK: - Codable (Manual so `id` (UUID) and `layoutCoordinate` (CGPoint) encode cleanly)
+    private enum CodingKeys: String, CodingKey {
+        case id, type, name, displayName, description, layoutCoordinate
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(type, forKey: .type)
+        try container.encode(name, forKey: .name)
+        try container.encode(displayName, forKey: .displayName)
+        try container.encodeIfPresent(description, forKey: .description)
+        try container.encodeIfPresent(layoutCoordinate, forKey: .layoutCoordinate)
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(UUID.self, forKey: .id)
+        self.type = try container.decodeIfPresent(SpreadPositionType.self, forKey: .type)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.displayName = try container.decode(String.self, forKey: .displayName)
+        self.description = try container.decodeIfPresent(String.self, forKey: .description)
+        self.layoutCoordinate = try container.decodeIfPresent(CGPoint.self, forKey: .layoutCoordinate)
     }
 }
 
@@ -46,13 +73,18 @@ public enum SpreadType: String, CaseIterable, Codable {
     case chakraSpread
     case hexagram
 
-    // Phase 4 — Esoteric Spreads
+// Phase 4 — Esoteric Spreads
     case temperance       // La Templanza — Equilibrio Alquímico (6 cards)
     case treeOfLife       // Árbol de la Vida — 10 Sefirot Cabalísticas
     case starDavid        // Estrella de David — Hexagrama Sagrado (7 cards)
     case soulMirror       // Espejo del Alma — Sanación profunda (9 cards)
     case alchemyPath      // Gran Obra Alquímica — Nigredo→Rubedo (4 cards)
     case moonCycle        // Ciclo Lunar — 4 fases lunares
+
+    // Phase 5 — New Practical Spreads
+    case pyramid          // La Pirámide — Crecimiento espiritual (6 cards)
+    case yesNo            // Lectura de Sí/No — Respuesta clara (3 cards)
+    case lineage          // El Linaje — Herencia y propósito (7 cards)
 
     /// Returns the canonical positions for this spread type.
     public var positions: [SpreadPosition] {
@@ -226,12 +258,42 @@ public enum SpreadType: String, CaseIterable, Codable {
                 SpreadPosition(name: "Rubedo — Perfección", description: "La Piedra Filosofal, la transmutación completa. ¿Quién emerges?")
             ]
 
-        case .moonCycle:
+case .moonCycle:
             return [
                 SpreadPosition(name: "Luna Nueva — Semilla", description: "Lo que planta su semilla en tu vida. Nuevos comienzos e intenciones."),
                 SpreadPosition(name: "Luna Creciente — Acción", description: "Lo que crece y pide tu acción y esfuerzo activo."),
                 SpreadPosition(name: "Luna Llena — Plenitud", description: "Lo que llega a su máxima expresión. La revelación y la cosecha."),
                 SpreadPosition(name: "Luna Menguante — Liberación", description: "Lo que debe soltarse, liberarse y transformarse antes del nuevo ciclo.")
+            ]
+
+        // MARK: Phase 5 — New Practical Spreads
+
+        case .pyramid:
+            return [
+                SpreadPosition(name: "Base Izquierda — Raíces", description: "Tus cimientos, origen y lo que te sostiene."),
+                SpreadPosition(name: "Base Centro — Equilibrio", description: "El estado presente de tu vida y tu centro."),
+                SpreadPosition(name: "Base Derecha — Recursos", description: "Tus talentos y herramientas disponibles."),
+                SpreadPosition(name: "Nivel Medio Izquierdo — Desafío", description: "El obstáculo que debes superar para crecer."),
+                SpreadPosition(name: "Nivel Medio Derecho — Maestría", description: "La lección que estás aprendiendo ahora."),
+                SpreadPosition(name: "Vértice — Ascensión", description: "La cima de tu crecimiento espiritual y el potencial más alto.")
+            ]
+
+        case .yesNo:
+            return [
+                SpreadPosition(name: "Situación Actual", description: "El contexto real de tu pregunta."),
+                SpreadPosition(name: "Influencia Oculta", description: "Lo que impulsa o bloquea la respuesta."),
+                SpreadPosition(name: "Resultado / Respuesta", description: "La tendencia y el desenlace probable.")
+            ]
+
+        case .lineage:
+            return [
+                SpreadPosition(name: "Linaje Familiar", description: "La herencia emocional y de patrones que cargas."),
+                SpreadPosition(name: "Abuelos", description: "Las raíces ancestrales y su legado."),
+                SpreadPosition(name: "Padres", description: "Lo que aprendiste de tus figuras parentales."),
+                SpreadPosition(name: "Infancia", description: "Los condicionamientos tempranos de tu vida."),
+                SpreadPosition(name: "Patrón Kármico", description: "El ciclo que se repite y debes sanar."),
+                SpreadPosition(name: "Propósito", description: "La misión que trasciende tu linaje."),
+                SpreadPosition(name: "Liberación", description: "Lo que puedes soltar para honrar tu propio camino.")
             ]
         }
     }
@@ -255,7 +317,10 @@ public enum SpreadType: String, CaseIterable, Codable {
         case .starDavid:    return "✦ Estrella de David"
         case .soulMirror:   return "✦ Espejo del Alma"
         case .alchemyPath:  return "✦ Gran Obra Alquímica"
-        case .moonCycle:    return "✦ Ciclo Lunar"
+case .moonCycle:    return "✦ Ciclo Lunar"
+        case .pyramid:      return "✦ La Pirámide"
+        case .yesNo:        return "✦ Sí / No"
+        case .lineage:      return "✦ El Linaje"
         }
     }
 
@@ -279,7 +344,10 @@ public enum SpreadType: String, CaseIterable, Codable {
         case .starDavid:    return "Los 6 elementos sagrados + el centro integrador"
         case .soulMirror:   return "Exploración profunda del inconsciente y la sombra"
         case .alchemyPath:  return "Nigredo → Albedo → Citrinitas → Rubedo"
-        case .moonCycle:    return "Las 4 fases lunares como guía espiritual"
+case .moonCycle:    return "Las 4 fases lunares como guía espiritual"
+        case .pyramid:      return "Base → Maestría → Vértice: tu crecimiento espiritual"
+        case .yesNo:        return "Respuesta clara y orientadora ante una pregunta binaria"
+        case .lineage:      return "Herencia, patrones familiares y propósito de tu alma"
         }
     }
 
@@ -303,7 +371,10 @@ public enum SpreadType: String, CaseIterable, Codable {
         case .starDavid:    return "🌟"
         case .soulMirror:   return "🪞"
         case .alchemyPath:  return "🜂"
-        case .moonCycle:    return "🌙"
+case .moonCycle:    return "🌙"
+        case .pyramid:      return "🔺"
+        case .yesNo:        return "⚖️"
+        case .lineage:      return "🌳"
         }
     }
 }
@@ -344,7 +415,7 @@ public extension SpreadPositionType {
 }
 
 /// Represents a collection of positions that define the structure of a reading.
-public struct Spread {
+public struct Spread: Codable {
     /// Optional spread metadata kept for compatibility with older code: a spread may have a type and creation date.
     public var type: SpreadType?
     public var createdAt: Date?

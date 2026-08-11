@@ -13,28 +13,27 @@ public enum SpreadPositionType: String, Codable {
     case shadow = "Shadow"
     case environment = "Environment"
     case unknown = "Unknown"
-
 }
 
 /// Textual meaning of a card, optionally specialised per spread position.
-public struct Interpretation {
+public struct Interpretation: Codable {
 
     /// General summary text. Must be between 100 and 400 words.
     public let summary: String
-    
+
     /// The specific cards drawn for this interpretation (the source of truth).
     public let cards: [DrawnCard]
-    
+
     /// At least 3 keywords that capture the essence of the interpretation.
     public let keywords: [String]
-    
+
     /// Position-specific override texts. When a position is absent the general
     /// `summary` is used as fallback (Requirement 7.5).
     public let contextual: [SpreadPositionType: String]
 
     /// Structured aspects commonly consulted by users (e.g., Amor, Economía, Salud, Carrera).
     public let aspects: [String: String]
-    
+
     public init(
         cards: [DrawnCard], // Changed to accept cards directly for synergy support
         summary: String? = nil, // Made optional, allowing dynamic generation if needed
@@ -55,7 +54,7 @@ public struct Interpretation {
     public init(summary: String, keywords: [String], contextual: [SpreadPositionType: String] = [:]) {
         self.init(cards: [], summary: summary, keywords: keywords, contextual: contextual, aspects: [:])
     }
-    
+
     /// Generates a high-level summary string based on the drawn cards and their positions.
     /// This is used when an explicit summary isn't provided during initialization.
     static func generateDefaultSummary(from cards: [DrawnCard]) -> String {
@@ -66,4 +65,3 @@ public struct Interpretation {
         return "This interpretation is based on the spread of \(cards.count) cards: \(cardNames). The overall narrative suggests a dynamic interplay between these energies, specifically highlighting themes related to '\(cards.first?.card.name ?? "Unknown")' and its influence across various positions like \(positions). A deeper dive into the contextual meanings will reveal how each card contributes to the overarching story."
     }
 }
-

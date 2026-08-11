@@ -128,9 +128,34 @@ public final class BundleCardRepository: CardRepository {
             return Interpretation(cards: [drawn], summary: contextualText, keywords: baseInterpretation.keywords, contextual: baseInterpretation.contextual)
         }
         
-        // No contextual override, return base interpretation adapted to this draw
+// No contextual override, return base interpretation adapted to this draw
         let drawn = DrawnCard(card: card, position: position, orientation: orientation)
         return Interpretation(cards: [drawn], summary: baseInterpretation.summary, keywords: baseInterpretation.keywords, contextual: baseInterpretation.contextual)
+    }
+
+    public func drawCards(for spread: Spread) async throws -> [DrawnCard] {
+        let positions = spread.standardPositions
+        let count = positions.isEmpty ? 1 : positions.count
+        let drawCount = max(1, min(count, cards.count))
+
+        var shuffled = cards
+        for i in stride(from: shuffled.count - 1, through: 1, by: -1) {
+            let j = Int.random(in: 0...i)
+            shuffled.swapAt(i, j)
+        }
+
+        let selected = shuffled.prefix(drawCount)
+        return selected.enumerated().map { index, card in
+            let isReversed = Bool.random()
+            let orientation: CardOrientation = isReversed ? .reversed : .upright
+            let position: SpreadPosition
+            if positions.isEmpty {
+                position = SpreadPosition(name: "Position \(index + 1)")
+            } else {
+                position = positions[min(index, positions.count - 1)]
+            }
+            return DrawnCard(card: card, position: position, orientation: orientation)
+        }
     }
 }
 

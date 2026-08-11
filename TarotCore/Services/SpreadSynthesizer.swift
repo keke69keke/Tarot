@@ -15,46 +15,55 @@ public final class SpreadSynthesizer {
     /// - Returns: A detailed string summarizing the reading's meaning, structured by position where possible.
     public func synthesize(for spread: Spread, drawnCards: [DrawnCard]) -> String {
         guard !drawnCards.isEmpty else {
-            return "This spread currently contains no drawn cards to interpret."
+            return "Esta tirada aún no contiene cartas interpretadas."
         }
-        
-        var contextualInterpretations: [SpreadPosition: String] = [:]
+
+        // Build the interpretation text per drawn card, then match positions
+        // by normalized display name so the narrative reliably pairs each
+        // position (from the spread's standard set) with the drawn card.
+        var cardByName: [String: String] = [:]
         for card in drawnCards {
-            if let interpretationText = card.positionalInterpretation {
-                contextualInterpretations[card.position] = interpretationText
-            } else {
-                let fallback = cardRepository.interpretation(
+            let text = card.positionalInterpretation
+                ?? cardRepository.interpretation(
                     for: card.card,
                     position: card.position,
                     orientation: card.orientation
-                )
-                contextualInterpretations[card.position] = fallback.summary
+                ).summary
+            let key = card.position.displayName
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if !key.isEmpty {
+                if cardByName[key] == nil || cardByName[key]?.isEmpty == true {
+                    cardByName[key] = text
+                }
             }
         }
-        
+
         let defaultSummary: String = {
             let parts = drawnCards.map { dc in
-                let orient = (dc.orientation == .reversed) ? "reversed" : "upright"
+                let orient = (dc.orientation == .reversed) ? "invertida" : "al derecho"
                 return "\(dc.card.name) (\(orient))"
             }
-            return "This reading centers around: " + parts.joined(separator: ", ") + "."
+            return "Tirada centrada en: " + parts.joined(separator: ", ") + "."
         }()
-        
+
         var narrativeParts: [String] = []
-        narrativeParts.append("--- Positional Breakdown ---")
-        
+        narrativeParts.append("— Desglose por Posición —")
+
         let orderedPositions: [SpreadPosition] = spread.allPositions
         for position in orderedPositions {
-            if let text = contextualInterpretations[position] {
+            let key = position.displayName
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            if let text = cardByName[key], !text.isEmpty {
                 narrativeParts.append("✨ **\(position.displayName)**: \(text)")
             } else {
-                narrativeParts.append("❓ **\(position.displayName)**: (Interpretation pending or missing data.)")
+                narrativeParts.append("❓ **\(position.displayName)**: \(defaultSummary)")
             }
         }
-        
-        narrativeParts.append("\n--- Overall Reading Summary ---")
-        narrativeParts.append("🔮 **The Core Message**: \(defaultSummary)")
-        
+
+        // Overall synthesis based on the combined energy of all drawn cards.
+        narrativeParts.append("\n— Síntesis General —")
+        narrativeParts.append("🔮 **El Mensaje Central**: \(defaultSummary)")
+
         return narrativeParts.joined(separator: "\n\n")
     }
 }

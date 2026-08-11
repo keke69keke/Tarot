@@ -1,22 +1,32 @@
 import SwiftUI
 import PDFKit
 import TarotContent
+import TarotCore
 
 // MARK: - PDF Reader Tab View
 
 public struct PDFBookView: View {
-    public init() {}
+    /// Título opcional del libro. Si es `nil` (o no se encuentra el archivo),
+    /// se muestra la vista de "no disponible".
+    let book: ImportedBook?
+    /// Manager de biblioteca compartido, para evitar crear instancias duplicadas.
+    @ObservedObject var libraryManager: LibraryManager
+
+    public init(book: ImportedBook? = nil, libraryManager: LibraryManager) {
+        self.book = book
+        self.libraryManager = libraryManager
+    }
 
     public var body: some View {
         NavigationStack {
-            PDFReaderContainerView()
+            PDFReaderContainerView(book: book, libraryManager: libraryManager)
                 .toolbar {
                     ToolbarItem(placement: .principal) {
                         VStack(spacing: 1) {
-                            Text("Guía Definitiva")
+                            Text(book?.title ?? "Guía Definitiva")
                                 .font(.system(size: 15, weight: .semibold, design: .serif))
                                 .foregroundStyle(.primary)
-                            Text("Fiebig & Bürger · Rider-Waite")
+                            Text(book == nil ? "Fiebig & Bürger · Rider-Waite" : book!.fileName)
                                 .font(.system(size: 11, weight: .regular, design: .serif))
                                 .foregroundStyle(Color.tarotGold)
                         }
@@ -32,8 +42,16 @@ public struct PDFBookView: View {
 // MARK: - Container (platform-aware)
 
 private struct PDFReaderContainerView: View {
+    let book: ImportedBook?
+    let libraryManager: LibraryManager
+
     private var pdfURL: URL? {
-        Bundle.tarotContent.url(forResource: "rider_waite_guide", withExtension: "pdf")
+        // Si se especifica un libro, obtener su URL real (documentos o bundle).
+        if let book {
+            return libraryManager.getFileURL(for: book)
+        }
+        // Fallback por defecto: la guía integrada Rider-Waite.
+        return Bundle.tarotContent.url(forResource: "rider_waite_guide", withExtension: "pdf")
     }
 
     var body: some View {
@@ -160,7 +178,7 @@ private struct PDFKitRepresentable: UIViewRepresentable {
     @Binding var totalPages: Int
     @Binding var pdfViewRef: PDFView?
 
-    func makeCoordinator() -> Coordinator {
+func makeCoordinator() -> Coordinator {
         Coordinator(currentPage: $currentPage, totalPages: $totalPages)
     }
 
@@ -189,6 +207,15 @@ private struct PDFKitRepresentable: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: PDFView, context: Context) {}
+
+    static func dismantleUIView(_ uiView: PDFView, coordinator: Coordinator) {
+        // Elimina el observer para evitar fugas de memoria.
+        NotificationCenter.default.removeObserver(
+            coordinator,
+            name: .PDFViewPageChanged,
+            object: uiView
+        )
+    }
 
     final class Coordinator: NSObject {
         @Binding var currentPage: Int

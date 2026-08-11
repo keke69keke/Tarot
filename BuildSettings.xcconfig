@@ -1,0 +1,22 @@
+// Build Settings for Tarot Project
+// These settings optimize build performance
+
+// === Compilation Caching ===
+COMPILATION_CACHE_ENABLE_CACHING = YES
+
+// === Linking ===
+EAGER_LINKING = YES
+
+// === Swift Compiler ===
+SWIFT_USE_INTEGRATED_DRIVER = YES
+
+// === Clang Modules ===
+CLANG_ENABLE_MODULES = YES
+
+// === Debug Configuration ===
+// These are typically set correctly by default in Debug
+// SWIFT_COMPILATION_MODE = singlefile (default for Debug)
+// SWIFT_OPTIMIZATION_LEVEL = -Onone (default for Debug)
+// ONLY_ACTIVE_ARCH = YES (default for Debug)
+// DEBUG_INFORMATION_FORMAT = dwarf (default for Debug)
+// ENABLE_TESTABILITY = YES (default for Debug)

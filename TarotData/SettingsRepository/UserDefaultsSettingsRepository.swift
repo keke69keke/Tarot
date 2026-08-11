@@ -61,6 +61,12 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         let inactiveTabsRaw = userDefaults.stringArray(forKey: Keys.inactiveTabs) ?? UserSettings().inactiveTabs.map { $0.rawValue }
         let inactiveTabs = inactiveTabsRaw.compactMap { AppTab(rawValue: $0) }
         
+        // Ensure .learn tab is always included in activeTabs
+        let defaultActiveTabs = UserSettings().activeTabs
+        let updatedActiveTabs = activeTabs.isEmpty ? defaultActiveTabs : activeTabs
+        let finalActiveTabs = updatedActiveTabs.contains(.learn) ? updatedActiveTabs : (updatedActiveTabs + [.learn]).sorted(by: { defaultActiveTabs.firstIndex(of: $0) ?? 0 < defaultActiveTabs.firstIndex(of: $1) ?? 0 })
+        let finalInactiveTabs = inactiveTabs.filter { $0 != .learn }
+        
         let openAIKey = userDefaults.string(forKey: Keys.openAIKey) ?? ""
         
         return UserSettings(
@@ -72,8 +78,8 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
             dailyNotificationHour: dailyNotificationHour,
             notificationsEnabled: notificationsEnabled,
             openAIKey: openAIKey,
-            activeTabs: activeTabs.isEmpty ? UserSettings().activeTabs : activeTabs,
-            inactiveTabs: inactiveTabs
+            activeTabs: finalActiveTabs,
+            inactiveTabs: finalInactiveTabs
         )
     }
     
@@ -86,8 +92,14 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         userDefaults.set(settings.appearance.rawValue, forKey: Keys.appearance)
         userDefaults.set(settings.dailyNotificationHour, forKey: Keys.dailyNotificationHour)
         userDefaults.set(settings.notificationsEnabled, forKey: Keys.notificationsEnabled)
-        userDefaults.set(settings.activeTabs.map { $0.rawValue }, forKey: Keys.activeTabs)
-        userDefaults.set(settings.inactiveTabs.map { $0.rawValue }, forKey: Keys.inactiveTabs)
+        
+        // Ensure .learn is always in activeTabs and never in inactiveTabs when saving
+        let defaultActiveTabs = UserSettings().activeTabs
+        let activeTabsToSave = settings.activeTabs.contains(.learn) ? settings.activeTabs : (settings.activeTabs + [.learn]).sorted(by: { defaultActiveTabs.firstIndex(of: $0) ?? 0 < defaultActiveTabs.firstIndex(of: $1) ?? 0 })
+        let inactiveTabsToSave = settings.inactiveTabs.filter { $0 != .learn }
+        
+        userDefaults.set(activeTabsToSave.map { $0.rawValue }, forKey: Keys.activeTabs)
+        userDefaults.set(inactiveTabsToSave.map { $0.rawValue }, forKey: Keys.inactiveTabs)
         userDefaults.set(settings.openAIKey, forKey: Keys.openAIKey)
         
         // Force synchronization to disk

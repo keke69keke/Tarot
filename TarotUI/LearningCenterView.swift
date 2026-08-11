@@ -4,15 +4,15 @@ import TarotCore
 // MARK: - Book Cover Colors (deterministic from title hash)
 private func bookCoverGradient(for title: String) -> [Color] {
     let palettes: [[Color]] = [
-        [Color(red: 0.42, green: 0.10, blue: 0.35), Color(red: 0.18, green: 0.05, blue: 0.28)],   // deep purple
-        [Color(red: 0.55, green: 0.30, blue: 0.05), Color(red: 0.28, green: 0.12, blue: 0.02)],   // amber
-        [Color(red: 0.08, green: 0.22, blue: 0.42), Color(red: 0.04, green: 0.08, blue: 0.22)],   // midnight blue
-        [Color(red: 0.35, green: 0.08, blue: 0.08), Color(red: 0.18, green: 0.04, blue: 0.04)],   // deep crimson
-        [Color(red: 0.05, green: 0.28, blue: 0.22), Color(red: 0.02, green: 0.12, blue: 0.10)],   // teal emerald
-        [Color(red: 0.40, green: 0.35, blue: 0.05), Color(red: 0.18, green: 0.14, blue: 0.02)],   // gold
-        [Color(red: 0.22, green: 0.05, blue: 0.40), Color(red: 0.10, green: 0.02, blue: 0.20)],   // violet
-        [Color(red: 0.08, green: 0.08, blue: 0.08), Color(red: 0.18, green: 0.10, blue: 0.22)],   // dark
-        [Color(red: 0.38, green: 0.18, blue: 0.02), Color(red: 0.18, green: 0.08, blue: 0.01)],   // copper
+        [Color(red: 0.42, green: 0.10, blue: 0.35), Color(red: 0.18, green: 0.05, blue: 0.28)],
+        [Color(red: 0.55, green: 0.30, blue: 0.05), Color(red: 0.28, green: 0.12, blue: 0.02)],
+        [Color(red: 0.08, green: 0.22, blue: 0.42), Color(red: 0.04, green: 0.08, blue: 0.22)],
+        [Color(red: 0.35, green: 0.08, blue: 0.08), Color(red: 0.18, green: 0.04, blue: 0.04)],
+        [Color(red: 0.05, green: 0.28, blue: 0.22), Color(red: 0.02, green: 0.12, blue: 0.10)],
+        [Color(red: 0.40, green: 0.35, blue: 0.05), Color(red: 0.18, green: 0.14, blue: 0.02)],
+        [Color(red: 0.22, green: 0.05, blue: 0.40), Color(red: 0.10, green: 0.02, blue: 0.20)],
+        [Color(red: 0.08, green: 0.08, blue: 0.08), Color(red: 0.18, green: 0.10, blue: 0.22)],
+        [Color(red: 0.38, green: 0.18, blue: 0.02), Color(red: 0.18, green: 0.08, blue: 0.01)],
     ]
     let idx = abs(title.hashValue) % palettes.count
     return palettes[idx]
@@ -25,7 +25,7 @@ private func bookCoverIcon(for title: String) -> String {
 }
 
 // MARK: - Premium Book Cover Card
-private struct BookCoverCard: View {
+private struct EsotericBookCover: View {
     let title: String
     let subtitle: String
     let size: CGSize
@@ -36,11 +36,9 @@ private struct BookCoverCard: View {
         let icon = bookCoverIcon(for: title)
 
         ZStack(alignment: .bottomLeading) {
-            // Background gradient
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(LinearGradient(colors: colors, startPoint: .topLeading, endPoint: .bottomTrailing))
 
-            // Decorative pattern
             Canvas { context, sz in
                 let step: CGFloat = 22
                 var p = Path()
@@ -54,7 +52,6 @@ private struct BookCoverCard: View {
             }
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
-            // Top icon
             VStack {
                 HStack {
                     Spacer()
@@ -66,7 +63,6 @@ private struct BookCoverCard: View {
                 Spacer()
             }
 
-            // Bottom text
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 13, weight: .bold, design: .serif))
@@ -80,7 +76,6 @@ private struct BookCoverCard: View {
             }
             .padding(10)
 
-            // Gold border
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(
                     LinearGradient(colors: [Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.6),
@@ -97,7 +92,8 @@ private struct BookCoverCard: View {
     }
 }
 
-// MARK: - LearningCenterView (Premium Redesign)
+// MARK: - LearningCenterView
+@MainActor
 public struct LearningCenterView: View {
     @StateObject private var libraryManager = LibraryManager()
     @State private var showingFilePicker = false
@@ -110,7 +106,6 @@ public struct LearningCenterView: View {
     public var body: some View {
         NavigationStack {
             ZStack {
-                // Deep background gradient
                 LinearGradient(
                     colors: [Color(red: 0.04, green: 0.04, blue: 0.10), Color(red: 0.08, green: 0.04, blue: 0.16)],
                     startPoint: .topLeading, endPoint: .bottomTrailing
@@ -119,26 +114,21 @@ public struct LearningCenterView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
-
-                        // MARK: Header
                         headerView
                             .padding(.bottom, 20)
 
-                        // MARK: Mystic Music Player
                         MysticMusicPlayerBar()
                             .padding(.horizontal)
                             .padding(.bottom, 20)
 
-                        // MARK: Section Tabs
                         sectionTabs
                             .padding(.horizontal)
                             .padding(.bottom, 20)
 
-                        // MARK: Content
                         switch selectedSection {
-                        case .books:    booksSection
-                        case .spreads:  spreadsInfoSection
-                        case .tools:    toolsSection
+                        case .books: booksSection
+                        case .spreads: spreadsInfoSection
+                        case .tools: toolsSection
                         }
                     }
                     .padding(.bottom, 40)
@@ -153,8 +143,10 @@ public struct LearningCenterView: View {
                 allowedContentTypes: [.pdf],
                 allowsMultipleSelection: false
             ) { result in
-                if case .success(let urls) = result, let url = urls.first {
-                    try? libraryManager.importPDF(from: url)
+                Task {
+                    if case .success(let urls) = result, let url = urls.first {
+                        try? libraryManager.importPDF(from: url)
+                    }
                 }
             }
             .sheet(isPresented: $showingBrowser) {
@@ -164,15 +156,25 @@ public struct LearningCenterView: View {
                         #if os(iOS)
                         .navigationBarTitleDisplayMode(.inline)
                         #endif
-                        .toolbar {
-                            ToolbarItem(placement: .automatic) {
+.toolbar {
+                            #if os(iOS)
+                            ToolbarItem(placement: .navigationBarTrailing) {
                                 Button("Cerrar") { showingBrowser = false }
                             }
+                            #else
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Cerrar") { showingBrowser = false }
+                            }
+                            #endif
                         }
                 }
             }
         }
-        .onAppear { withAnimation(.easeOut(duration: 0.6)) { animateIn = true } }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.6)) {
+                animateIn = true
+            }
+        }
     }
 
     // MARK: - Header
@@ -247,26 +249,21 @@ public struct LearningCenterView: View {
     // MARK: - Books Section
     private var booksSection: some View {
         VStack(alignment: .leading, spacing: 20) {
-            // Quick actions
             quickActionsBar.padding(.horizontal)
 
-            // Built-in guide
             sectionLabel("📖 Guía Integrada").padding(.horizontal)
-            NavigationLink(destination: PDFBookView()) {
+            NavigationLink(destination: PDFBookView(book: builtInGuideBook, libraryManager: libraryManager)) {
                 builtInBookRow
             }
             .padding(.horizontal)
 
-                // Escuela de Tarot — cursos y talleres
-                sectionLabel("🎓 Escuela de Tarot").padding(.horizontal)
-                schoolSection.padding(.horizontal)
+            sectionLabel("🎓 Escuela de Tarot").padding(.horizontal)
+            schoolSection.padding(.horizontal)
 
-            // Library
             if libraryManager.importedBooks.isEmpty {
                 emptyLibraryView.padding(.horizontal)
             } else {
                 sectionLabel("📚 Biblioteca Esotérica — \(libraryManager.importedBooks.count) obras").padding(.horizontal)
-                // 2-column book grid
                 bookGrid
             }
         }
@@ -313,6 +310,13 @@ public struct LearningCenterView: View {
         .buttonStyle(.plain)
     }
 
+    private var builtInGuideBook: ImportedBook {
+        ImportedBook(
+            title: "Guía Definitiva del Tarot",
+            fileName: "rider_waite_guide.pdf"
+        )
+    }
+
     private var builtInBookRow: some View {
         HStack(spacing: 16) {
             ZStack {
@@ -343,8 +347,8 @@ public struct LearningCenterView: View {
     private var bookGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)], spacing: 16) {
             ForEach(libraryManager.importedBooks) { book in
-                NavigationLink(destination: GenericPDFReaderView(url: libraryManager.getFileURL(for: book))) {
-                    BookCoverCard(title: book.title, subtitle: book.fileName, size: CGSize(width: 160, height: 220))
+                NavigationLink(destination: PDFBookView(book: book, libraryManager: libraryManager)) {
+                    EsotericBookCover(title: book.title, subtitle: book.fileName, size: CGSize(width: 160, height: 220))
                 }
                 .buttonStyle(.plain)
                 .contextMenu {
@@ -363,9 +367,9 @@ public struct LearningCenterView: View {
     private var schoolSection: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 14) {
-                ForEach(schoolCourses, id: \ .self) { course in
-                    NavigationLink(destination: SchoolCourseView(title: course)) {
-                        BookCoverCard(title: course, subtitle: "Curso · 3 lecciones", size: CGSize(width: 220, height: 140))
+ForEach(schoolCourses) { course in
+                    NavigationLink(destination: SchoolCourseView(course: course)) {
+                        EsotericBookCover(title: course.title, subtitle: "Curso · \(course.lessons.count) lecciones", size: CGSize(width: 220, height: 140))
                     }
                     .buttonStyle(.plain)
                 }
@@ -374,24 +378,178 @@ public struct LearningCenterView: View {
         }
     }
 
-    private var schoolCourses: [String] {
-        ["Interpretación de Arcanos", "Tiradas Prácticas", "Cábala y Tarot", "Astrología Aplicada", "Trabajo con la Sombra"]
+private var schoolCourses: [SchoolCourse] {
+        [
+            SchoolCourse(
+                title: "Interpretación de Arcanos",
+                icon: "arcade.stick",
+                color: Color(red: 0.78, green: 0.62, blue: 0.98),
+                summary: "Domina el significado de los 22 Arcanos Mayores y los 56 Menores, con sus símbolos, arquetipos y mensajes.",
+                lessons: [
+                    SchoolLesson(title: "Los Arcanos Mayores", subtitle: "22 arquetipos que narran el viaje del alma", icon: "star.fill", content: "Los Arcanos Mayores representan el camino de la vida: desde El Loco (0) que inicia el viaje con fe y espontaneidad, hasta El Mundo (21) que alcanza la plenitud. Cada carta es un arquetipo universal que refleja una etapa de tu evolución. Aprende a identificar cuál de estos arquetipos resuena con tu situación actual y cómo integrar su energía."),
+                    SchoolLesson(title: "Los Arcanos Menores", subtitle: "La vida cotidiana en 4 palos y 56 cartas", icon: "suit.club.fill", content: "Los Arcanos Menores se dividen en cuatro palos que corresponden a los elementos: Bastos (fuego, acción), Copas (agua, emociones), Espadas (aire, mente) y Oros (tierra, materia). Cada palo narra la evolución de un área de tu vida, desde el As (el comienzo) hasta el Rey (la maestría). Aprende a leerlos en contexto."),
+                    SchoolLesson(title: "Símbolos y numerología", subtitle: "El lenguaje oculto de cada carta", icon: "number", content: "Cada carta esconde múltiples capas de significado: los números (del 1 al 10 y las figuras de corte), los colores, los objetos y las posturas de los personajes. El número indica el nivel de desarrollo de la energía, mientras que los símbolos aportan matices. El Sol, la luna, la estrella y la torre son arquetipos universales que se repiten."),
+                ]
+            ),
+            SchoolCourse(
+                title: "Tiradas Prácticas",
+                icon: "rectangle.stack.fill",
+                color: Color(red: 0.95, green: 0.72, blue: 0.38),
+                summary: "Aprende a realizar las tiradas más usadas y a interpretar las posiciones de cada carta.",
+                lessons: [
+                    SchoolLesson(title: "Tirada de 3 cartas", subtitle: "Pasado, presente y futuro", icon: "3.circle.fill", content: "La tirada más versátil y sencilla. La primera carta revela el pasado que te trajo hasta aquí, la segunda describe el presente o el corazón de la cuestión, y la tercera apunta al futuro probable. Es ideal para preguntas rápidas y consultas diarias. Cada posición se lee en relación con las demás para formar una historia coherente."),
+                    SchoolLesson(title: "La Cruz Celta", subtitle: "La tirada más completa del tarot", icon: "xmark.circle.fill", content: "Con 10 cartas, es la tirada reina del tarot. Analiza el corazón de la cuestión, el desafío, el pasado, el futuro, tu objetivo consciente, la base inconsciente, el consejo, el entorno, tus esperanzas y temores, y el resultado final. Cada posición ilumina una faceta distinta de tu situación."),
+                    SchoolLesson(title: "Tirada de la Herradura", subtitle: "7 cartas para visión de conjunto", icon: "7.circle.fill", content: "La herradura despliega 7 cartas en arco: pasado lejano, presente, fuerzas ocultas, consejo, futuro cercano, futuro lejano y resultado. Es excelente para obtener una panorámica general de una situación compleja y entender cómo se desarrollarán los acontecimientos."),
+                ]
+            ),
+            SchoolCourse(
+                title: "Cábala y Tarot",
+                icon: "tree.fill",
+                color: Color(red: 0.55, green: 0.78, blue: 0.42),
+                summary: "Conecta las cartas con el Árbol de la Vida y la sabiduría hermética.",
+                lessons: [
+                    SchoolLesson(title: "El Árbol de la Vida", subtitle: "Las 10 sefirot y sus correspondencias", icon: "tree", content: "La Cábala estructura el universo en 10 esferas (sefirot) conectadas por 22 senderos, los mismos que los 22 Arcanos Mayores. Cada sefirá es una emanación divina: desde Kether (la corona) hasta Malkuth (el reino). El tarot y la cábala comparten este mapa sagrado de la creación."),
+                    SchoolLesson(title: "Los Arcanos y los senderos", subtitle: "El camino del iniciado", icon: "arrow.right.circle.fill", content: "Cada Arcano Mayor corresponde a un sendero del Árbol de la Vida y a una letra hebrea. El Loco es Aleph, el aire primordial; El Mundo es Tav, la culminación. Estudiar estas correspondencias te permite leer el tarot como un mapa de iniciación espiritual y de desarrollo personal."),
+                    SchoolLesson(title: "Visiertoes y prácticas", subtitle: "Meditaciones con el Árbol", icon: "sparkles", content: "Una práctica poderosa es meditar ascendiendo por el Árbol de la Vida mientras contemplas los Arcanos. Coloca las cartas en la posición de las sefirot y observa cómo cada energía se conecta. Esta práctica integra cuerpo, mente y espíritu revelando bloqueos y dones ocultos."),
+                ]
+            ),
+            SchoolCourse(
+                title: "Astrología Aplicada",
+                icon: "moon.stars.fill",
+                color: Color(red: 0.40, green: 0.72, blue: 1.0),
+                summary: "Integra los 12 signos, planetas y casas con las cartas del tarot.",
+                lessons: [
+                    SchoolLesson(title: "Signos y Arcanos Mayores", subtitle: "Correspondencias zodiacales", icon: "star.fill", content: "Varios Arcanos Mayores se asocian a signos zodiacales: El Emperador es Aries, La Templanza es Sagitario, La Estrella es Acuario, La Rueda es Júpiter. Conocer estas correspondencias enriquece tus lecturas y te permite usar el tarot como una herramienta astrológica."),
+                    SchoolLesson(title: "Los palos y los elementos", subtitle: "Fuego, tierra, aire y agua", icon: "flame.fill", content: "Los cuatro palos del tarot corresponden a los cuatro elementos: Bastos = Fuego, Oros = Tierra, Espadas = Aire y Copas = Agua. Estos elementos se relacionan con los signos zodiacales según su naturaleza. Esta correspondencia te ayuda a equilibrar las energías en una lectura."),
+                    SchoolLesson(title: "La rueda de 12 casas", subtitle: "La tirada astrológica", icon: "circle.grid.cross.fill", content: "La tirada astrológica coloca 12 cartas en las 12 casas. Cada casa rige un área de la vida: la 1ª tu identidad, la 2ª tus recursos, la 7ª tus relaciones, la 10ª tu carrera. Es una herramienta poderosa para una lectura anual o para entender tu cielo natal con el tarot."),
+                ]
+            ),
+            SchoolCourse(
+                title: "Trabajo con la Sombra",
+                icon: "moon.fill",
+                color: Color(red: 0.72, green: 0.42, blue: 1.0),
+                summary: "Explora el inconsciente, integra tu sombra y sana heridas profundas.",
+                lessons: [
+                    SchoolLesson(title: "La sombra en el tarot", subtitle: "Los arcanos que nos confrontan", icon: "moon.haze.fill", content: "Cartas como La Torre, La Luna, El Diablo o La Muerte suelen asustar, pero son las más sanadoras. La Torre derrumba lo falso, La Luna ilumina lo inconsciente, El Diablo revela tus ataduras, y La Muerte abre paso a la transformación. Trabajarlas conscientemente integra tu sombra."),
+                    SchoolLesson(title: "El Espejo del Alma", subtitle: "Sanación con la tirada de 9 cartas", icon: "camera.macro", content: "La tirada del Espejo del Alma explora tu máscara, tu sombra, tu herida de infancia, tu don oculto, tus patrones kármicos y tu llamado del alma. Es una herramienta de autoindagación profunda inspirada en Carl Jung. Cada carta te invita a mirar dentro sin juicio."),
+                    SchoolLesson(title: "Integración y práctica", subtitle: "Transformar la herida en don", icon: "heart.fill", content: "No se trata de eliminar la sombra, sino de integrarla. Lleva un diario de tus lecturas, pregunta a las cartas qué patrón repites y cómo transformarlo. La oscuridad no es enemiga de la luz: es su complemento. Cuando integras tu sombra, recuperas una energía vital preciosa."),
+                ]
+            ),
+        ]
     }
 
     private struct SchoolCourseView: View {
-        let title: String
+        let course: SchoolCourse
+        @State private var expandedLesson: UUID?
+
         var body: some View {
-            VStack(spacing: 16) {
-                Text(title).font(.title).bold()
-                Text("Contenido del curso — lecciones, videos y ejercicios prácticos.")
-                    .foregroundStyle(.secondary)
-                Spacer()
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 20) {
+                    // Header
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(spacing: 12) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .fill(course.color.opacity(0.18))
+                                    .frame(width: 56, height: 56)
+                                Image(systemName: course.icon)
+                                    .font(.system(size: 26))
+                                    .foregroundStyle(course.color)
+                            }
+                            Text(course.title)
+                                .font(.system(size: 24, weight: .bold, design: .serif))
+                                .foregroundStyle(.white)
+                        }
+                        Text(course.summary)
+                            .font(.system(size: 14, design: .serif))
+                            .foregroundStyle(Color.white.opacity(0.6))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(20)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .fill(Color.white.opacity(0.06))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .stroke(course.color.opacity(0.4), lineWidth: 1)
+                    )
+
+                    // Lessons
+                    Text("\(course.lessons.count) LECCIONES")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundStyle(course.color)
+                        .tracking(1.4)
+                        .padding(.horizontal, 4)
+
+                    ForEach(course.lessons) { lesson in
+                        lessonRow(lesson)
+                    }
+                }
+                .padding()
             }
-            .padding()
-            .navigationTitle(title)
+            .navigationTitle(course.title)
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+        }
+
+        private func lessonRow(_ lesson: SchoolLesson) -> some View {
+            let isExpanded = expandedLesson == lesson.id
+            return VStack(alignment: .leading, spacing: 0) {
+                Button {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        expandedLesson = isExpanded ? nil : lesson.id
+                    }
+                } label: {
+                    HStack(spacing: 14) {
+                        ZStack {
+                            Circle()
+                                .fill(course.color.opacity(0.15))
+                                .frame(width: 42, height: 42)
+                            Image(systemName: lesson.icon)
+                                .font(.system(size: 18))
+                                .foregroundStyle(course.color)
+                        }
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(lesson.title)
+                                .font(.system(size: 15, weight: .bold, design: .serif))
+                                .foregroundStyle(.white)
+                                .multilineTextAlignment(.leading)
+                            Text(lesson.subtitle)
+                                .font(.caption)
+                                .foregroundStyle(Color.white.opacity(0.5))
+                                .multilineTextAlignment(.leading)
+                        }
+                        Spacer()
+                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                            .font(.caption)
+                            .foregroundStyle(Color.white.opacity(0.4))
+                    }
+                    .padding(16)
+                }
+                .buttonStyle(.plain)
+
+                if isExpanded {
+                    Text(lesson.content)
+                        .font(.system(size: 14, design: .serif))
+                        .foregroundStyle(Color.white.opacity(0.75))
+                        .lineSpacing(6)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 16)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.white.opacity(0.05))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(isExpanded ? course.color.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
+            )
         }
     }
 
@@ -413,7 +571,7 @@ public struct LearningCenterView: View {
         VStack(alignment: .leading, spacing: 16) {
             sectionLabel("🔮 Catálogo de Tiradas").padding(.horizontal)
 
-            ForEach(SpreadType.allCases, id: \.rawValue) { spread in
+            ForEach(SpreadType.allCases, id: \.self) { spread in
                 spreadInfoRow(spread: spread)
             }
         }
@@ -427,7 +585,7 @@ public struct LearningCenterView: View {
                 .font(.title2)
                 .frame(width: 44, height: 44)
                 .background(isEsoteric ? Color(red: 0.42, green: 0.10, blue: 0.35).opacity(0.4)
-                                        : Color.white.opacity(0.06))
+                            : Color.white.opacity(0.06))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             VStack(alignment: .leading, spacing: 3) {
@@ -463,10 +621,23 @@ public struct LearningCenterView: View {
         VStack(alignment: .leading, spacing: 16) {
             sectionLabel("🛠 Herramientas Arcanas").padding(.horizontal)
 
-            toolRow(icon: "safari.fill", title: "Navegador Arcano", subtitle: "Explora recursos esotéricos en internet",
-                    color: Color(red: 0.3, green: 0.6, blue: 1.0)) { showingBrowser = true }
-            toolRow(icon: "doc.badge.plus", title: "Importar PDF", subtitle: "Añade libros desde tus archivos",
-                    color: Color(red: 0.85, green: 0.72, blue: 0.38)) { showingFilePicker = true }
+            Button {
+                showingBrowser = true
+            } label: {
+                toolRowContent(icon: "safari.fill", title: "Navegador Arcano", subtitle: "Explora recursos esotéricos en internet",
+                               color: Color(red: 0.3, green: 0.6, blue: 1.0))
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal)
+
+            Button {
+                showingFilePicker = true
+            } label: {
+                toolRowContent(icon: "doc.badge.plus", title: "Importar PDF", subtitle: "Añade libros desde tus archivos",
+                               color: Color(red: 0.85, green: 0.72, blue: 0.38))
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal)
 
             NavigationLink(destination: SecretVaultView()) {
                 toolRowContent(icon: "lock.shield.fill", title: "Bóveda Secreta",
@@ -474,16 +645,9 @@ public struct LearningCenterView: View {
                                color: Color(red: 0.72, green: 0.42, blue: 1.0))
             }
             .buttonStyle(.plain)
+            .padding(.horizontal)
         }
         .transition(.opacity.combined(with: .move(edge: .trailing)))
-    }
-
-    private func toolRow(icon: String, title: String, subtitle: String, color: Color, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            toolRowContent(icon: icon, title: title, subtitle: subtitle, color: color)
-        }
-        .buttonStyle(.plain)
-        .padding(.horizontal)
     }
 
     private func toolRowContent(icon: String, title: String, subtitle: String, color: Color) -> some View {
@@ -503,7 +667,6 @@ public struct LearningCenterView: View {
         .background(Color.white.opacity(0.05))
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(color.opacity(0.2), lineWidth: 1))
-        .padding(.horizontal)
     }
 
     // MARK: - Helpers
@@ -516,51 +679,41 @@ public struct LearningCenterView: View {
     }
 }
 
+// MARK: - School Models
+private struct SchoolCourse: Identifiable {
+    let id = UUID()
+    let title: String
+    let icon: String
+    let color: Color
+    let summary: String
+    let lessons: [SchoolLesson]
+}
+
+private struct SchoolLesson: Identifiable {
+    let id = UUID()
+    let title: String
+    let subtitle: String
+    let icon: String
+    let content: String
+}
+
 // MARK: - Section Enum
 private enum LibrarySection: CaseIterable, Hashable {
     case books, spreads, tools
+
     var label: String {
-        switch self { case .books: return "Libros"; case .spreads: return "Tiradas"; case .tools: return "Herramientas" }
-    }
-    var icon: String {
-        switch self { case .books: return "books.vertical"; case .spreads: return "sparkles"; case .tools: return "wrench.and.screwdriver" }
-    }
-}
-
-// MARK: - GenericPDFReaderView
-public struct GenericPDFReaderView: View {
-    let url: URL
-
-    public init(url: URL) {
-        self.url = url
-    }
-
-    public var body: some View {
-        #if os(iOS)
-        GenericIOSPDFView(url: url)
-            .navigationTitle(url.deletingPathExtension().lastPathComponent.replacingOccurrences(of: "_", with: " "))
-            .navigationBarTitleDisplayMode(.inline)
-        #else
-        Text("Lector PDF disponible en iPhone")
-        #endif
-    }
-}
-
-#if os(iOS)
-import PDFKit
-
-private struct GenericIOSPDFView: UIViewRepresentable {
-    let url: URL
-    func makeUIView(context: Context) -> PDFView {
-        let view = PDFView()
-        view.autoScales = true
-        view.displayMode = .singlePageContinuous
-        view.backgroundColor = UIColor(red: 0.04, green: 0.04, blue: 0.10, alpha: 1)
-        if let doc = PDFDocument(url: url) {
-            view.document = doc
+        switch self {
+        case .books: return "Libros"
+        case .spreads: return "Tiradas"
+        case .tools: return "Herramientas"
         }
-        return view
     }
-    func updateUIView(_ uiView: PDFView, context: Context) {}
+
+    var icon: String {
+        switch self {
+        case .books: return "books.vertical"
+        case .spreads: return "sparkles"
+        case .tools: return "wrench.and.screwdriver"
+        }
+    }
 }
-#endif

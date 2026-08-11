@@ -1,35 +1,27 @@
 import Foundation
 
 // MARK: - CardSuit
-
-/// The four suits of the Minor Arcana.
 public enum CardSuit: String, CaseIterable, Codable {
-    case wands      = "wands"      // Bastos
-    case cups       = "cups"       // Copas
-    case swords     = "swords"     // Espadas
-    case pentacles  = "pentacles"  // Oros
+    case wands = "wands"
+    case cups = "cups"
+    case swords = "swords"
+    case pentacles = "pentacles"
 }
 
 // MARK: - ArcanaType
-
-/// Distinguishes Major from Minor Arcana cards.
 public enum ArcanaType: String, Codable {
     case major
     case minor
 }
 
 // MARK: - CardGroup
-
-/// Logical grouping used for browsing the card library.
 public enum CardGroup: Hashable {
     case majorArcana
     case minorArcana(suit: CardSuit)
 }
 
-// MARK: - CardOrientation
-
-/// Orientation at which a card was drawn during a spread.
-public enum CardOrientation {
+// MARK: - CardOrientation (FIX: Add Codable)
+public enum CardOrientation: String, Codable {
     case upright
     case reversed
 }

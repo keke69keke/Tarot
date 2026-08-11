@@ -4,7 +4,7 @@ import Foundation
 public struct JournalEntry: Identifiable {
 
     public let id: UUID
-    public let spread: TarotCore.Spread
+    public let spread: Spread
     public let savedAt: Date
 
     /// Personal reflections. Maximum 2 000 characters (Requirement 3.2).
@@ -15,7 +15,7 @@ public struct JournalEntry: Identifiable {
 
     public init(
         id: UUID = UUID(),
-        spread: TarotCore.Spread,
+        spread: Spread,
         savedAt: Date = Date(),
         notes: String = "",
         isSyncedToCloud: Bool = false

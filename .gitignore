@@ -8,6 +8,7 @@
 # Swift Package Manager
 .build/
 .swiftpm/
+.build-benchmark/
 
 # Temporary scratch files
 scratch/
@@ -19,3 +20,10 @@ output_cards/
 *.orig.bak
 *_cropped.pdf
 Hello-Kitty-Tarot-6x13.pdf
+
+# Large feature bundles (keep them out of git)
+feature_changes.patch
+feature_esoteric_expansion.bundle
+
+# Screenshots and temporary images
+*.png

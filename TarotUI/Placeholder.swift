@@ -42,6 +42,10 @@ typealias PlatformImage = NSImage
     @Published var dailyCard: Card
     @Published var dailyRevealed: Bool
     @Published var errorMessage: String?
+    // Intention & significator
+    @Published var readingIntention: String = ""
+    @Published var useSignificator: Bool = false
+    @Published var significatorCard: Card?
     let container: AppContainer
 
     init(container: AppContainer) {
@@ -52,6 +56,12 @@ typealias PlatformImage = NSImage
         reloadEntries()
     }
     var visibleCards: [Card] { searchQuery.isEmpty ? container.cards.allCards() : container.cards.search(query: searchQuery) }
+
+    /// Randomly selects a significator card from the full deck (represents the querent).
+    func drawRandomSignificator() {
+        significatorCard = container.cards.allCards().randomElement()
+    }
+
     func draw() {
         isShuffling = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
@@ -59,7 +69,22 @@ typealias PlatformImage = NSImage
             let engine = SystemRandomizationEngine(deck: self.container.cards.allCards())
             // Use the engine directly to draw cards for the selected spread
             let positions = self.selectedSpread.positions
-            let drawn = engine.drawCards(count: positions.count, allowReversed: self.settings.allowReversedCards, positions: positions)
+            var drawn = engine.drawCards(count: positions.count, allowReversed: self.settings.allowReversedCards, positions: positions)
+
+            // If a significator is enabled, prepend it as the first card (in the first position)
+            // and remove it from the deck so the rest of the draw is unique.
+            if self.useSignificator, let sig = self.significatorCard {
+                let sigPosition = SpreadPosition(name: "Significador", displayName: "Tu Carta", description: "La carta que te representa en esta lectura")
+                let sigDrawn = DrawnCard(
+                    card: sig,
+                    position: sigPosition,
+                    orientation: .upright
+                )
+                // Remove the significator from the drawn set if it appears (avoid duplicates)
+                drawn.removeAll { $0.card.id == sig.id }
+                drawn.insert(sigDrawn, at: 0)
+            }
+
             // Build a local Spread model for UI purposes
             self.spread = Spread(type: self.selectedSpread, drawnCards: drawn, createdAt: Date())
             self.isShuffling = false
@@ -67,7 +92,12 @@ typealias PlatformImage = NSImage
     }
     func saveSpread(notes: String = "") {
         guard let spread else { return }
-        do { try self.container.journal.save(entry: JournalEntry(spread: spread, notes: notes)); reloadEntries() }
+        // Compose full notes: intention + user notes
+        var fullNotes = notes
+        if !readingIntention.isEmpty {
+            fullNotes = "🎯 Intención: \(readingIntention)" + (notes.isEmpty ? "" : "\n\n\(notes)")
+        }
+        do { try self.container.journal.save(entry: JournalEntry(spread: spread, notes: fullNotes)); reloadEntries() }
         catch { errorMessage = error.localizedDescription }
     }
     func reloadEntries() { entries = container.journal.fetchAll() }
@@ -110,62 +140,52 @@ public struct ContentView: View {
             // ── Background ──────────────────────────────────────
             Color.tarotBackground.ignoresSafeArea()
 
-            LinearGradient(
+LinearGradient(
                 colors: colorScheme == .dark
-                    ? [Color(red: 0.04, green: 0.08, blue: 0.16), Color(red: 0.06, green: 0.04, blue: 0.12)]
-                    : [Color(red: 0.96, green: 0.93, blue: 0.87), Color(red: 0.92, green: 0.87, blue: 0.78)],
+                    ? [Color(red: 0.05, green: 0.02, blue: 0.14), Color(red: 0.08, green: 0.03, blue: 0.18)]
+                    : [Color(red: 0.20, green: 0.12, blue: 0.30), Color(red: 0.16, green: 0.08, blue: 0.24)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
             .blendMode(.overlay)
             .ignoresSafeArea()
 
-            // Rider-Waite gold ambient glow
+            // Lavender ambient glow
             Circle()
-                .fill(Color(red: 0.78, green: 0.58, blue: 0.18).opacity(colorScheme == .dark ? 0.14 : 0.08))
+                .fill(Color(red: 0.72, green: 0.55, blue: 0.95).opacity(colorScheme == .dark ? 0.16 : 0.10))
                 .frame(width: 340, height: 340)
                 .blur(radius: 68)
                 .offset(x: -140, y: -200)
 
-            // Burgundy accent glow
+            // Deep violet accent glow
             Circle()
-                .fill(Color(red: 0.42, green: 0.10, blue: 0.10).opacity(colorScheme == .dark ? 0.13 : 0.07))
+                .fill(Color(red: 0.42, green: 0.12, blue: 0.55).opacity(colorScheme == .dark ? 0.15 : 0.09))
                 .frame(width: 260, height: 260)
                 .blur(radius: 40)
                 .offset(x: 160, y: -140)
 
-            // ── Main UI ─────────────────────────────────────────
-            VStack(spacing: 0) {
-                TabView {
-                    ForEach(model.settings.activeTabs) { tab in
-                        Group {
-                            switch tab {
-                            case .reading: ReadingView(model: model)
-                            case .ask: AskTarotView(repository: model.container.cards)
-                            case .horoscope: HoroscopeView(repository: model.container.cards)
-                            case .library: LibraryView(model: model)
-                            case .reference: RiderReferenceView(repository: model.container.cards, activeDeck: model.settings.activeDeck, cardBackDesign: model.settings.cardBackDesign)
-                            case .daily: DailyCardView(model: model)
-                            case .book: LearningCenterView()
-                            case .journal: JournalView(model: model)
-                            case .settings: SettingsView(model: model)
-                            case .chat: TarotChatView(apiKey: model.settings.openAIKey, repository: model.container.cards)
-                            }
+// ── Main UI ─────────────────────────────────────────
+            // TabView fills the screen fully, respecting safe areas so
+            // nothing is clipped on iPhone (no framed/rounded wrapper).
+            TabView {
+                ForEach(model.settings.activeTabs) { tab in
+                    Group {
+                        switch tab {
+                        case .reading: ReadingView(model: model)
+                        case .ask: AskTarotView(repository: model.container.cards)
+                        case .horoscope: HoroscopeView(repository: model.container.cards)
+                        case .library: LibraryGridView(repository: model.container.cards, activeDeck: model.settings.activeDeck, cardBackDesign: model.settings.cardBackDesign)
+                        case .reference: RiderReferenceView(repository: model.container.cards, activeDeck: model.settings.activeDeck, cardBackDesign: model.settings.cardBackDesign)
+                        case .daily: DailyCardView(model: model)
+                        case .learn: LearningCenterView()
+                        case .journal: JournalView(model: model)
+                        case .settings: SettingsView(model: model)
+                        case .chat: TarotChatView(apiKey: model.settings.openAIKey, repository: model.container.cards)
                         }
-                        .tabItem { Label(tab.label, systemImage: tab.systemImage) }
-                        .tag(tab)
                     }
+                    .tabItem { Label(tab.label, systemImage: tab.systemImage) }
+                    .tag(tab)
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 30, style: .continuous)
-                        .fill(Color.tarotPanel.opacity(0.90))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 30, style: .continuous)
-                                .stroke(Color.tarotBorder, lineWidth: 1)
-                        )
-                )
-                .padding(.horizontal, 8)
-                .padding(.bottom, 6)
             }
             .opacity(showWelcome ? 0 : 1)
 
@@ -205,49 +225,49 @@ private struct WelcomeView: View {
 
     var body: some View {
         ZStack {
-            // Deep mystical background
+// Deep mystical background (esoteric purple)
             LinearGradient(
                 colors: [
-                    Color(red: 0.06, green: 0.03, blue: 0.16),
-                    Color(red: 0.10, green: 0.05, blue: 0.25),
-                    Color(red: 0.04, green: 0.08, blue: 0.22)
+                    Color(red: 0.08, green: 0.02, blue: 0.18),
+                    Color(red: 0.12, green: 0.04, blue: 0.26),
+                    Color(red: 0.05, green: 0.02, blue: 0.14)
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
 
-            // Ambient glow orbs — Rider-Waite palette
+            // Ambient glow orbs — esoteric purple palette
             Circle()
-                .fill(Color(red: 0.42, green: 0.10, blue: 0.10).opacity(0.28)) // burgundy
+                .fill(Color(red: 0.42, green: 0.12, blue: 0.42).opacity(0.30)) // deep violet
                 .frame(width: 420, height: 420)
                 .blur(radius: 90)
                 .offset(x: -80, y: -220)
 
             Circle()
-                .fill(Color(red: 0.78, green: 0.58, blue: 0.18).opacity(0.22)) // gold
+                .fill(Color(red: 0.72, green: 0.55, blue: 0.95).opacity(0.24)) // lavender
                 .frame(width: 300, height: 300)
                 .blur(radius: 70)
                 .offset(x: 120, y: 240)
 
             Circle()
-                .fill(Color(red: 0.04, green: 0.15, blue: 0.32).opacity(0.40)) // navy
+                .fill(Color(red: 0.20, green: 0.08, blue: 0.40).opacity(0.42)) // deep purple
                 .frame(width: 180, height: 180)
                 .blur(radius: 40)
                 .offset(x: -40, y: 60)
 
             // Rotating star mandala
             ZStack {
-                ForEach(0..<8, id: \.self) { i in
+ForEach(0..<8, id: \.self) { i in
                     Image(systemName: "sparkle")
                         .font(.system(size: 12, weight: .thin))
-                        .foregroundStyle(Color(red: 0.92, green: 0.80, blue: 0.45).opacity(0.5))
+                        .foregroundStyle(Color(red: 0.78, green: 0.62, blue: 0.98).opacity(0.5))
                         .offset(y: -110)
                         .rotationEffect(.degrees(Double(i) * 45))
                 }
                 ForEach(0..<16, id: \.self) { i in
                     Circle()
-                        .fill(Color(red: 0.85, green: 0.70, blue: 0.35).opacity(0.18))
+                        .fill(Color(red: 0.72, green: 0.55, blue: 0.95).opacity(0.18))
                         .frame(width: 3, height: 3)
                         .offset(y: -155)
                         .rotationEffect(.degrees(Double(i) * 22.5))
@@ -262,13 +282,13 @@ private struct WelcomeView: View {
                 // Central tarot card icon with pulse
                 ZStack {
                     // Outer glow ring
-                    Circle()
+Circle()
                         .stroke(
                             LinearGradient(
                                 colors: [
-                                    Color(red: 0.92, green: 0.80, blue: 0.45),
-                                    Color(red: 0.65, green: 0.45, blue: 0.20),
-                                    Color(red: 0.92, green: 0.80, blue: 0.45)
+                                    Color(red: 0.90, green: 0.78, blue: 1.0),
+                                    Color(red: 0.55, green: 0.35, blue: 0.80),
+                                    Color(red: 0.90, green: 0.78, blue: 1.0)
                                 ],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
@@ -279,13 +299,13 @@ private struct WelcomeView: View {
                         .opacity(starOpacity * 0.6)
                         .scaleEffect(pulseScale)
 
-                    // Inner background
+// Inner background
                     Circle()
                         .fill(
                             RadialGradient(
                                 colors: [
-                                    Color(red: 0.20, green: 0.10, blue: 0.40),
-                                    Color(red: 0.08, green: 0.04, blue: 0.20)
+                                    Color(red: 0.30, green: 0.15, blue: 0.55),
+                                    Color(red: 0.12, green: 0.05, blue: 0.28)
                                 ],
                                 center: .center,
                                 startRadius: 0,
@@ -294,54 +314,54 @@ private struct WelcomeView: View {
                         )
                         .frame(width: 96, height: 96)
 
-                    Image(systemName: "moon.stars.fill")
+Image(systemName: "moon.stars.fill")
                         .font(.system(size: 38))
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [
-                                    Color(red: 0.98, green: 0.90, blue: 0.60),
-                                    Color(red: 0.85, green: 0.65, blue: 0.30)
+                                    Color(red: 0.90, green: 0.78, blue: 1.0),
+                                    Color(red: 0.72, green: 0.55, blue: 0.95)
                                 ],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
                         )
                 }
-                .shadow(color: Color(red: 0.78, green: 0.58, blue: 0.18).opacity(0.70), radius: 30, x: 0, y: 0)
+                .shadow(color: Color(red: 0.42, green: 0.20, blue: 0.60).opacity(0.70), radius: 30, x: 0, y: 0)
                 .opacity(starOpacity)
 
                 Spacer().frame(height: 40)
 
                 // Greeting text
                 VStack(spacing: 14) {
-                    Text("Hola, Nicole")
+Text("Hola, Nicole")
                         .font(.system(size: 44, weight: .bold, design: .serif))
                         .foregroundStyle(
                             LinearGradient(
                                 colors: [
-                                    Color(red: 0.98, green: 0.92, blue: 0.70),
-                                    Color(red: 0.92, green: 0.80, blue: 0.45),
-                                    Color(red: 0.80, green: 0.60, blue: 0.25)
+                                    Color(red: 0.90, green: 0.78, blue: 1.0),
+                                    Color(red: 0.78, green: 0.62, blue: 0.98),
+                                    Color(red: 0.55, green: 0.35, blue: 0.80)
                                 ],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
                         )
-                        .shadow(color: Color(red: 0.85, green: 0.65, blue: 0.25).opacity(0.45), radius: 16, x: 0, y: 4)
+                        .shadow(color: Color(red: 0.55, green: 0.35, blue: 0.80).opacity(0.45), radius: 16, x: 0, y: 4)
                         .offset(y: titleOffset)
                         .opacity(titleOpacity)
 
                     Text("Las cartas te esperan")
                         .font(.system(size: 17, weight: .regular, design: .serif))
-                        .tracking(2)
-                        .foregroundStyle(Color(red: 0.92, green: 0.84, blue: 0.68).opacity(0.80))
+.tracking(2)
+                        .foregroundStyle(Color(red: 0.90, green: 0.78, blue: 1.0).opacity(0.80))
                         .opacity(subtitleOpacity)
 
                     HStack(spacing: 6) {
                         ForEach(0..<5, id: \.self) { _ in
                             Image(systemName: "sparkle")
                                 .font(.caption2)
-                                .foregroundStyle(Color(red: 0.92, green: 0.80, blue: 0.45).opacity(0.50))
+                                .foregroundStyle(Color(red: 0.78, green: 0.62, blue: 0.98).opacity(0.50))
                         }
                     }
                     .opacity(subtitleOpacity)
@@ -360,20 +380,20 @@ private struct WelcomeView: View {
                     .foregroundStyle(.black.opacity(0.85))
                     .padding(.horizontal, 36)
                     .padding(.vertical, 16)
-                    .background(
+.background(
                         Capsule()
                             .fill(
                                 LinearGradient(
                                     colors: [
-                                        Color(red: 0.98, green: 0.92, blue: 0.70),
-                                        Color(red: 0.85, green: 0.68, blue: 0.30)
+                                        Color(red: 0.78, green: 0.62, blue: 0.98),
+                                        Color(red: 0.42, green: 0.20, blue: 0.60)
                                     ],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
                             )
                     )
-                    .shadow(color: Color(red: 0.85, green: 0.65, blue: 0.25).opacity(0.55), radius: 18, x: 0, y: 8)
+                    .shadow(color: Color(red: 0.42, green: 0.20, blue: 0.60).opacity(0.55), radius: 18, x: 0, y: 8)
                     .scaleEffect(pulseScale)
                 }
                 .opacity(buttonOpacity)
@@ -499,7 +519,7 @@ private struct ReadingView: View {
                         )
                     }
 
-                    VStack(alignment: .leading, spacing: 10) {
+VStack(alignment: .leading, spacing: 10) {
                         Text(model.selectedSpread.label)
                             .font(.headline)
                             .foregroundStyle(.primary)
@@ -521,7 +541,104 @@ private struct ReadingView: View {
                             .stroke(Color.tarotBorder, lineWidth: 1)
                     )
 
-                    Button {
+                    // ── Intención de lectura ─────────────────────────
+                    VStack(alignment: .leading, spacing: 10) {
+                        Label("Intención de la lectura", systemImage: "sparkles")
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+                        Text("Opcional: escribe tu pregunta o el tema que quieres explorar. Se integrará en tu lectura.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        TextField("Ej: ¿Qué energía me acompaña esta semana?", text: $model.readingIntention)
+                            .font(.system(size: 15, design: .serif))
+                            .padding(14)
+                            .background(Color.tarotPanel.opacity(0.95))
+                            .cornerRadius(16)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.tarotGold.opacity(0.30), lineWidth: 1)
+                            )
+                    }
+                    .padding(18)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .fill(Color.tarotPanel.opacity(0.90))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .stroke(Color.tarotBorder, lineWidth: 1)
+                    )
+
+                    // ── Carta significadora opcional ────────────────
+                    VStack(alignment: .leading, spacing: 12) {
+                        Toggle("Usar carta significadora", isOn: $model.useSignificator)
+                            .font(.headline)
+                            .foregroundStyle(.primary)
+
+                        if model.useSignificator {
+                            Text("La carta significadora te representa. Se elige al azar del mazo y se coloca como primera carta de la tirada.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            HStack(spacing: 14) {
+                                if let sig = model.significatorCard {
+                                    VStack(spacing: 6) {
+                                        CardFace(name: sig.name, imageName: sig.imageName, textureName: sig.textureImageName, reversed: false, useTexture: true, size: CGSize(width: 70, height: 104), activeDeck: model.settings.activeDeck, backDesign: model.settings.cardBackDesign)
+                                            .shadow(color: Color.tarotShadow.opacity(0.6), radius: 8, x: 0, y: 4)
+                                        Text(sig.name)
+                                            .font(.caption.weight(.semibold))
+                                            .foregroundStyle(Color.tarotGold)
+                                            .multilineTextAlignment(.center)
+                                    }
+                                } else {
+                                    VStack(spacing: 6) {
+                                        CardFace(name: "Sin carta", imageName: nil, textureName: nil, reversed: false, back: true, size: CGSize(width: 70, height: 104), activeDeck: model.settings.activeDeck, backDesign: model.settings.cardBackDesign)
+                                        Text("Sin elegir")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+
+                                Spacer()
+
+                                Button {
+                                    TarotAudioService.shared.triggerHaptic(.medium)
+                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                        model.drawRandomSignificator()
+                                    }
+                                } label: {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "dice.fill")
+                                        Text("Elegir al azar")
+                                            .fontWeight(.semibold)
+                                    }
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 12)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                            .fill(LinearGradient(colors: [Color.tarotGold, Color.tarotBurgundy], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                    )
+                                    .foregroundStyle(Color(red: 0.97, green: 0.93, blue: 0.82))
+                                    .shadow(color: Color.tarotGold.opacity(0.35), radius: 10, x: 0, y: 6)
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                    .padding(18)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .fill(Color.tarotPanel.opacity(0.90))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .stroke(Color.tarotBorder, lineWidth: 1)
+                    )
+
+Button {
+                        TarotAudioService.shared.triggerHaptic(.medium)
                         withAnimation(.interactiveSpring(response: 0.45, dampingFraction: 0.75)) {
                             model.draw()
                         }
@@ -536,13 +653,13 @@ private struct ReadingView: View {
                         .background(
                             RoundedRectangle(cornerRadius: 22, style: .continuous)
                                 .fill(LinearGradient(
-                                    colors: [Color(red: 0.78, green: 0.58, blue: 0.18), Color(red: 0.42, green: 0.10, blue: 0.10)],
+                                    colors: [Color(red: 0.78, green: 0.62, blue: 0.98), Color(red: 0.42, green: 0.20, blue: 0.60)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 ))
                         )
                         .foregroundStyle(Color(red: 0.97, green: 0.93, blue: 0.82))
-                        .shadow(color: Color(red: 0.78, green: 0.58, blue: 0.18).opacity(0.45), radius: 16, x: 0, y: 10)
+                        .shadow(color: Color(red: 0.42, green: 0.20, blue: 0.60).opacity(0.45), radius: 16, x: 0, y: 10)
                     }
                     .disabled(model.isShuffling)
                     .opacity(model.isShuffling ? 0.75 : 1)
@@ -632,6 +749,11 @@ private struct ReadingView: View {
                             }
                         }
 
+// Narrative synthesis of the whole reading
+                        if let spread = model.spread, !spread.drawnCards.isEmpty {
+                            SpreadNarrativeCard(spread: spread, repository: model.container.cards, intention: model.readingIntention)
+                        }
+
                         VStack(alignment: .leading, spacing: 14) {
                             Text("Notas del diario")
                                 .font(.headline)
@@ -649,7 +771,8 @@ private struct ReadingView: View {
                                     .frame(minHeight: 120)
                                     .foregroundStyle(.primary)
                             }
-                            Button {
+Button {
+                                TarotAudioService.shared.triggerHaptic(.success)
                                 model.saveSpread(notes: notes)
                                 notes = ""
                             } label: {
@@ -871,8 +994,11 @@ private struct DailyCardView: View {
                         .stroke(Color.tarotBorder, lineWidth: 1)
                 )
 
-                Button {
-                    if !model.dailyRevealed { model.revealDaily() }
+Button {
+                    if !model.dailyRevealed {
+                        TarotAudioService.shared.playGoldenChime()
+                        model.revealDaily()
+                    }
                 } label: {
                     CardFace(
                         name: model.dailyCard.name,
@@ -1239,7 +1365,7 @@ private struct SettingsView: View {
     // Settings are still functional with essential toggles
 }
 
-private struct CardDetailView: View {
+struct CardDetailView: View {
     let card: Card
     let repository: any CardRepository
     let activeDeck: DeckType
@@ -1321,10 +1447,13 @@ private struct CardDetailView: View {
                 }
                 .pickerStyle(.segmented)
 
-                // Quick aspects summary
+// Quick aspects summary
                 if !currentInterpretation.aspects.isEmpty {
                     CardAspectSummaryView(interpretation: currentInterpretation)
                 }
+
+                // Esoteric wisdom panel (unified card info)
+                CardWisdomView(card: card)
 
                 // Book content from OCR (Fiebig & Bürger)
                 if let bookContent = card.bookContent, !bookContent.isEmpty {
@@ -1450,6 +1579,125 @@ private struct CardAspectSummaryView: View {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .stroke(Color.tarotGold.opacity(0.15), lineWidth: 1)
         )
+    }
+}
+
+/// Esoteric wisdom panel that unifies all the card's hidden correspondences
+/// (mythology, astrology, kabbalah, numerology, element, affirmation, crystals,
+/// chakras, yes/no answer, zodiac decan, light/shadow) into one visual guide.
+private struct CardWisdomView: View {
+    let card: Card
+
+    private struct WisdomItem: Identifiable {
+        let id = UUID()
+        let icon: String
+        let title: String
+        let value: String
+        let color: Color
+    }
+
+    private var items: [WisdomItem] {
+        var result: [WisdomItem] = []
+
+        if let m = card.mythology, !m.isEmpty {
+            result.append(WisdomItem(icon: "figure.mind.and.body", title: "Mitología", value: m, color: Color(red: 0.72, green: 0.55, blue: 0.95)))
+        }
+        if let a = card.astrology, !a.isEmpty {
+            result.append(WisdomItem(icon: "star.fill", title: "Astrología", value: a, color: Color(red: 0.90, green: 0.72, blue: 0.30)))
+        }
+        if let d = card.zodiacalDecan, !d.isEmpty {
+            result.append(WisdomItem(icon: "moon.stars.fill", title: "Decanato", value: d, color: Color(red: 0.40, green: 0.72, blue: 1.0)))
+        }
+        if let k = card.kabbalah, !k.isEmpty {
+            result.append(WisdomItem(icon: "tree.fill", title: "Cábala", value: k, color: Color(red: 0.42, green: 0.72, blue: 0.42)))
+        }
+        if let n = card.numerology, !n.isEmpty {
+            result.append(WisdomItem(icon: "number", title: "Numerología", value: n, color: Color(red: 0.78, green: 0.55, blue: 0.30)))
+        }
+        if let e = card.element, !e.isEmpty {
+            result.append(WisdomItem(icon: "flame.fill", title: "Elemento", value: e, color: Color(red: 0.85, green: 0.45, blue: 0.25)))
+        }
+        if let c = card.chakras, !c.isEmpty {
+            result.append(WisdomItem(icon: "circle.hexagongrid.fill", title: "Chakras", value: c, color: Color(red: 0.72, green: 0.30, blue: 0.72)))
+        }
+        if let cr = card.crystals, !cr.isEmpty {
+            result.append(WisdomItem(icon: "sparkles", title: "Cristales", value: cr, color: Color(red: 0.45, green: 0.65, blue: 0.90)))
+        }
+        if let ls = card.lightShadow, !ls.isEmpty {
+            result.append(WisdomItem(icon: "sun.max.fill", title: "Luz y Sombra", value: ls, color: Color(red: 0.85, green: 0.75, blue: 0.35)))
+        }
+        if let yn = card.yesNo, !yn.isEmpty {
+            result.append(WisdomItem(icon: "checkmark.circle.fill", title: "Respuesta Sí/No", value: yn, color: Color(red: 0.30, green: 0.62, blue: 0.42)))
+        }
+        if let af = card.affirmation, !af.isEmpty {
+            result.append(WisdomItem(icon: "hands.sparkles.fill", title: "Afirmación", value: "“\(af)”", color: Color(red: 0.78, green: 0.55, blue: 0.95)))
+        }
+        return result
+    }
+
+var body: some View {
+        let visibleItems = items
+        if visibleItems.isEmpty {
+            EmptyView()
+        } else {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 8) {
+                Image(systemName: "wand.and.stars")
+                    .foregroundStyle(Color.tarotGold)
+                Text("Sabiduría de la Carta")
+                    .font(.system(size: 16, weight: .bold, design: .serif))
+                    .foregroundStyle(.primary)
+                Spacer()
+            }
+            .accessibilityAddTraits(.isHeader)
+
+            ForEach(visibleItems) { item in
+                HStack(alignment: .top, spacing: 12) {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 10, style: .continuous)
+                            .fill(item.color.opacity(0.14))
+                            .frame(width: 40, height: 40)
+                        Image(systemName: item.icon)
+                            .font(.system(size: 16))
+                            .foregroundStyle(item.color)
+                    }
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(item.title)
+                            .font(.subheadline.weight(.bold))
+                            .foregroundStyle(.primary)
+                        Text(item.value)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    Spacer(minLength: 0)
+                }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(item.color.opacity(0.06))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .stroke(item.color.opacity(0.18), lineWidth: 1)
+                )
+            }
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [Color.tarotGold.opacity(0.08), Color.tarotBurgundy.opacity(0.08)],
+                        startPoint: .topLeading, endPoint: .bottomTrailing
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(Color.tarotGold.opacity(0.25), lineWidth: 1)
+        )
+        }
     }
 }
 
@@ -1649,6 +1897,84 @@ private struct JournalDetail: View {
         #endif
     }
 }
+/// Summative card that synthesizes the full spread into a coherent narrative.
+private struct SpreadNarrativeCard: View {
+    let spread: Spread
+    let repository: any CardRepository
+    let intention: String
+    @State private var expanded = false
+
+    init(spread: Spread, repository: any CardRepository, intention: String = "") {
+        self.spread = spread
+        self.repository = repository
+        self.intention = intention
+    }
+
+    private var narrative: String {
+        let synthesizer = SpreadSynthesizer(cardRepository: repository)
+        var base = synthesizer.synthesize(for: spread, drawnCards: spread.drawnCards)
+        if !intention.isEmpty {
+            base = "🎯 **Intención**: \(intention)\n\n\(base)"
+        }
+        return base
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                Image(systemName: "sparkles")
+                    .foregroundStyle(Color.tarotAccent)
+                Text("Lectura Completa")
+                    .font(.system(size: 16, weight: .bold, design: .serif))
+                    .foregroundStyle(.primary)
+                Spacer()
+                Image(systemName: "book.closed.fill")
+                    .foregroundStyle(Color.tarotAccent.opacity(0.6))
+            }
+
+            Text(narrative)
+                .font(.system(size: 14, design: .serif))
+                .lineSpacing(6)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .lineLimit(expanded ? nil : 6)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if narrative.count > 200 {
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                        expanded.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 5) {
+                        Text(expanded ? "Mostrar menos" : "Leer lectura completa")
+                            .font(.caption.weight(.semibold))
+                        Image(systemName: expanded ? "chevron.up" : "chevron.down")
+                            .font(.caption2)
+                    }
+                    .foregroundStyle(Color.tarotAccent)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(18)
+        .background(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [Color.tarotAccent.opacity(0.10), Color.tarotBurgundy.opacity(0.10)],
+                        startPoint: .topLeading, endPoint: .bottomTrailing
+                    )
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 22, style: .continuous)
+                .stroke(LinearGradient(colors: [Color.tarotAccent.opacity(0.4), Color.tarotBurgundy.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)
+        )
+        .shadow(color: Color.tarotShadow.opacity(0.2), radius: 10, x: 0, y: 6)
+    }
+}
+
 private struct CardDetailText: View {
     let card: Card
     let orientation: CardOrientation
@@ -1716,15 +2042,31 @@ struct CardFace: View {
             if back {
                 // Ornate Tarot Card Back
                 CardBackView(cardSize: cardSize, design: backDesign)
-            } else if let imageName, let platformImage = platformImage(named: imageName) {
-                // Card Front Image: Edge-to-edge display matching reference card designs
+} else if let imageName, let platformImage = platformImage(named: imageName) {
+                // Card Front Image: Edge-to-edge display matching reference card designs.
+                // If the source image is significantly wider/shorter than the tall card
+                // frame (e.g. Hello Kitty artwork is near-square), scale to FIT so the
+                // full artwork is visible instead of cropped. Standard tall card art uses
+                // scaledToFill for edge-to-edge coverage.
                 let cornerRadius: CGFloat = max(10, cardSize.width * 0.08)
+                let imageH = platformImage.size.height
+                let imageW = platformImage.size.width
+                let imageAspect = imageH > 0 ? imageW / imageH : 1.0
+                let frameAspect = cardSize.height > 0 ? cardSize.width / cardSize.height : 0.66
+                // Hello Kitty artwork is already pre-cropped to the card ratio (150:220 ≈ 0.682),
+                // so we always scale to FILL to avoid blank bands. For other decks, only use
+                // .fit when the source is clearly wider than the card frame.
+                let useFit: Bool = {
+                    if activeDeck == .helloKitty { return false }
+                    return imageAspect > frameAspect + 0.03
+                }()
+
                 #if canImport(UIKit)
                 Image(uiImage: platformImage)
                     .resizable()
                     .renderingMode(.original)
                     .interpolation(.high)
-                    .scaledToFill()
+                    .aspectRatio(contentMode: useFit ? .fit : .fill)
                     .frame(width: cardSize.width, height: cardSize.height)
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
@@ -1737,7 +2079,7 @@ struct CardFace: View {
                     .resizable()
                     .renderingMode(.original)
                     .interpolation(.high)
-                    .scaledToFill()
+                    .aspectRatio(contentMode: useFit ? .fit : .fill)
                     .frame(width: cardSize.width, height: cardSize.height)
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
@@ -1745,10 +2087,10 @@ struct CardFace: View {
                         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                             .stroke(Color.black.opacity(0.60), lineWidth: max(1.5, cardSize.width * 0.015))
                     )
-                #endif
+#endif
             } else {
                 // Fallback card illustration when image is not present
-                CardFallbackIllustration(name: name, size: cardSize)
+                CardFallbackIllustration(name: name, size: cardSize, textureStyle: activeDeck.textureStyle)
             }
 
             // Visible Tactile Deck-Specific Texture Overlay
@@ -1826,7 +2168,7 @@ private struct CardTextureOverlayView: View {
     let cardSize: CGSize
     let textureStyle: DeckTextureStyle
 
-    var body: some View {
+var body: some View {
         ZStack {
             switch textureStyle {
             case .agedParchment:   agedParchmentLayer
@@ -1860,11 +2202,11 @@ private struct CardTextureOverlayView: View {
                     path.move(to: CGPoint(x: x, y: 0))
                     path.addLine(to: CGPoint(x: x + size.height * 0.4, y: size.height))
                 }
-                context.stroke(path, with: .color(Color(red: 0.55, green: 0.38, blue: 0.15).opacity(0.055)), lineWidth: 0.5)
+                context.stroke(path, with: .color(Color(red: 0.55, green: 0.38, blue: 0.15).opacity(0.10)), lineWidth: 0.5)
             }
             LinearGradient(
-                colors: [Color(red: 0.97, green: 0.92, blue: 0.80).opacity(0.13),
-                         Color(red: 0.88, green: 0.76, blue: 0.55).opacity(0.20)],
+                colors: [Color(red: 0.97, green: 0.92, blue: 0.80).opacity(0.22),
+                         Color(red: 0.88, green: 0.76, blue: 0.55).opacity(0.32)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
             .blendMode(.overlay)
@@ -1875,7 +2217,7 @@ private struct CardTextureOverlayView: View {
                 vein.addCurve(to: CGPoint(x: size.width * 0.8, y: size.height),
                               control1: CGPoint(x: size.width * 0.6, y: size.height * 0.3),
                               control2: CGPoint(x: size.width * 0.3, y: size.height * 0.7))
-                context.stroke(vein, with: .color(Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.10)), lineWidth: 0.8)
+                context.stroke(vein, with: .color(Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.18)), lineWidth: 0.8)
             }
         }
     }
@@ -1886,9 +2228,9 @@ private struct CardTextureOverlayView: View {
             Canvas { context, size in
                 let cx = size.width / 2, cy = size.height / 2
                 let radii: [CGFloat] = [size.width * 0.18, size.width * 0.35, size.width * 0.50]
-                for r in radii {
+for r in radii {
                     let circ = Path(ellipseIn: CGRect(x: cx - r, y: cy - r, width: r*2, height: r*2))
-                    context.stroke(circ, with: .color(Color(red: 0.60, green: 0.45, blue: 0.92).opacity(0.14)), lineWidth: 0.75)
+                    context.stroke(circ, with: .color(Color(red: 0.60, green: 0.45, blue: 0.92).opacity(0.24)), lineWidth: 0.75)
                 }
                 // Hexagram lines
                 let pts6: [CGPoint] = (0..<6).map { i in
@@ -1900,25 +2242,39 @@ private struct CardTextureOverlayView: View {
                     star.move(to: pts6[i])
                     star.addLine(to: pts6[(i+3) % 6])
                 }
-                context.stroke(star, with: .color(Color(red: 0.72, green: 0.58, blue: 0.95).opacity(0.12)), lineWidth: 0.75)
+                context.stroke(star, with: .color(Color(red: 0.72, green: 0.58, blue: 0.95).opacity(0.22)), lineWidth: 0.75)
             }
             LinearGradient(
-                colors: [Color(red: 0.2, green: 0.05, blue: 0.35).opacity(0.10),
-                         Color(red: 0.45, green: 0.15, blue: 0.80).opacity(0.06)],
+                colors: [Color(red: 0.2, green: 0.05, blue: 0.35).opacity(0.18),
+                         Color(red: 0.45, green: 0.15, blue: 0.80).opacity(0.12)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
             .blendMode(.screen)
         }
     }
 
-    // MARK: - Hello Kitty: Soft Pastel
+// MARK: - Hello Kitty: Soft Pastel
     private var softPastelLayer: some View {
-        LinearGradient(
-            colors: [Color(red: 1.0, green: 0.88, blue: 0.95).opacity(0.18),
-                     Color(red: 0.88, green: 0.92, blue: 1.0).opacity(0.15)],
-            startPoint: .topLeading, endPoint: .bottomTrailing
-        )
-        .blendMode(.screen)
+        ZStack {
+            LinearGradient(
+                colors: [Color(red: 1.0, green: 0.88, blue: 0.95).opacity(0.26),
+                         Color(red: 0.88, green: 0.92, blue: 1.0).opacity(0.22)],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
+            .blendMode(.screen)
+            // Cute sparkle accents
+            Canvas { context, size in
+                let sparkles: [(CGFloat, CGFloat)] = [
+                    (0.12, 0.18), (0.82, 0.22), (0.30, 0.82), (0.70, 0.78), (0.50, 0.45)
+                ]
+                for s in sparkles {
+                    let dot = Path(ellipseIn: CGRect(x: s.0 * size.width - 1.5,
+                                                    y: s.1 * size.height - 1.5,
+                                                    width: 3, height: 3))
+                    context.fill(dot, with: .color(Color.white.opacity(0.60)))
+                }
+            }
+        }
     }
 
     // MARK: - Marseille: Medieval Embroidery
@@ -1935,18 +2291,18 @@ private struct CardTextureOverlayView: View {
                     grid.move(to: CGPoint(x: 0, y: y))
                     grid.addLine(to: CGPoint(x: size.width, y: y))
                 }
-                context.stroke(grid, with: .color(Color(red: 0.65, green: 0.15, blue: 0.15).opacity(0.07)), lineWidth: 0.5)
+context.stroke(grid, with: .color(Color(red: 0.65, green: 0.15, blue: 0.15).opacity(0.14)), lineWidth: 0.5)
                 // Diagonal overlay
                 var diag = Path()
                 for x in stride(from: -size.height, to: size.width + size.height, by: step * 2) {
                     diag.move(to: CGPoint(x: x, y: 0))
                     diag.addLine(to: CGPoint(x: x + size.height, y: size.height))
                 }
-                context.stroke(diag, with: .color(Color(red: 0.15, green: 0.25, blue: 0.65).opacity(0.06)), lineWidth: 0.5)
+                context.stroke(diag, with: .color(Color(red: 0.15, green: 0.25, blue: 0.65).opacity(0.12)), lineWidth: 0.5)
             }
             LinearGradient(
-                colors: [Color(red: 0.95, green: 0.88, blue: 0.72).opacity(0.10),
-                         Color(red: 0.82, green: 0.68, blue: 0.42).opacity(0.14)],
+                colors: [Color(red: 0.95, green: 0.88, blue: 0.72).opacity(0.18),
+                         Color(red: 0.82, green: 0.68, blue: 0.42).opacity(0.24)],
                 startPoint: .top, endPoint: .bottom
             )
             .blendMode(.overlay)
@@ -1954,19 +2310,19 @@ private struct CardTextureOverlayView: View {
     }
 
     // MARK: - Osho: Watercolor
-    private var watercolorLayer: some View {
+private var watercolorLayer: some View {
         ZStack {
             LinearGradient(
-                colors: [Color(red: 1.0, green: 0.5, blue: 0.2).opacity(0.08),
-                         Color(red: 0.2, green: 0.7, blue: 1.0).opacity(0.08),
-                         Color(red: 0.8, green: 0.2, blue: 0.9).opacity(0.06)],
+                colors: [Color(red: 1.0, green: 0.5, blue: 0.2).opacity(0.16),
+                         Color(red: 0.2, green: 0.7, blue: 1.0).opacity(0.16),
+                         Color(red: 0.8, green: 0.2, blue: 0.9).opacity(0.12)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
             .blendMode(.screen)
             Canvas { context, size in
                 // Soft circular blobs
                 let blobs: [(x: CGFloat, y: CGFloat, r: CGFloat, op: CGFloat)] = [
-                    (0.2, 0.25, 0.25, 0.07), (0.7, 0.4, 0.30, 0.06), (0.45, 0.70, 0.28, 0.08)
+                    (0.2, 0.25, 0.25, 0.14), (0.7, 0.4, 0.30, 0.12), (0.45, 0.70, 0.28, 0.16)
                 ]
                 for b in blobs {
                     let blob = Path(ellipseIn: CGRect(x: (b.x - b.r/2) * size.width,
@@ -1980,10 +2336,10 @@ private struct CardTextureOverlayView: View {
     }
 
     // MARK: - Dark Side: Grunge
-    private var grungeLayer: some View {
+private var grungeLayer: some View {
         ZStack {
             LinearGradient(
-                colors: [Color.black.opacity(0.18), Color(red: 0.1, green: 0.0, blue: 0.05).opacity(0.25)],
+                colors: [Color.black.opacity(0.30), Color(red: 0.1, green: 0.0, blue: 0.05).opacity(0.40)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
             .blendMode(.multiply)
@@ -1999,7 +2355,7 @@ private struct CardTextureOverlayView: View {
                     scratches.move(to: CGPoint(x: s.0 * size.width, y: s.1 * size.height))
                     scratches.addLine(to: CGPoint(x: s.2 * size.width, y: s.3 * size.height))
                 }
-                context.stroke(scratches, with: .color(Color.white.opacity(0.07)), lineWidth: 0.8)
+                context.stroke(scratches, with: .color(Color.white.opacity(0.14)), lineWidth: 0.8)
             }
         }
     }
@@ -2008,8 +2364,8 @@ private struct CardTextureOverlayView: View {
     private var starfieldLayer: some View {
         ZStack {
             LinearGradient(
-                colors: [Color(red: 0.04, green: 0.05, blue: 0.18).opacity(0.20),
-                         Color(red: 0.10, green: 0.18, blue: 0.40).opacity(0.15)],
+                colors: [Color(red: 0.04, green: 0.05, blue: 0.18).opacity(0.34),
+                         Color(red: 0.10, green: 0.18, blue: 0.40).opacity(0.26)],
                 startPoint: .topLeading, endPoint: .bottomTrailing
             )
             .blendMode(.screen)
@@ -2026,7 +2382,7 @@ private struct CardTextureOverlayView: View {
                     let dot = Path(ellipseIn: CGRect(x: s.0 * size.width - s.2/2,
                                                     y: s.1 * size.height - s.2/2,
                                                     width: s.2, height: s.2))
-                    context.fill(dot, with: .color(Color.white.opacity(0.55)))
+                    context.fill(dot, with: .color(Color.white.opacity(0.85)))
                 }
             }
         }
@@ -2036,8 +2392,8 @@ private struct CardTextureOverlayView: View {
     private var leafVeinsLayer: some View {
         ZStack {
             LinearGradient(
-                colors: [Color(red: 0.15, green: 0.40, blue: 0.20).opacity(0.10),
-                         Color(red: 0.25, green: 0.55, blue: 0.25).opacity(0.08)],
+                colors: [Color(red: 0.15, green: 0.40, blue: 0.20).opacity(0.20),
+                         Color(red: 0.25, green: 0.55, blue: 0.25).opacity(0.16)],
                 startPoint: .top, endPoint: .bottom
             )
             .blendMode(.screen)
@@ -2046,7 +2402,7 @@ private struct CardTextureOverlayView: View {
                 var vein = Path()
                 vein.move(to: CGPoint(x: size.width * 0.5, y: 0))
                 vein.addLine(to: CGPoint(x: size.width * 0.5, y: size.height))
-                context.stroke(vein, with: .color(Color(red: 0.2, green: 0.55, blue: 0.2).opacity(0.12)), lineWidth: 0.8)
+                context.stroke(vein, with: .color(Color(red: 0.2, green: 0.55, blue: 0.2).opacity(0.22)), lineWidth: 0.8)
                 // Side veins
                 let veinCount = 7
                 for i in 0...veinCount {
@@ -2056,7 +2412,7 @@ private struct CardTextureOverlayView: View {
                     sv.addLine(to: CGPoint(x: size.width * 0.12, y: y - size.height * 0.06))
                     sv.move(to: CGPoint(x: size.width * 0.5, y: y))
                     sv.addLine(to: CGPoint(x: size.width * 0.88, y: y - size.height * 0.06))
-                    context.stroke(sv, with: .color(Color(red: 0.2, green: 0.55, blue: 0.2).opacity(0.09)), lineWidth: 0.6)
+                    context.stroke(sv, with: .color(Color(red: 0.2, green: 0.55, blue: 0.2).opacity(0.18)), lineWidth: 0.6)
                 }
             }
         }
@@ -2234,82 +2590,107 @@ private struct CardBackView: View {
 private struct CardFallbackIllustration: View {
     let name: String
     let size: CGSize
+    var textureStyle: DeckTextureStyle = .agedParchment
 
     var body: some View {
         ZStack {
+            // Deck-specific textured background
             LinearGradient(
                 colors: [Color(red: 0.15, green: 0.12, blue: 0.28), Color(red: 0.08, green: 0.06, blue: 0.16)],
                 startPoint: .top,
                 endPoint: .bottom
             )
 
+            // Apply the deck's signature texture overlay
+            CardTextureOverlayView(cardSize: size, textureStyle: textureStyle)
+
+            // Subtle radial glow in the center
+            RadialGradient(
+                colors: [.clear, Color(red: 0.78, green: 0.62, blue: 0.98).opacity(0.28)],
+                center: .center,
+                startRadius: 0,
+                endRadius: size.width * 0.55
+            )
+
             VStack(spacing: 12) {
-                Image(systemName: "sparkle.magnifyingglass")
+                Image(systemName: "sparkles")
                     .font(.system(size: max(24, size.width * 0.22)))
-                    .foregroundStyle(Color(red: 0.92, green: 0.80, blue: 0.45))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Color(red: 0.90, green: 0.78, blue: 1.0), Color(red: 0.72, green: 0.55, blue: 0.95)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
 
                 Text(name)
                     .font(.system(size: max(11, size.width * 0.09), weight: .medium, design: .serif))
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.white)
                     .padding(.horizontal, 8)
+                    .shadow(color: .black.opacity(0.5), radius: 3, x: 0, y: 1)
             }
+
+            // Inner gold hairline frame to match real cards
+            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                .stroke(Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.45), lineWidth: 1)
+                .padding(4)
         }
     }
 }
 
 extension Color {
-    // Rider-Waite deep navy base
+    // Esoteric deep purple base (dark violet-navy)
     static var tarotBackground: Color {
         #if canImport(UIKit)
         return Color(UIColor.systemBackground)
         #elseif canImport(AppKit)
         return Color(nsColor: .windowBackgroundColor)
         #else
-        return Color(red: 0.04, green: 0.08, blue: 0.16)
+        return Color(red: 0.05, green: 0.02, blue: 0.12)
         #endif
     }
 
-    // Aged parchment/cream panel
+    // Violet translucent panel
     static var tarotPanel: Color {
         #if canImport(UIKit)
         return Color(UIColor.secondarySystemBackground)
         #elseif canImport(AppKit)
         return Color(nsColor: .textBackgroundColor)
         #else
-        return Color(red: 0.96, green: 0.92, blue: 0.84).opacity(0.10)
+        return Color(red: 0.22, green: 0.10, blue: 0.34).opacity(0.16)
         #endif
     }
 
-    // Card base background for image containers
+    // Card base background for image containers (deep plum)
     static var tarotCardBase: Color {
         #if canImport(UIKit)
         return Color(UIColor.tertiarySystemBackground)
         #elseif canImport(AppKit)
         return Color(nsColor: .textBackgroundColor)
         #else
-        return Color(red: 0.96, green: 0.94, blue: 0.89)
+        return Color(red: 0.20, green: 0.10, blue: 0.30)
         #endif
     }
 
-    // Antique gold border
+    // Violet/lavender translucent border
     static var tarotBorder: Color {
-        Color(red: 0.78, green: 0.58, blue: 0.18).opacity(0.20)
+        Color(red: 0.72, green: 0.55, blue: 0.95).opacity(0.28)
     }
 
-    // Deep amber shadow
+    // Deep violet shadow
     static var tarotShadow: Color {
-        Color(red: 0.40, green: 0.22, blue: 0.04).opacity(0.22)
+        Color(red: 0.12, green: 0.02, blue: 0.28).opacity(0.30)
     }
 
-    // Antique gold accent
+    // Lavender-gold accent (kept name for compatibility)
     static var tarotGold: Color {
-        Color(red: 0.78, green: 0.58, blue: 0.18)
+        Color(red: 0.78, green: 0.62, blue: 0.98)
     }
 
-    // Rider-Waite burgundy
+    // Deep violet-magenta
     static var tarotBurgundy: Color {
-        Color(red: 0.42, green: 0.10, blue: 0.10)
+        Color(red: 0.42, green: 0.12, blue: 0.42)
     }
 }
 

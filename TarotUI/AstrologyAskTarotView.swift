@@ -100,8 +100,9 @@ public struct AskTarotView: View {
     @State private var question: String = ""
     @State private var selectedTopic: String = "General"
     @State private var drawnCard: Card? = nil
-    @State private var isRevealed: Bool = false
+@State private var isRevealed: Bool = false
     @State private var isShuffling: Bool = false
+    @State private var cardShuffleAngle: Double = 0
 
     private let topics = ["General", "Amor", "Trabajo", "Dinero", "Decisión Sí/No"]
 
@@ -200,18 +201,20 @@ public struct AskTarotView: View {
                             )
                     }
 
-                    // Draw Button
+// Draw Button
                     Button {
                         guard !question.trimmingCharacters(in: .whitespaces).isEmpty else { return }
+                        TarotAudioService.shared.triggerHaptic(.medium)
                         isShuffling = true
                         drawnCard = nil
                         isRevealed = false
 
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
                             let all = repository.allCards()
                             drawnCard = all.randomElement()
                             isShuffling = false
-                            withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                            TarotAudioService.shared.playGoldenChime()
+                            withAnimation(.spring(response: 0.55, dampingFraction: 0.6)) {
                                 isRevealed = true
                             }
                         }
@@ -232,6 +235,29 @@ public struct AskTarotView: View {
                         .opacity(question.isEmpty ? 0.5 : 1)
                     }
                     .disabled(question.isEmpty || isShuffling)
+
+// Shuffling animation
+                    if isShuffling {
+                        VStack(spacing: 16) {
+                            ZStack {
+                                ForEach(0..<3, id: \.self) { i in
+                                    CardFace(name: "Carta", imageName: nil, textureName: nil, reversed: false, back: true, size: CGSize(width: 110, height: 165))
+                                        .rotationEffect(.degrees(Double(i) * 24 + cardShuffleAngle))
+                                        .offset(x: CGFloat(i - 1) * 26, y: 6)
+                                }
+                            }
+                            .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: cardShuffleAngle)
+                            .onAppear {
+                                withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
+                                    cardShuffleAngle = 12
+                                }
+                            }
+                            Text("Barajando las cartas...")
+                                .font(.system(size: 14, weight: .medium, design: .serif))
+                                .foregroundStyle(Color.tarotGold)
+                        }
+                        .transition(.opacity)
+                    }
 
                     // Answer Result Block
                     if let card = drawnCard {

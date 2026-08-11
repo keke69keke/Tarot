@@ -1,0 +1,39 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../Cards-png"
+		}
+	],
+	"settings": {
+		"githubPullRequests.ignoredPullRequestBranches": [
+			"feature/esoteric-expansion"
+		]
+	},
+	"launch": {
+		"configurations": [
+			{
+				"type": "swift",
+				"request": "launch",
+				"args": [],
+				"cwd": "${workspaceFolder:Tarot}",
+				"name": "Debug TarotApp (Tarot)",
+				"target": "TarotApp",
+				"configuration": "debug",
+				"preLaunchTask": "swift: Build Debug TarotApp (Tarot)"
+			},
+			{
+				"type": "swift",
+				"request": "launch",
+				"args": [],
+				"cwd": "${workspaceFolder:Tarot}",
+				"name": "Release TarotApp (Tarot)",
+				"target": "TarotApp",
+				"configuration": "release",
+				"preLaunchTask": "swift: Build Release TarotApp (Tarot)"
+			}
+		]
+	}
+}

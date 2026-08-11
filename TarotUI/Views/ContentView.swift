@@ -2,6 +2,7 @@ import SwiftUI
 import TarotCore
 import TarotData
 
+
 public struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
     @StateObject private var model: TarotViewModel

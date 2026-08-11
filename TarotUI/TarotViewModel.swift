@@ -2,6 +2,7 @@ import SwiftUI
 import TarotCore
 import TarotData
 
+
 @MainActor final class TarotViewModel: ObservableObject {
     @Published var selectedSpread: SpreadType = .threeCard
     @Published var spread: Spread?

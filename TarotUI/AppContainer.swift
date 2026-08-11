@@ -1,8 +1,8 @@
 import SwiftUI
 import TarotContent
 import TarotCore
-import TarotData
 import TarotNotifications
+import TarotData
 
 @MainActor public final class AppContainer: ObservableObject {
     public let cards: BundleCardRepository

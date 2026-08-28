@@ -157,9 +157,12 @@ struct ReadingView: View {
                 .lineSpacing(2)
 
             HStack(spacing: 12) {
-                FirstCardSlot(index: 1, card: model.firstCardChoice) { chosenFirstCardSlot = 0 }
-                FirstCardSlot(index: 2, card: model.secondCardChoice) { chosenFirstCardSlot = 1 }
+                Spacer()
+                FirstCardSlot(index: 1, card: model.firstCardChoice, activeDeck: model.settings.activeDeck, backDesign: model.settings.cardBackDesign) { chosenFirstCardSlot = 0 }
+                FirstCardSlot(index: 2, card: model.secondCardChoice, activeDeck: model.settings.activeDeck, backDesign: model.settings.cardBackDesign) { chosenFirstCardSlot = 1 }
+                Spacer()
             }
+            .frame(maxWidth: .infinity)
 
             if chosenFirstCardSlot != nil {
                 firstCardPicker
@@ -570,39 +573,49 @@ struct ReadingView: View {
     }
 }
 
-// MARK: - First card slot — minimal joya
+// MARK: - First card slot — minimal joya (ahora con imagen real)
 private struct FirstCardSlot: View {
     let index: Int
     let card: Card?
+    var activeDeck: DeckType = .riderWaite
+    var backDesign: CardBackDesign = .classic
     let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 7) {
                 ZStack(alignment: .topLeading) {
-                    RoundedRectangle(cornerRadius: 13, style: .continuous)
-                        .fill(Color.white.opacity(0.05))
-                        .background(RoundedRectangle(cornerRadius: 13, style: .continuous).fill(.ultraThinMaterial).opacity(0.38))
-                        .frame(width: 86, height: 126)
-                        .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous).stroke(card == nil ? Color.white.opacity(0.08) : Color.tarotGold.opacity(0.28), lineWidth: 0.85))
+                    if let c = card {
+                        CardFace(
+                            name: c.name,
+                            imageName: c.imageName,
+                            textureName: c.textureImageName,
+                            reversed: false,
+                            useTexture: true,
+                            size: CGSize(width: 86, height: 126),
+                            activeDeck: activeDeck,
+                            backDesign: backDesign
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                .stroke(Color.tarotGold.opacity(0.28), lineWidth: 0.85)
+                        )
                         .shadow(color: Color.black.opacity(0.22), radius: 10, x: 0, y: 6)
-                        .overlay {
-                            if let c = card {
-                                Text(c.name)
-                                    .font(.system(size: 11, weight: .semibold, design: .serif))
-                                    .multilineTextAlignment(.center)
-                                    .foregroundStyle(Color.tarotIvory)
-                                    .padding(8)
-                                    .lineLimit(3)
-                                    .tracking(0.1)
-                            } else {
+                    } else {
+                        RoundedRectangle(cornerRadius: 13, style: .continuous)
+                            .fill(Color.white.opacity(0.05))
+                            .background(RoundedRectangle(cornerRadius: 13, style: .continuous).fill(.ultraThinMaterial).opacity(0.38))
+                            .frame(width: 86, height: 126)
+                            .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous).stroke(Color.white.opacity(0.08), lineWidth: 0.85))
+                            .shadow(color: Color.black.opacity(0.22), radius: 10, x: 0, y: 6)
+                            .overlay {
                                 VStack(spacing: 6) {
                                     Image(systemName: "plus").font(.system(size: 12, weight: .thin)).foregroundStyle(Color.tarotIvory.opacity(0.42))
                                     Text(TarotStrings.addCard.localized)
                                         .font(.system(size: 9, weight: .bold, design: .serif)).tracking(1.0).foregroundStyle(Color.tarotIvory.opacity(0.36))
                                 }
                             }
-                        }
+                    }
                     // badge
                     ZStack {
                         Circle().fill(Color.tarotGoldGradient).frame(width: 18, height: 18).shadow(color: Color.black.opacity(0.32), radius: 3, x: 0, y: 1)

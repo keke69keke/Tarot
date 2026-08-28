@@ -4,7 +4,14 @@ import TarotData
 import TarotDI
 
 @MainActor final class TarotViewModel: ObservableObject {
-    @Published var selectedSpread: SpreadType = .threeCard
+    @Published var selectedSpread: SpreadType = .threeCard {
+        didSet {
+            if oldValue != selectedSpread {
+                // La tirada mostrada corresponde al tipo anterior — invalidarla hasta nuevo Barajar
+                spread = nil
+            }
+        }
+    }
     @Published var spread: Spread?
     @Published var isShuffling = false
     @Published var entries: [JournalEntry] = []
@@ -17,7 +24,13 @@ import TarotDI
     @Published var useSignificator: Bool = false
     @Published var significatorCard: Card?
     /// Number of cards used by the "Tirada Libre" spread.
-    @Published var freeCardCount: Int = 5
+    @Published var freeCardCount: Int = 5 {
+        didSet {
+            if oldValue != freeCardCount, selectedSpread == .free {
+                spread = nil
+            }
+        }
+    }
     /// Cards the user chooses to be the first ones that come out of the deck
     /// (slot 0 and slot 1 of the spread).
     @Published var firstCardChoice: Card? = nil

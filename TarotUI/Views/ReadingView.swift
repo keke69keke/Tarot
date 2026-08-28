@@ -109,16 +109,10 @@ struct ReadingView: View {
                 .font(.system(size: 12, weight: .semibold, design: .serif))
                 .tracking(0.4)
                 .foregroundStyle(Color.tarotIvory.opacity(0.92))
-            if let desc = model.selectedSpread.positions.first?.description, !desc.isEmpty {
-                Text(desc)
-                    .font(.system(size: 12, weight: .regular, design: .serif))
-                    .foregroundStyle(Color.tarotIvory.opacity(0.56))
-                    .lineSpacing(3)
-                    .fixedSize(horizontal: false, vertical: true)
-            } else if !model.selectedSpread.esotericDescription.isEmpty {
+            if !model.selectedSpread.esotericDescription.isEmpty {
                 Text(model.selectedSpread.esotericDescription)
                     .font(.system(size: 12, weight: .regular, design: .serif))
-                    .foregroundStyle(Color.tarotIvory.opacity(0.56))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.6))
                     .lineSpacing(3)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -281,6 +275,9 @@ struct ReadingView: View {
                 onReplaceCard: { index, _ in
                     replacementIndex = index
                     isShowingReplacementPicker = true
+                },
+                onRevealCard: { index in
+                    withAnimation(LuxuryAnimation.softSpring) { revealedIndices.insert(index) }
                 }
             )
             .padding(.horizontal, 4)

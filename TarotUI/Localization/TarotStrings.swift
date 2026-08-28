@@ -80,7 +80,7 @@ public enum TarotStrings: String {
     case natalSunDetail = "Tu esencia, identidad y propósito central."
     case natalMoonDetail = "Tu mundo emocional e intuición (aproximado)."
     case natalAscDetail = "Tu imagen externa al conocer (aproximado)."
-    case natalElementPrefix = "Elemento: %s · %s"
+    case natalElementPrefix = "Elemento: %@ · %@"
 
     // Reading extras
     case chooseFirstTwo = "Elegir las 2 primeras cartas"
@@ -100,7 +100,7 @@ public enum TarotStrings: String {
 
     // Accessibility
     case cardBackDescription = "Carta boca abajo"
-    case cardFrontDescription = "Carta %s"
+    case cardFrontDescription = "Carta %@"
     case ritualTitle = "Ritual de tarot"
     case ritualDescription = "Elige una tirada, baraja con intención y descubre lo que las cartas te quieren revelar hoy."
     case startRitual = "Iniciar ritual"

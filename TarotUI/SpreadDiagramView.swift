@@ -14,7 +14,8 @@ public struct SpreadDiagramView: View {
     let cardBackDesign: CardBackDesign
     let onSelectCard: (DrawnCard) -> Void
     let onReplaceCard: ((Int, SpreadPosition) -> Void)?
- 
+    let onRevealCard: ((Int) -> Void)?
+
     public init(
         spread: Spread,
         repository: any CardRepository,
@@ -22,7 +23,8 @@ public struct SpreadDiagramView: View {
         activeDeck: DeckType = .riderWaite,
         cardBackDesign: CardBackDesign = .classic,
         onSelectCard: @escaping (DrawnCard) -> Void,
-        onReplaceCard: ((Int, SpreadPosition) -> Void)? = nil
+        onReplaceCard: ((Int, SpreadPosition) -> Void)? = nil,
+        onRevealCard: ((Int) -> Void)? = nil
     ) {
         self.spread = spread
         self.repository = repository
@@ -31,6 +33,7 @@ public struct SpreadDiagramView: View {
         self.cardBackDesign = cardBackDesign
         self.onSelectCard = onSelectCard
         self.onReplaceCard = onReplaceCard
+        self.onRevealCard = onRevealCard
     }
 
     public var body: some View {
@@ -735,6 +738,9 @@ private func moonPhaseCard(index: Int, phase: String, yOffset: CGFloat) -> some 
 
         return Button {
             TarotAudioService.shared.playCardFlip()
+            if !isRevealed {
+                onRevealCard?(index)
+            }
             onSelectCard(drawn)
         } label: {
             VStack(spacing: 6) {

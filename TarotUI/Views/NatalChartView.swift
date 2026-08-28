@@ -88,11 +88,11 @@ struct NatalChartView: View {
 
                     // Guardar en Diario
                     Button {
-                        let repo = try? CoreDataJournalRepository()
+                        let repo = CoreDataJournalRepository()
                         let notes = "Hoja Natal — Sol \(sunSign.rawValue) (\(sunSign.element)), Luna \(moonSign.rawValue), Asc \(ascSign.rawValue) · \(place.isEmpty ? "sin lugar" : place) · \(birthDate.formatted(date: .abbreviated, time: .omitted))"
                         let spread = Spread(type: .astrological, drawnCards: [], createdAt: Date())
                         let entry = JournalEntry(spread: spread, notes: notes)
-                        try? repo?.save(entry: entry)
+                        try? repo.save(entry: entry)
                         #if os(iOS)
                         UINotificationFeedbackGenerator().notificationOccurred(.success)
                         #endif

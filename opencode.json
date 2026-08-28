@@ -1,0 +1,20 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md", ".opencode/memory/**/*.md"],
+  "references": {
+    "cerebro": {
+      "path": "/Users/gvstii/Documents/Cerebro",
+      "description": "Vault Obsidian principal — Segundo Cerebro de gvstii. Memoria persistente, contexto del usuario, decisiones del proyecto Tarot (app morada lujo minimal, icono carta tarot). USAR SIEMPRE para no olvidar contexto entre sesiones."
+    },
+    "tarot-memoria": {
+      "path": "/Users/gvstii/Documents/Cerebro/Tarot",
+      "description": "Memoria específica del proyecto Tarot — estado actual, paleta morada, icono tarot minimal, textos bien ajustados. Leer al inicio y actualizar al final de cada sesión."
+    }
+  },
+  "permission": {
+    "external_directory": {
+      "/Users/gvstii/Documents/Cerebro/**": "allow",
+      "*": "allow"
+    }
+  }
+}

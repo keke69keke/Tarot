@@ -67,7 +67,7 @@ public struct ContentView: View {
                 .zIndex(10)
             }
         }
-        .preferredColorScheme(model.settings.appearance.colorScheme)
+        .preferredColorScheme(.dark)
         .alert(TarotStrings.errorTitle.localized, isPresented: Binding(get: { model.errorMessage != nil }, set: { if !$0 { model.errorMessage = nil } })) {
             Button(TarotStrings.ok.localized, role: .cancel) {}
         } message: { Text(model.errorMessage ?? "") }

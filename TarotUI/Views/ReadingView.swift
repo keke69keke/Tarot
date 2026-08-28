@@ -13,6 +13,9 @@ struct ReadingView: View {
     @State private var isShowingReplacementPicker = false
     @State private var replacementPickerQuery = ""
     @State private var chosenFirstCardSlot: Int? = nil
+    @FocusState private var notesFocused: Bool
+    @FocusState private var cardPickerFocused: Bool
+    @FocusState private var replacementPickerFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -352,12 +355,14 @@ struct ReadingView: View {
                 .padding(10)
                 .frame(minHeight: 84)
                 .luxuryGlass(cornerRadius: LuxuryRadius.sm)
+                .focused($notesFocused)
         }
         .padding(.horizontal, 4)
     }
 
     private var saveButton: some View {
         Button {
+            notesFocused = false
             withAnimation(LuxuryAnimation.softSpring) { model.saveSpread(notes: notes); notes = "" }
         } label: {
             Text(TarotStrings.saveReading.localized.uppercased())
@@ -444,6 +449,7 @@ struct ReadingView: View {
         VStack(alignment: .leading, spacing: 10) {
             TextField(TarotStrings.searchCard.localized, text: $cardPickerQuery)
                 .textFieldStyle(.roundedBorder)
+                .focused($cardPickerFocused)
             ScrollView(.vertical, showsIndicators: true) {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 62), spacing: 8)], spacing: 8) {
                     ForEach(cardsForPicker()) { card in
@@ -482,6 +488,7 @@ struct ReadingView: View {
                     .padding(.horizontal, 4)
                 TextField(TarotStrings.searchCard.localized, text: $replacementPickerQuery)
                     .textFieldStyle(.roundedBorder)
+                    .focused($replacementPickerFocused)
                 ScrollView(.vertical, showsIndicators: true) {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 62), spacing: 8)], spacing: 8) {
                         ForEach(replacementCards()) { card in
@@ -514,6 +521,7 @@ struct ReadingView: View {
                     Button(TarotStrings.cancel.localized) {
                         isShowingReplacementPicker = false
                         replacementPickerQuery = ""
+                        replacementPickerFocused = false
                         replacementIndex = nil
                     }
                 }
@@ -542,6 +550,7 @@ struct ReadingView: View {
         }
         chosenFirstCardSlot = nil
         cardPickerQuery = ""
+        cardPickerFocused = false
     }
 
     private func replacementCards() -> [Card] {
@@ -554,6 +563,7 @@ struct ReadingView: View {
         model.replaceCard(at: replacementIndex ?? 0, with: card)
         isShowingReplacementPicker = false
         replacementPickerQuery = ""
+        replacementPickerFocused = false
         replacementIndex = nil
     }
 }

@@ -37,7 +37,7 @@ struct SettingsView: View {
                 }
             }
             .onChange(of: model.settings.selectedLanguage) { _ in model.persistSettings() }
-            .onChange(of: model.settings.activeDeck) { _ in model.persistSettings() }
+            .onChange(of: model.settings.activeDeck) { _ in model.persistSettings(); PlatformImageLoader.clearCache() }
             .onChange(of: model.settings.cardBackDesign) { _ in model.persistSettings() }
             .onChange(of: model.settings.appearance) { _ in model.persistSettings() }
             .onChange(of: model.settings.dailyNotificationHour) { value in

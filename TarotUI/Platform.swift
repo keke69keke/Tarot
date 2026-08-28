@@ -106,56 +106,68 @@ extension CardSuit {
 }
 
 // MARK: - Image loading
-
 enum PlatformImageLoader {
     private static let cache = NSCache<NSString, PlatformImage>()
+
+    /// Vacía el cache — llamar al cambiar de mazo para evitar imágenes obsoletas.
+    static func clearCache() {
+        cache.removeAllObjects()
+    }
+
     static func image(named name: String) -> PlatformImage? {
-        if let cached = cache.object(forKey: name as NSString) { return cached }
+        let cacheKey = name as NSString
+        if let cached = cache.object(forKey: cacheKey) { return cached }
         let cleanName = (name as NSString).deletingPathExtension
-        let candidates = ["\(cleanName)", cleanName]
 
-        for candidate in candidates {
-            if let resourceURL = Bundle.tarotContent.url(forResource: candidate, withExtension: "png") {
-                #if canImport(UIKit)
-                if let img = UIImage(contentsOfFile: resourceURL.path) {
-                    cache.setObject(img, forKey: name as NSString)
-                    return img
-                }
-                #elseif canImport(AppKit)
-                if let img = NSImage(contentsOf: resourceURL) {
-                    cache.setObject(img, forKey: name as NSString)
-                    return img
-                }
-                #endif
-            }
-
-            if let resourceURL = Bundle.tarotContent.url(forResource: candidate, withExtension: nil) {
-                #if canImport(UIKit)
-                if let img = UIImage(contentsOfFile: resourceURL.path) {
-                    cache.setObject(img, forKey: name as NSString)
-                    return img
-                }
-                #elseif canImport(AppKit)
-                if let img = NSImage(contentsOf: resourceURL) {
-                    cache.setObject(img, forKey: name as NSString)
-                    return img
-                }
-                #endif
-            }
-
-            #if canImport(UIKit)
-            if let img = UIImage(named: candidate, in: .tarotContent, compatibleWith: nil) {
-                cache.setObject(img, forKey: name as NSString)
-                return img
-            }
-            #elseif canImport(AppKit)
-            if let img = Bundle.tarotContent.image(forResource: candidate) {
-                cache.setObject(img, forKey: name as NSString)
-                return img
-            }
-            #endif
+        // Estrategia 1: url(forResource:withExtension:) — SPM bundles
+        if let url = Bundle.tarotContent.url(forResource: cleanName, withExtension: "png"),
+           let img = loadImage(from: url) {
+            cache.setObject(img, forKey: cacheKey); return img
         }
+        // Estrategia 2: path(forResource:ofType:) — bundles con Contents/Resources
+        if let path = Bundle.tarotContent.path(forResource: cleanName, ofType: "png"),
+           let img = loadImage(from: URL(fileURLWithPath: path)) {
+            cache.setObject(img, forKey: cacheKey); return img
+        }
+        // Estrategia 3: búsqueda manual en directorios de recursos
+        if let img = searchInResources(cleanName) {
+            cache.setObject(img, forKey: cacheKey); return img
+        }
+        #if canImport(UIKit)
+        // Estrategia 4: UIImage(named:in:) — xcassets
+        if let img = UIImage(named: cleanName, in: .tarotContent, compatibleWith: nil) {
+            cache.setObject(img, forKey: cacheKey); return img
+        }
+        #elseif canImport(AppKit)
+        if let img = Bundle.tarotContent.image(forResource: cleanName) {
+            cache.setObject(img, forKey: cacheKey); return img
+        }
+        #endif
+        return nil
+    }
 
+    private static func loadImage(from url: URL) -> PlatformImage? {
+        #if canImport(UIKit)
+        return UIImage(contentsOfFile: url.path)
+        #elseif canImport(AppKit)
+        return NSImage(contentsOf: url)
+        #else
+        return nil
+        #endif
+    }
+
+    private static func searchInResources(_ name: String) -> PlatformImage? {
+        let bundles: [Bundle] = [.tarotContent, .main]
+        let subdirs = ["", "Resources", "Contents/Resources"]
+        for bundle in bundles {
+            guard let base = bundle.resourceURL else { continue }
+            for sub in subdirs {
+                let dir = sub.isEmpty ? base : base.appendingPathComponent(sub)
+                let file = dir.appendingPathComponent("\(name).png")
+                if FileManager.default.fileExists(atPath: file.path),
+                   let img = loadImage(from: file) { return img }
+            }
+        }
         return nil
     }
 }

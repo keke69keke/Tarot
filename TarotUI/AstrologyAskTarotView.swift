@@ -430,7 +430,7 @@ public struct HoroscopeView: View {
                     // Header
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 8) {
-                            Image(systemName: "star.sparkles.fill")
+                            Image(systemName: "sparkles")
                                 .foregroundStyle(Color.tarotGold)
                          Text("ZODÍACO & TAROT")
                             .font(.system(size: 11, weight: .bold, design: .serif))

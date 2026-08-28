@@ -32,13 +32,19 @@ public struct UserSettings {
     public var openAIKey: String = ""
 
     /// Active tabs in the bottom navigation menu
-    public var activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal, .settings]
+    public var activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal, .settings, .biorhythm, .natal]
     
     /// Inactive tabs hidden from the bottom navigation menu
     public var inactiveTabs: [AppTab] = [.ask, .horoscope, .library, .chat]
 
     /// User display name used for personalized greetings in the UI.
     public var userName: String = ""
+
+    /// Persisted birth data for biorhythm and natal chart (luxury continuity)
+    public var biorhythmBirthDate: Date? = nil
+    public var natalBirthDate: Date? = nil
+    public var natalBirthTime: Date? = nil
+    public var natalPlace: String = ""
     
     public init(
         allowReversedCards: Bool = true,
@@ -49,9 +55,13 @@ public struct UserSettings {
         dailyNotificationHour: Int = 8,
         notificationsEnabled: Bool = false,
         openAIKey: String = "",
-        activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal, .settings],
+        activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal, .settings, .biorhythm, .natal],
         inactiveTabs: [AppTab] = [.ask, .horoscope, .library, .chat],
-        userName: String = ""
+        userName: String = "",
+        biorhythmBirthDate: Date? = nil,
+        natalBirthDate: Date? = nil,
+        natalBirthTime: Date? = nil,
+        natalPlace: String = ""
     ) {
         self.allowReversedCards = allowReversedCards
         self.selectedLanguage = selectedLanguage
@@ -64,6 +74,10 @@ public struct UserSettings {
         self.activeTabs = activeTabs
         self.inactiveTabs = inactiveTabs
         self.userName = userName
+        self.biorhythmBirthDate = biorhythmBirthDate
+        self.natalBirthDate = natalBirthDate
+        self.natalBirthTime = natalBirthTime
+        self.natalPlace = natalPlace
     }
 }
 
@@ -216,6 +230,8 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable {
     case journal = "journal"
     case settings = "settings"
     case chat = "chat"
+    case biorhythm = "biorhythm"
+    case natal = "natal"
     
     public var id: String { rawValue }
     
@@ -231,21 +247,25 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable {
         case .journal: return "Diario"
         case .settings: return "Ajustes"
         case .chat: return "Arcana IA"
+        case .biorhythm: return "Biorritmo"
+        case .natal: return "Hoja Natal"
         }
     }
     
     public var systemImage: String {
         switch self {
-        case .reading: return "sparkles"
-        case .ask: return "bubble.left.and.bubble.right"
-        case .horoscope: return "moon.stars"
-        case .library: return "books.vertical"
-        case .reference: return "magnifyingglass"
-        case .daily: return "sun.max"
-        case .learn: return "graduationcap"
-        case .journal: return "book.closed"
-        case .settings: return "gearshape"
-        case .chat: return "brain.head.profile"
+        case .reading: return "diamond"
+        case .ask: return "questionmark.circle"
+        case .horoscope: return "moon"
+        case .library: return "rectangle.stack"
+        case .reference: return "eye"
+        case .daily: return "sunrise"
+        case .learn: return "lightbulb"
+        case .journal: return "text.book.closed"
+        case .settings: return "slider.horizontal.3"
+        case .chat: return "wand.and.stars"
+        case .biorhythm: return "waveform"
+        case .natal: return "star.circle"
         }
     }
 }

@@ -1,6 +1,7 @@
 import SwiftUI
 import TarotCore
 import TarotData
+import TarotDI
 
 struct JournalView: View {
     @ObservedObject var model: TarotViewModel
@@ -8,30 +9,34 @@ struct JournalView: View {
         NavigationStack {
             Group {
                 if model.entries.isEmpty {
-                    VStack(spacing: 22) {
+                    VStack(spacing: 18) {
                         ZStack {
                             Circle()
-                                .fill(Color.tarotGold.opacity(0.10))
+                                .fill(Color.tarotGold.opacity(0.07))
                                 .frame(width: 110, height: 110)
-                            Image(systemName: "book.closed.fill")
-                                .font(.system(size: 52))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [Color.tarotGold, Color.tarotBurgundy],
-                                        startPoint: .topLeading, endPoint: .bottomTrailing
-                                    )
-                                )
+                                .blur(radius: 18)
+                            Circle()
+                                .stroke(Color.tarotGold.opacity(0.14), lineWidth: 0.85)
+                                .frame(width: 110, height: 110)
+                            Image(systemName: "text.book.closed")
+                                .font(.system(size: 34, weight: .thin))
+                                .foregroundStyle(Color.tarotGold.opacity(0.85))
                         }
-                        .shadow(color: Color.tarotGold.opacity(0.25), radius: 18, x: 0, y: 8)
+                        .shadow(color: Color.black.opacity(0.18), radius: 16, x: 0, y: 8)
 
-                        Text("Aún no hay lecturas guardadas")
-                            .font(.title3.bold())
-                            .foregroundStyle(.primary)
-                        Text("Guarda tus tiradas aquí y vuelve a consultarlas cuando quieras.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 30)
+                        VStack(spacing: 8) {
+                            Text(TarotStrings.emptyJournalTitle.localized)
+                                .font(.system(size: 18, weight: .semibold, design: .serif))
+                                .tracking(-0.2)
+                                .foregroundStyle(Color.tarotIvory)
+                                .multilineTextAlignment(.center)
+                            Text(TarotStrings.emptyJournalMessage.localized)
+                                .font(.system(size: 13, weight: .regular, design: .serif))
+                                .foregroundStyle(Color.tarotIvory.opacity(0.56))
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(4)
+                                .padding(.horizontal, 28)
+                        }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .padding()
@@ -41,36 +46,45 @@ struct JournalView: View {
                             NavigationLink {
                                 JournalDetail(entry: entry, repository: model.container.cards, activeDeck: model.settings.activeDeck, cardBackDesign: model.settings.cardBackDesign)
                             } label: {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text(entry.spread.type?.label ?? "Tirada")
-                                        .font(.headline)
-                                    Text(entry.savedAt.formatted(date: .abbreviated, time: .shortened))
-                                        .foregroundStyle(.secondary)
-                                    Text(entry.spread.drawnCards.map { $0.card.name }.joined(separator: " · "))
+                                VStack(alignment: .leading, spacing: 7) {
+                                    HStack(spacing: 8) {
+                                        EyebrowLabel(text: entry.spread.type?.label.uppercased() ?? "TIRADA")
+                                        Spacer()
+                                        Text(entry.savedAt.formatted(date: .abbreviated, time: .shortened))
+                                            .font(.system(size: 11, weight: .regular, design: .serif))
+                                            .foregroundStyle(Color.tarotIvory.opacity(0.42))
+                                    }
+                                    GoldDivider(opacity: 0.10)
+                                    Text(entry.spread.drawnCards.map { $0.card.name }.joined(separator: "  ·  "))
                                         .lineLimit(1)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
+                                        .font(.system(size: 12, weight: .regular, design: .serif))
+                                        .foregroundStyle(Color.tarotIvory.opacity(0.72))
+                                        .tracking(0.1)
+                                        .truncationMode(.tail)
                                 }
-                                .padding(14)
-                                .background(Color.tarotPanel.opacity(0.88))
-                                .cornerRadius(18)
+                                .padding(.vertical, 4)
                             }
                         }
                         .onDelete { offsets in offsets.map { model.entries[$0] }.forEach(model.delete) }
                         .listRowBackground(
-                            RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                .fill(Color.tarotPanel.opacity(0.88))
-                                .shadow(color: Color.tarotShadow.opacity(0.15), radius: 8, x: 0, y: 4)
-                                .padding(.vertical, 4)
+                            RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous)
+                                .fill(Color.white.opacity(0.045))
+                                .background(RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous).fill(.ultraThinMaterial).opacity(0.38))
+                                .overlay(RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous).stroke(Color.white.opacity(0.07), lineWidth: 0.7))
                         )
                         .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
                     }
                     .listStyle(.plain)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
                 }
             }
-            .navigationTitle("Diario")
+            .navigationTitle(TarotStrings.journalTitle.localized)
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(Color.tarotBackground, for: .navigationBar)
+            #endif
         }
     }
 }

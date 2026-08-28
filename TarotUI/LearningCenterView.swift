@@ -4,15 +4,15 @@ import TarotCore
 // MARK: - Book Cover Colors (deterministic from title hash)
 private func bookCoverGradient(for title: String) -> [Color] {
     let palettes: [[Color]] = [
-        [Color(red: 0.42, green: 0.10, blue: 0.35), Color(red: 0.18, green: 0.05, blue: 0.28)],
-        [Color(red: 0.55, green: 0.30, blue: 0.05), Color(red: 0.28, green: 0.12, blue: 0.02)],
-        [Color(red: 0.08, green: 0.22, blue: 0.42), Color(red: 0.04, green: 0.08, blue: 0.22)],
-        [Color(red: 0.35, green: 0.08, blue: 0.08), Color(red: 0.18, green: 0.04, blue: 0.04)],
-        [Color(red: 0.05, green: 0.28, blue: 0.22), Color(red: 0.02, green: 0.12, blue: 0.10)],
-        [Color(red: 0.40, green: 0.35, blue: 0.05), Color(red: 0.18, green: 0.14, blue: 0.02)],
-        [Color(red: 0.22, green: 0.05, blue: 0.40), Color(red: 0.10, green: 0.02, blue: 0.20)],
-        [Color(red: 0.08, green: 0.08, blue: 0.08), Color(red: 0.18, green: 0.10, blue: 0.22)],
-        [Color(red: 0.38, green: 0.18, blue: 0.02), Color(red: 0.18, green: 0.08, blue: 0.01)],
+        [Color.tarotGoldDeep, Color.tarotGoldDeep.opacity(0.4)],
+        [Color.tarotGold, Color.tarotGoldDeep],
+        [Color.tarotGoldHighlight, Color.tarotGold],
+        [Color.tarotGold, Color.tarotGoldHighlight],
+        [Color.tarotGoldDeep, Color.tarotGold],
+        [Color.tarotGoldHighlight, Color.tarotGoldDeep],
+        [Color.tarotGold, Color.tarotGold.opacity(0.6)],
+        [Color.tarotGoldDeep, Color.tarotGoldHighlight],
+        [Color.tarotGoldHighlight, Color.tarotGoldDeep],
     ]
     let idx = abs(title.hashValue) % palettes.count
     return palettes[idx]
@@ -20,7 +20,7 @@ private func bookCoverGradient(for title: String) -> [Color] {
 
 private func bookCoverIcon(for title: String) -> String {
     let icons = ["books.vertical.fill", "scroll.fill", "moon.stars.fill", "sparkles",
-                 "flame.fill", "leaf.fill", "star.fill", "eye.fill", "atom"]
+                 "flame.fill", "leaf.fill", "star.fill", "eye.fill", "atom", "wand.and.stars", "sun.max.fill", "moon.fill"]
     return icons[abs(title.hashValue) % icons.count]
 }
 
@@ -48,7 +48,7 @@ private struct EsotericBookCover: View {
                     p.move(to: CGPoint(x: x, y: sz.height))
                     p.addLine(to: CGPoint(x: x + sz.height, y: 0))
                 }
-                context.stroke(p, with: .color(Color.white.opacity(0.06)), lineWidth: 0.75)
+                context.stroke(p, with: .color(Color.tarotIvory.opacity(0.06)), lineWidth: 0.75)
             }
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
@@ -57,7 +57,7 @@ private struct EsotericBookCover: View {
                     Spacer()
                     Image(systemName: icon)
                         .font(.system(size: 28, weight: .semibold))
-                        .foregroundStyle(Color.white.opacity(0.25))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.25))
                         .padding(12)
                 }
                 Spacer()
@@ -66,27 +66,27 @@ private struct EsotericBookCover: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
                     .font(.system(size: 13, weight: .bold, design: .serif))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.tarotIvory)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
                 Text(subtitle)
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundStyle(Color.white.opacity(0.60))
+                    .font(.system(size: 10, weight: .medium, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.60))
                     .lineLimit(1)
             }
             .padding(10)
 
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .stroke(
-                    LinearGradient(colors: [Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.6),
-                                             Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.15)],
+                    LinearGradient(colors: [Color.tarotGold.opacity(0.6),
+                                             Color.tarotGold.opacity(0.15)],
                                    startPoint: .topLeading, endPoint: .bottomTrailing),
-                    lineWidth: 1
+                    lineWidth: 0.75
                 )
         }
         .frame(width: size.width, height: size.height)
         .scaleEffect(hovered ? 1.03 : 1.0)
-        .shadow(color: colors.first?.opacity(0.5) ?? .clear, radius: hovered ? 18 : 10, x: 0, y: 6)
+        .shadow(color: Color.tarotGold.opacity(0.3), radius: hovered ? 18 : 10, x: 0, y: 6)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: hovered)
         .onHover { hovered = $0 }
     }
@@ -106,10 +106,7 @@ public struct LearningCenterView: View {
     public var body: some View {
         NavigationStack {
             ZStack {
-                LinearGradient(
-                    colors: [Color(red: 0.04, green: 0.04, blue: 0.10), Color(red: 0.08, green: 0.04, blue: 0.16)],
-                    startPoint: .topLeading, endPoint: .bottomTrailing
-                )
+                 Color.tarotBackground
                 .ignoresSafeArea()
 
                 ScrollView(showsIndicators: false) {
@@ -182,21 +179,18 @@ public struct LearningCenterView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Biblioteca Arcana")
-                        .font(.system(size: 34, weight: .bold, design: .serif))
-                        .foregroundStyle(
-                            LinearGradient(colors: [Color(red: 0.95, green: 0.85, blue: 0.50),
-                                                     Color(red: 0.78, green: 0.58, blue: 0.22)],
-                                           startPoint: .leading, endPoint: .trailing)
-                        )
-                    Text("Sabiduría Esotérica · \(libraryManager.importedBooks.count) libros")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.7))
+                         Text("Biblioteca Arcana")
+                            .font(.system(size: 34, weight: .bold, design: .serif))
+                            .tracking(-0.6)
+                            .foregroundStyle(Color.tarotIvory)
+                        Text("Sabiduría Esotérica · \(libraryManager.importedBooks.count) libros")
+                            .font(.system(size: 14, weight: .medium, design: .serif))
+                            .foregroundStyle(Color.tarotIvory.opacity(0.68))
                 }
-                Spacer()
-                Image(systemName: "books.vertical.fill")
-                    .font(.system(size: 28))
-                    .foregroundStyle(Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.5))
+                 Spacer()
+                 Image(systemName: "books.vertical.fill")
+                     .font(.system(size: 28))
+                     .foregroundStyle(Color.tarotGold.opacity(0.5))
             }
             .padding(.horizontal)
             .padding(.top, 20)
@@ -207,7 +201,7 @@ public struct LearningCenterView: View {
 
     // MARK: - Section Tabs
     private var sectionTabs: some View {
-        HStack(spacing: 0) {
+         HStack(spacing: 0) {
             ForEach(LibrarySection.allCases, id: \.self) { section in
                 Button {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -216,34 +210,38 @@ public struct LearningCenterView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: section.icon).font(.caption)
-                        Text(section.label).font(.system(size: 13, weight: .semibold))
+                        Text(section.label).font(.system(size: 13, weight: .semibold, design: .serif))
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, 9)
                     .background(
                         selectedSection == section
-                            ? Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.20)
+                            ? Color.tarotGold.opacity(0.20)
                             : Color.clear
                     )
                     .foregroundStyle(
                         selectedSection == section
-                            ? Color(red: 0.95, green: 0.85, blue: 0.50)
-                            : Color.white.opacity(0.45)
+                            ? Color.tarotGold
+                            : Color.tarotIvory.opacity(0.45)
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
                             .stroke(selectedSection == section
-                                    ? Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.5)
-                                    : Color.clear, lineWidth: 1)
+                                    ? Color.tarotGold.opacity(0.5)
+                                    : Color.clear, lineWidth: 0.75)
                     )
                 }
                 .buttonStyle(.plain)
             }
         }
         .padding(4)
-        .background(Color.white.opacity(0.05))
+        .background(Color.tarotPanel)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.tarotGold.opacity(0.13), lineWidth: 0.75)
+        )
     }
 
     // MARK: - Books Section
@@ -272,24 +270,24 @@ public struct LearningCenterView: View {
 
     private var quickActionsBar: some View {
         HStack(spacing: 10) {
-            quickActionButton(icon: "safari.fill", label: "Navegador", color: Color(red: 0.3, green: 0.6, blue: 1.0)) {
+            quickActionButton(icon: "safari.fill", label: "Navegador", color: Color.tarotGold) {
                 showingBrowser = true
             }
-            quickActionButton(icon: "doc.badge.plus", label: "Importar PDF", color: Color(red: 0.85, green: 0.72, blue: 0.38)) {
+            quickActionButton(icon: "doc.badge.plus", label: "Importar PDF", color: Color.tarotGold) {
                 showingFilePicker = true
             }
             NavigationLink(destination: SecretVaultView()) {
                 VStack(spacing: 6) {
                     Image(systemName: "lock.shield.fill").font(.system(size: 20))
-                    Text("Bóveda").font(.caption.bold())
+                    Text("Bóveda").font(.system(size: 11, weight: .bold, design: .serif))
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
-                .background(Color.white.opacity(0.06))
+                .background(Color.tarotPanel)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                 .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color(red: 0.42, green: 0.25, blue: 0.65).opacity(0.6), lineWidth: 1))
-                .foregroundStyle(Color(red: 0.75, green: 0.55, blue: 1.0))
+                    .stroke(Color.tarotGold.opacity(0.6), lineWidth: 0.75))
+                .foregroundStyle(Color.tarotGold)
             }
         }
     }
@@ -298,13 +296,13 @@ public struct LearningCenterView: View {
         Button(action: action) {
             VStack(spacing: 6) {
                 Image(systemName: icon).font(.system(size: 20))
-                Text(label).font(.caption.bold())
+                Text(label).font(.system(size: 11, weight: .bold, design: .serif))
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 12)
-            .background(Color.white.opacity(0.06))
+            .background(Color.tarotPanel)
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(color.opacity(0.5), lineWidth: 1))
+            .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(color.opacity(0.5), lineWidth: 0.75))
             .foregroundStyle(color)
         }
         .buttonStyle(.plain)
@@ -321,27 +319,26 @@ public struct LearningCenterView: View {
         HStack(spacing: 16) {
             ZStack {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(LinearGradient(colors: [Color(red: 0.42, green: 0.28, blue: 0.05),
-                                                   Color(red: 0.20, green: 0.12, blue: 0.02)],
+                    .fill(LinearGradient(colors: [Color.tarotGoldDeep, Color.tarotGoldDeep.opacity(0.4)],
                                          startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: 56, height: 72)
-                Image(systemName: "book.closed.fill").font(.title2).foregroundStyle(Color(red: 0.95, green: 0.82, blue: 0.45))
+                Image(systemName: "book.closed.fill").font(.title2).foregroundStyle(Color.tarotGold)
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("Guía Definitiva del Tarot")
                     .font(.system(size: 16, weight: .bold, design: .serif))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(Color.tarotIvory)
                 Text("Fiebig & Bürger · Rider-Waite · Incluida")
-                    .font(.caption).foregroundStyle(Color.white.opacity(0.55))
+                    .font(.system(size: 11, design: .serif)).foregroundStyle(Color.tarotIvory.opacity(0.55))
             }
             Spacer()
-            Image(systemName: "chevron.right").foregroundStyle(Color.white.opacity(0.3)).font(.caption)
+            Image(systemName: "chevron.right").foregroundStyle(Color.tarotIvory.opacity(0.3)).font(.caption)
         }
         .padding(14)
-        .background(Color.white.opacity(0.06))
+        .background(Color.tarotPanel)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .stroke(Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.3), lineWidth: 1))
+            .stroke(Color.tarotGold.opacity(0.3), lineWidth: 0.75))
     }
 
     private var bookGrid: some View {
@@ -367,7 +364,7 @@ public struct LearningCenterView: View {
     private var schoolSection: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 14) {
-ForEach(schoolCourses) { course in
+                ForEach(schoolCourses) { course in
                     NavigationLink(destination: SchoolCourseView(course: course)) {
                         EsotericBookCover(title: course.title, subtitle: "Curso · \(course.lessons.count) lecciones", size: CGSize(width: 220, height: 140))
                     }
@@ -383,7 +380,7 @@ private var schoolCourses: [SchoolCourse] {
             SchoolCourse(
                 title: "Interpretación de Arcanos",
                 icon: "arcade.stick",
-                color: Color(red: 0.78, green: 0.62, blue: 0.98),
+                color: Color.tarotGold,
                 summary: "Domina el significado de los 22 Arcanos Mayores y los 56 Menores, con sus símbolos, arquetipos y mensajes.",
                 lessons: [
                     SchoolLesson(title: "Los Arcanos Mayores", subtitle: "22 arquetipos que narran el viaje del alma", icon: "star.fill", content: "Los Arcanos Mayores representan el camino de la vida: desde El Loco (0) que inicia el viaje con fe y espontaneidad, hasta El Mundo (21) que alcanza la plenitud. Cada carta es un arquetipo universal que refleja una etapa de tu evolución. Aprende a identificar cuál de estos arquetipos resuena con tu situación actual y cómo integrar su energía."),
@@ -394,7 +391,7 @@ private var schoolCourses: [SchoolCourse] {
             SchoolCourse(
                 title: "Tiradas Prácticas",
                 icon: "rectangle.stack.fill",
-                color: Color(red: 0.95, green: 0.72, blue: 0.38),
+                color: Color.tarotGold,
                 summary: "Aprende a realizar las tiradas más usadas y a interpretar las posiciones de cada carta.",
                 lessons: [
                     SchoolLesson(title: "Tirada de 3 cartas", subtitle: "Pasado, presente y futuro", icon: "3.circle.fill", content: "La tirada más versátil y sencilla. La primera carta revela el pasado que te trajo hasta aquí, la segunda describe el presente o el corazón de la cuestión, y la tercera apunta al futuro probable. Es ideal para preguntas rápidas y consultas diarias. Cada posición se lee en relación con las demás para formar una historia coherente."),
@@ -405,7 +402,7 @@ private var schoolCourses: [SchoolCourse] {
             SchoolCourse(
                 title: "Cábala y Tarot",
                 icon: "tree.fill",
-                color: Color(red: 0.55, green: 0.78, blue: 0.42),
+                color: Color.tarotGold,
                 summary: "Conecta las cartas con el Árbol de la Vida y la sabiduría hermética.",
                 lessons: [
                     SchoolLesson(title: "El Árbol de la Vida", subtitle: "Las 10 sefirot y sus correspondencias", icon: "tree", content: "La Cábala estructura el universo en 10 esferas (sefirot) conectadas por 22 senderos, los mismos que los 22 Arcanos Mayores. Cada sefirá es una emanación divina: desde Kether (la corona) hasta Malkuth (el reino). El tarot y la cábala comparten este mapa sagrado de la creación."),
@@ -416,7 +413,7 @@ private var schoolCourses: [SchoolCourse] {
             SchoolCourse(
                 title: "Astrología Aplicada",
                 icon: "moon.stars.fill",
-                color: Color(red: 0.40, green: 0.72, blue: 1.0),
+                color: Color.tarotGold,
                 summary: "Integra los 12 signos, planetas y casas con las cartas del tarot.",
                 lessons: [
                     SchoolLesson(title: "Signos y Arcanos Mayores", subtitle: "Correspondencias zodiacales", icon: "star.fill", content: "Varios Arcanos Mayores se asocian a signos zodiacales: El Emperador es Aries, La Templanza es Sagitario, La Estrella es Acuario, La Rueda es Júpiter. Conocer estas correspondencias enriquece tus lecturas y te permite usar el tarot como una herramienta astrológica."),
@@ -427,7 +424,7 @@ private var schoolCourses: [SchoolCourse] {
             SchoolCourse(
                 title: "Trabajo con la Sombra",
                 icon: "moon.fill",
-                color: Color(red: 0.72, green: 0.42, blue: 1.0),
+                color: Color.tarotGold,
                 summary: "Explora el inconsciente, integra tu sombra y sana heridas profundas.",
                 lessons: [
                     SchoolLesson(title: "La sombra en el tarot", subtitle: "Los arcanos que nos confrontan", icon: "moon.haze.fill", content: "Cartas como La Torre, La Luna, El Diablo o La Muerte suelen asustar, pero son las más sanadoras. La Torre derrumba lo falso, La Luna ilumina lo inconsciente, El Diablo revela tus ataduras, y La Muerte abre paso a la transformación. Trabajarlas conscientemente integra tu sombra."),
@@ -458,29 +455,31 @@ private var schoolCourses: [SchoolCourse] {
                             }
                             Text(course.title)
                                 .font(.system(size: 24, weight: .bold, design: .serif))
-                                .foregroundStyle(.white)
+                                .tracking(-0.3)
+                                .foregroundStyle(Color.tarotIvory)
                         }
                         Text(course.summary)
                             .font(.system(size: 14, design: .serif))
-                            .foregroundStyle(Color.white.opacity(0.6))
+                            .foregroundStyle(Color.tarotIvory.opacity(0.6))
+                            .lineSpacing(4)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(20)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(
                         RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .fill(Color.white.opacity(0.06))
+                            .fill(Color.tarotPanel)
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .stroke(course.color.opacity(0.4), lineWidth: 1)
+                            .stroke(course.color.opacity(0.4), lineWidth: 0.75)
                     )
 
                     // Lessons
                     Text("\(course.lessons.count) LECCIONES")
-                        .font(.system(size: 12, weight: .bold))
+                        .font(.system(size: 12, weight: .bold, design: .serif))
                         .foregroundStyle(course.color)
-                        .tracking(1.4)
+                        .tracking(1.6)
                         .padding(.horizontal, 4)
 
                     ForEach(course.lessons) { lesson in
@@ -515,17 +514,17 @@ private var schoolCourses: [SchoolCourse] {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(lesson.title)
                                 .font(.system(size: 15, weight: .bold, design: .serif))
-                                .foregroundStyle(.white)
+                                .foregroundStyle(Color.tarotIvory)
                                 .multilineTextAlignment(.leading)
                             Text(lesson.subtitle)
-                                .font(.caption)
-                                .foregroundStyle(Color.white.opacity(0.5))
+                                .font(.system(size: 11, design: .serif))
+                                .foregroundStyle(Color.tarotIvory.opacity(0.5))
                                 .multilineTextAlignment(.leading)
                         }
                         Spacer()
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                             .font(.caption)
-                            .foregroundStyle(Color.white.opacity(0.4))
+                            .foregroundStyle(Color.tarotIvory.opacity(0.4))
                     }
                     .padding(16)
                 }
@@ -534,7 +533,7 @@ private var schoolCourses: [SchoolCourse] {
                 if isExpanded {
                     Text(lesson.content)
                         .font(.system(size: 14, design: .serif))
-                        .foregroundStyle(Color.white.opacity(0.75))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.75))
                         .lineSpacing(6)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, 16)
@@ -544,26 +543,34 @@ private var schoolCourses: [SchoolCourse] {
             }
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(Color.white.opacity(0.05))
+                    .fill(Color.tarotPanel)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(isExpanded ? course.color.opacity(0.4) : Color.white.opacity(0.08), lineWidth: 1)
+                    .stroke(isExpanded ? course.color.opacity(0.4) : Color.tarotGold.opacity(0.08), lineWidth: 0.75)
             )
         }
     }
 
     private var emptyLibraryView: some View {
         VStack(spacing: 16) {
-            Image(systemName: "books.vertical").font(.system(size: 48)).foregroundStyle(Color.white.opacity(0.2))
-            Text("Biblioteca vacía").font(.headline).foregroundStyle(Color.white.opacity(0.5))
+            Image(systemName: "books.vertical").font(.system(size: 48)).foregroundStyle(Color.tarotIvory.opacity(0.2))
+            Text("Biblioteca vacía")
+                .font(.system(size: 17, weight: .semibold, design: .serif))
+                .foregroundStyle(Color.tarotIvory.opacity(0.5))
             Text("Importa PDFs o espera a que los libros precargados se carguen automáticamente.")
-                .font(.subheadline).foregroundStyle(Color.white.opacity(0.35)).multilineTextAlignment(.center)
+                .font(.system(size: 13, design: .serif))
+                .foregroundStyle(Color.tarotIvory.opacity(0.35))
+                .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
         .padding(40)
-        .background(Color.white.opacity(0.04))
+        .background(Color.tarotPanel)
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.tarotGold.opacity(0.13), lineWidth: 0.75)
+        )
     }
 
     // MARK: - Spreads Info Section
@@ -584,35 +591,35 @@ private var schoolCourses: [SchoolCourse] {
             Text(spread.symbol)
                 .font(.title2)
                 .frame(width: 44, height: 44)
-                .background(isEsoteric ? Color(red: 0.42, green: 0.10, blue: 0.35).opacity(0.4)
-                            : Color.white.opacity(0.06))
+                .background(isEsoteric ? Color.tarotGoldDeep.opacity(0.4)
+                            : Color.tarotPanel)
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 8) {
                     Text(spread.label)
                         .font(.system(size: 15, weight: .bold, design: .serif))
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Color.tarotIvory)
                     if isEsoteric {
-                        Text("ESOTÉRICO").font(.system(size: 9, weight: .black)).foregroundStyle(Color(red: 0.95, green: 0.72, blue: 0.38))
+                        Text("ESOTÉRICO").font(.system(size: 9, weight: .black, design: .serif)).foregroundStyle(Color.tarotGold)
                             .padding(.horizontal, 6).padding(.vertical, 2)
-                            .background(Color(red: 0.85, green: 0.60, blue: 0.20).opacity(0.2))
+                            .background(Color.tarotGold.opacity(0.2))
                             .clipShape(Capsule())
                     }
                 }
                 Text(spread.esotericDescription)
-                    .font(.caption).foregroundStyle(Color.white.opacity(0.5)).lineLimit(2)
+                    .font(.system(size: 11, design: .serif)).foregroundStyle(Color.tarotIvory.opacity(0.5)).lineLimit(2)
                 Text("\(spread.positions.count) cartas")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundStyle(Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.8))
+                    .font(.system(size: 11, weight: .semibold, design: .serif))
+                    .foregroundStyle(Color.tarotGold.opacity(0.8))
             }
             Spacer()
         }
         .padding(14)
-        .background(Color.white.opacity(isEsoteric ? 0.07 : 0.04))
+        .background(Color.tarotPanel.opacity(isEsoteric ? 0.95 : 0.92))
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
-            .stroke(isEsoteric ? Color(red: 0.85, green: 0.60, blue: 0.20).opacity(0.35) : Color.white.opacity(0.08), lineWidth: 1))
+            .stroke(isEsoteric ? Color.tarotGold.opacity(0.35) : Color.tarotGold.opacity(0.08), lineWidth: 0.75))
         .padding(.horizontal)
     }
 
@@ -625,7 +632,7 @@ private var schoolCourses: [SchoolCourse] {
                 showingBrowser = true
             } label: {
                 toolRowContent(icon: "safari.fill", title: "Navegador Arcano", subtitle: "Explora recursos esotéricos en internet",
-                               color: Color(red: 0.3, green: 0.6, blue: 1.0))
+                               color: Color.tarotGold)
             }
             .buttonStyle(.plain)
             .padding(.horizontal)
@@ -634,7 +641,7 @@ private var schoolCourses: [SchoolCourse] {
                 showingFilePicker = true
             } label: {
                 toolRowContent(icon: "doc.badge.plus", title: "Importar PDF", subtitle: "Añade libros desde tus archivos",
-                               color: Color(red: 0.85, green: 0.72, blue: 0.38))
+                               color: Color.tarotGold)
             }
             .buttonStyle(.plain)
             .padding(.horizontal)
@@ -642,7 +649,7 @@ private var schoolCourses: [SchoolCourse] {
             NavigationLink(destination: SecretVaultView()) {
                 toolRowContent(icon: "lock.shield.fill", title: "Bóveda Secreta",
                                subtitle: "Notas privadas protegidas con PIN y cámara",
-                               color: Color(red: 0.72, green: 0.42, blue: 1.0))
+                               color: Color.tarotGold)
             }
             .buttonStyle(.plain)
             .padding(.horizontal)
@@ -657,25 +664,30 @@ private var schoolCourses: [SchoolCourse] {
                 .background(color.opacity(0.12))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             VStack(alignment: .leading, spacing: 3) {
-                Text(title).font(.system(size: 15, weight: .bold)).foregroundStyle(.white)
-                Text(subtitle).font(.caption).foregroundStyle(Color.white.opacity(0.5)).lineLimit(2)
+                Text(title)
+                    .font(.system(size: 15, weight: .bold, design: .serif))
+                    .foregroundStyle(Color.tarotIvory)
+                Text(subtitle)
+                    .font(.system(size: 11, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.5))
+                    .lineLimit(2)
             }
             Spacer()
-            Image(systemName: "chevron.right").font(.caption).foregroundStyle(Color.white.opacity(0.3))
+            Image(systemName: "chevron.right").font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.3))
         }
         .padding(14)
-        .background(Color.white.opacity(0.05))
+        .background(Color.tarotPanel)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(color.opacity(0.2), lineWidth: 1))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(color.opacity(0.2), lineWidth: 0.75))
     }
 
     // MARK: - Helpers
     private func sectionLabel(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 13, weight: .bold))
-            .foregroundStyle(Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.8))
+            .font(.system(size: 13, weight: .bold, design: .serif))
+            .foregroundStyle(Color.tarotGold.opacity(0.8))
             .textCase(.uppercase)
-            .tracking(1.2)
+            .tracking(1.4)
     }
 }
 

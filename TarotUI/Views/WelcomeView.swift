@@ -3,225 +3,177 @@ import SwiftUI
 struct WelcomeView: View {
     let colorScheme: ColorScheme
     let userName: String
-    let onDismiss: () -> Void
-
-    @State private var starOpacity: Double = 0
-    @State private var titleOffset: CGFloat = 30
-    @State private var titleOpacity: Double = 0
-    @State private var subtitleOpacity: Double = 0
-    @State private var buttonOpacity: Double = 0
-    @State private var rotationAngle: Double = 0
-    @State private var pulseScale: CGFloat = 1.0
+    let onStart: () -> Void
+    @State private var appear = false
+    @State private var halo: CGFloat = 0.9
 
     var body: some View {
         ZStack {
-// Deep mystical background (esoteric purple)
-            LinearGradient(
-                colors: [
-                    Color(red: 0.08, green: 0.02, blue: 0.18),
-                    Color(red: 0.12, green: 0.04, blue: 0.26),
-                    Color(red: 0.05, green: 0.02, blue: 0.14)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            Color.tarotBackground.ignoresSafeArea()
+            Color.tarotBackgroundGradient.ignoresSafeArea()
 
-            // Ambient glow orbs — esoteric purple palette
+            // Sutil velo viñeta editorial — no brillos infantiles
+            RadialGradient(colors: [Color.white.opacity(0.04), .clear], center: .top, startRadius: 0, endRadius: 720)
+                .ignoresSafeArea()
+                .blendMode(.softLight)
+
+            // Halo morado muy suave — tarot nocturno
             Circle()
-                .fill(Color(red: 0.42, green: 0.12, blue: 0.42).opacity(0.30)) // deep violet
-                .frame(width: 420, height: 420)
-                .blur(radius: 90)
-                .offset(x: -80, y: -220)
-
-            Circle()
-                .fill(Color(red: 0.72, green: 0.55, blue: 0.95).opacity(0.24)) // lavender
-                .frame(width: 300, height: 300)
-                .blur(radius: 70)
-                .offset(x: 120, y: 240)
-
-            Circle()
-                .fill(Color(red: 0.20, green: 0.08, blue: 0.40).opacity(0.42)) // deep purple
-                .frame(width: 180, height: 180)
-                .blur(radius: 40)
-                .offset(x: -40, y: 60)
-
-            // Rotating star mandala
-            ZStack {
-                ForEach(0..<8, id: \.self) { i in
-                    Image(systemName: "sparkle")
-                        .font(.system(size: 12, weight: .thin))
-                        .foregroundStyle(Color(red: 0.78, green: 0.62, blue: 0.98).opacity(0.5))
-                        .offset(y: -110)
-                        .rotationEffect(.degrees(Double(i) * 45))
-                }
-                ForEach(0..<16, id: \.self) { i in
-                    Circle()
-                        .fill(Color(red: 0.72, green: 0.55, blue: 0.95).opacity(0.18))
-                        .frame(width: 3, height: 3)
-                        .offset(y: -155)
-                        .rotationEffect(.degrees(Double(i) * 22.5))
-                }
-            }
-            .rotationEffect(.degrees(rotationAngle))
-            .opacity(starOpacity)
+                .fill(Color.tarotGold.opacity(0.10))
+                .frame(width: 560, height: 560)
+                .blur(radius: 64)
+                .scaleEffect(halo)
+                .opacity(appear ? 1 : 0)
 
             VStack(spacing: 0) {
-                Spacer()
+                Spacer(minLength: 40)
 
-                // Central tarot card icon with pulse
+                // Emblema tarot — carta minimal morada
                 ZStack {
-                    // Outer glow ring
                     Circle()
-                        .stroke(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 0.90, green: 0.78, blue: 1.0),
-                                    Color(red: 0.55, green: 0.35, blue: 0.80),
-                                    Color(red: 0.90, green: 0.78, blue: 1.0)
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
-                        .frame(width: 100, height: 100)
-                        .opacity(starOpacity * 0.6)
-                        .scaleEffect(pulseScale)
-
-// Inner background
+                        .stroke(Color.tarotGold.opacity(0.13), lineWidth: 0.85)
+                        .frame(width: 132, height: 132)
                     Circle()
-                        .fill(
-                            RadialGradient(
-                                colors: [
-                                    Color(red: 0.30, green: 0.15, blue: 0.55),
-                                    Color(red: 0.12, green: 0.05, blue: 0.28)
-                                ],
-                                center: .center,
-                                startRadius: 0,
-                                endRadius: 48
-                            )
-                        )
-                        .frame(width: 96, height: 96)
-
-                    Image(systemName: "moon.stars.fill")
-                        .font(.system(size: 38))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 0.90, green: 0.78, blue: 1.0),
-                                    Color(red: 0.72, green: 0.55, blue: 0.95)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
+                        .stroke(Color.tarotGold.opacity(0.07), lineWidth: 0.75)
+                        .frame(width: 108, height: 108)
+                    TarotCardEmblem(size: 52)
+                        .shadow(color: Color.tarotGold.opacity(0.18), radius: 14, x: 0, y: 6)
                 }
-                .shadow(color: Color(red: 0.42, green: 0.20, blue: 0.60).opacity(0.70), radius: 30, x: 0, y: 0)
-                .opacity(starOpacity)
+                .scaleEffect(appear ? 1 : 0.92)
+                .opacity(appear ? 1 : 0)
 
-                Spacer().frame(height: 40)
+                Spacer().frame(height: 34)
 
-                // Greeting text
                 VStack(spacing: 14) {
-                    Text(userName.isEmpty ? "Bienvenida" : "Hola, \(userName)")
-                        .font(.system(size: 44, weight: .bold, design: .serif))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 0.90, green: 0.78, blue: 1.0),
-                                    Color(red: 0.78, green: 0.62, blue: 0.98),
-                                    Color(red: 0.55, green: 0.35, blue: 0.80)
-                                ],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .shadow(color: Color(red: 0.55, green: 0.35, blue: 0.80).opacity(0.45), radius: 16, x: 0, y: 4)
-                        .offset(y: titleOffset)
-                        .opacity(titleOpacity)
+                    // Eyebrow editorial
+                    EyebrowLabel(text: "ARCANA  ·  78 CARTAS  ·  RIDER-WAITE")
+                        .opacity(appear ? 1 : 0)
+                        .offset(y: appear ? 0 : 6)
+
+                    if !userName.isEmpty {
+                        Text("Hola, \(userName)")
+                            .font(.system(size: 16, weight: .regular, design: .serif))
+                            .foregroundStyle(Color.tarotIvory.opacity(0.62))
+                            .tracking(0.2)
+                            .transition(.opacity)
+                    }
 
                     Text("Las cartas te esperan")
-                        .font(.system(size: 17, weight: .regular, design: .serif))
-                        .tracking(2)
-                        .foregroundStyle(Color(red: 0.90, green: 0.78, blue: 1.0).opacity(0.80))
-                        .opacity(subtitleOpacity)
+                        .font(.system(size: 34, weight: .bold, design: .serif))
+                        .tracking(-0.6)
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Color.tarotIvory)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .shadow(color: Color.black.opacity(0.28), radius: 10, x: 0, y: 6)
 
-                    HStack(spacing: 6) {
-                        ForEach(0..<5, id: \.self) { _ in
-                            Image(systemName: "sparkle")
-                                .font(.caption2)
-                                .foregroundStyle(Color(red: 0.78, green: 0.62, blue: 0.98).opacity(0.50))
-                        }
-                    }
-                    .opacity(subtitleOpacity)
+                    Text("Ritual diario, mazo completo y lecturas\ncon la profundidad del tarot.")
+                        .font(.system(size: 15, weight: .regular, design: .serif))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.58))
+                        .lineSpacing(5)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 28)
                 }
+                .opacity(appear ? 1 : 0)
+                .offset(y: appear ? 0 : 8)
 
-                Spacer().frame(height: 64)
+                Spacer().frame(height: 36)
 
-                // Enter button
-                Button(action: onDismiss) {
+                // CTA — tarot morado, no plástico
+                Button { withAnimation(LuxuryAnimation.softSpring) { onStart() } } label: {
                     HStack(spacing: 10) {
-                        Image(systemName: "sparkles")
-                        Text("Iniciar lectura")
-                            .fontWeight(.semibold)
+                        Text(TarotStrings.startReading.localized.uppercased())
+                            .font(.system(size: 13, weight: .semibold, design: .serif))
+                            .tracking(1.2)
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 11, weight: .semibold))
+                            .opacity(0.85)
                     }
-                    .font(.body)
-                    .foregroundStyle(.black.opacity(0.85))
-                    .padding(.horizontal, 36)
+                    .foregroundStyle(Color.white)
+                    .padding(.horizontal, 32)
                     .padding(.vertical, 16)
-.background(
+                    .background(
                         Capsule()
-                            .fill(
-                                LinearGradient(
-                                    colors: [
-                                        Color(red: 0.78, green: 0.62, blue: 0.98),
-                                        Color(red: 0.42, green: 0.20, blue: 0.60)
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
+                            .fill(Color.tarotGoldGradient)
+                            .overlay(
+                                Capsule()
+                                    .stroke(Color.white.opacity(0.28), lineWidth: 0.75)
+                                    .blendMode(.softLight)
                             )
                     )
-                    .shadow(color: Color(red: 0.42, green: 0.20, blue: 0.60).opacity(0.55), radius: 18, x: 0, y: 8)
-                    .scaleEffect(pulseScale)
+                    .shadow(color: Color.black.opacity(0.38), radius: 16, x: 0, y: 10)
+                    .shadow(color: Color.tarotGold.opacity(0.32), radius: 18, x: 0, y: 0)
                 }
-                .opacity(buttonOpacity)
+                .buttonStyle(.plain)
+                .scaleEffect(appear ? 1 : 0.96)
+                .opacity(appear ? 1 : 0)
 
-                Spacer().frame(height: 20)
+                Spacer(minLength: 24)
 
-                Text("Tarot Rider-Waite")
-                    .font(.caption2)
-                    .tracking(3)
-                    .foregroundStyle(Color.white.opacity(0.20))
-                    .opacity(buttonOpacity)
-
-                Spacer()
+                // Footer discreto — marca, no ruido
+                Text("Hecho para durar. Sin prisas.")
+                    .font(.system(size: 10, weight: .medium, design: .serif))
+                    .tracking(1.0)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.28))
+                    .padding(.bottom, 18)
             }
+            .padding(.horizontal, 24)
         }
         .onAppear {
-            // Staggered entrance animations
-            withAnimation(.easeOut(duration: 1.4).delay(0.1)) {
-                starOpacity = 1
+            withAnimation(.easeOut(duration: 0.9)) { appear = true }
+            withAnimation(LuxuryAnimation.breathe) { halo = 1.04 }
+        }
+    }
+}
+
+// MARK: - Tarot card emblem — carta minimal morada (mismo lenguaje que el icono)
+private struct TarotCardEmblem: View {
+    var size: CGFloat = 52
+    var body: some View {
+        ZStack {
+            // Carta base — rounded rect morado
+            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                .fill(Color(red: 0.11, green: 0.08, blue: 0.19))
+                .frame(width: size*0.66, height: size)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .stroke(Color.tarotGold, lineWidth: 1.25)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4.5, style: .continuous)
+                        .stroke(Color.tarotGold.opacity(0.22), lineWidth: 0.85)
+                        .padding(6)
+                )
+            // Estrella central tarot — 5 puntas hairline
+            Canvas { ctx, sz in
+                let c = CGPoint(x: sz.width/2, y: sz.height/2)
+                let outer: CGFloat = size*0.22
+                let inner: CGFloat = size*0.09
+                var pts: [CGPoint] = []
+                for i in 0..<10 {
+                    let a = Double(-90 + i*36) * Double.pi/180
+                    let r = i%2==0 ? outer : inner
+                    pts.append(CGPoint(x: c.x + CGFloat(cos(a))*r, y: c.y + CGFloat(sin(a))*r))
+                }
+                var p = Path()
+                p.move(to: pts[0])
+                for pt in pts.dropFirst() { p.addLine(to: pt) }
+                p.closeSubpath()
+                ctx.stroke(p, with: .color(Color.tarotGold), lineWidth: 1.15)
+                // círculo central
+                let cr: CGFloat = size*0.065
+                ctx.stroke(Path(ellipseIn: CGRect(x: c.x-cr, y: c.y-cr, width: cr*2, height: cr*2)), with: .color(Color.tarotGold.opacity(0.52)), lineWidth: 0.9)
             }
-            withAnimation(.easeOut(duration: 0.9).delay(0.4)) {
-                titleOffset = 0
-                titleOpacity = 1
-            }
-            withAnimation(.easeOut(duration: 0.8).delay(0.85)) {
-                subtitleOpacity = 1
-            }
-            withAnimation(.easeOut(duration: 0.7).delay(1.2)) {
-                buttonOpacity = 1
-            }
-            // Continuous gentle rotation
-            withAnimation(.linear(duration: 30).repeatForever(autoreverses: false)) {
-                rotationAngle = 360
-            }
-            // Pulse breathing
-            withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true).delay(1.0)) {
-                pulseScale = 1.06
+            .frame(width: size, height: size)
+            // sparkles esquinas — muy sutiles
+            ForEach([CGPoint(x: -size*0.18, y: -size*0.32), CGPoint(x: size*0.20, y: -size*0.26)], id: \.x) { off in
+                Image(systemName: "sparkle")
+                    .font(.system(size: 5, weight: .thin))
+                    .foregroundStyle(Color.tarotGoldHighlight.opacity(0.72))
+                    .offset(x: off.x, y: off.y)
             }
         }
+        .frame(width: size, height: size)
     }
 }

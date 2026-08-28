@@ -70,7 +70,7 @@ let package = Package(
 // MARK: - TarotUI
         .target(
             name: "TarotUI",
-            dependencies: ["TarotCore", "TarotData", "TarotContent", "TarotNotifications"],
+            dependencies: ["TarotCore", "TarotData", "TarotContent", "TarotNotifications", "TarotDI"],
             path: "TarotUI",
             exclude: ["README.md"]
         ),

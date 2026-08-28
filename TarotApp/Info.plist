@@ -21,9 +21,9 @@
 		<string>spotify</string>
 	</array>
 	<key>NSAppleMusicUsageDescription</key>
-	<string>M</string>
+	<string>Tarot usa Apple Music para ofrecerte música ambiente opcional durante tus lecturas.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>di que si puta</string>
+	<string>Accede a tu cámara para capturar y guardar lecturas de tarot privadas en la bóveda secreta.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UILaunchStoryboardName</key>

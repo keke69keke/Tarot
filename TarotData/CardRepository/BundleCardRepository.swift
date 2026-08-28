@@ -145,8 +145,15 @@ public final class BundleCardRepository: CardRepository {
         }
 
         let selected = shuffled.prefix(drawCount)
+        // Respetar UserSettings.allowReversedCards y probabilidad 30% (spec)
+        let allowReversed: Bool = {
+            // Lee desde UserDefaultsSettingsRepository para respetar migración y defaults
+            // Evita crear ciclo: lee directo UserDefaults con fallback true
+            if UserDefaults.standard.object(forKey: "allowReversedCards") == nil { return true }
+            return UserDefaults.standard.bool(forKey: "allowReversedCards")
+        }()
         return selected.enumerated().map { index, card in
-            let isReversed = Bool.random()
+            let isReversed = allowReversed && (Double.random(in: 0..<1) < 0.30)
             let orientation: CardOrientation = isReversed ? .reversed : .upright
             let position: SpreadPosition
             if positions.isEmpty {

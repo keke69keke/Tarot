@@ -248,7 +248,7 @@ public struct TarotChatView: View {
                         ZStack {
                             Circle()
                                 .fill(LinearGradient(
-                                    colors: [Color(red: 0.78, green: 0.58, blue: 0.18), Color(red: 0.42, green: 0.10, blue: 0.10)],
+                                    colors: [Color.tarotGold, Color.tarotGoldDeep],
                                     startPoint: .topLeading, endPoint: .bottomTrailing
                                 ))
                                 .frame(width: 30, height: 30)
@@ -303,13 +303,13 @@ public struct TarotChatView: View {
 
             // Ambient orbs
             Circle()
-                .fill(Color(red: 0.78, green: 0.58, blue: 0.18).opacity(colorScheme == .dark ? 0.08 : 0.05))
+                .fill(Color.tarotGold.opacity(colorScheme == .dark ? 0.08 : 0.05))
                 .frame(width: 300, height: 300)
                 .blur(radius: 80)
                 .offset(x: -100, y: -200)
 
             Circle()
-                .fill(Color(red: 0.42, green: 0.10, blue: 0.10).opacity(colorScheme == .dark ? 0.10 : 0.04))
+                .fill(Color.tarotGoldDeep.opacity(colorScheme == .dark ? 0.10 : 0.04))
                 .frame(width: 250, height: 250)
                 .blur(radius: 60)
                 .offset(x: 140, y: 100)
@@ -380,7 +380,7 @@ public struct TarotChatView: View {
             ZStack {
                 Circle()
                     .fill(LinearGradient(
-                        colors: [Color(red: 0.78, green: 0.58, blue: 0.18).opacity(0.20), Color(red: 0.42, green: 0.10, blue: 0.10).opacity(0.15)],
+                        colors: [Color.tarotGold.opacity(0.20), Color.tarotGoldDeep.opacity(0.15)],
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     ))
                     .frame(width: 90, height: 90)
@@ -402,7 +402,7 @@ public struct TarotChatView: View {
                         startPoint: .top, endPoint: .bottom
                     ))
             }
-            .shadow(color: Color(red: 0.78, green: 0.58, blue: 0.18).opacity(0.40), radius: 20)
+            .shadow(color: Color.tarotGold.opacity(0.40), radius: 20)
 
             VStack(spacing: 8) {
                 Text("Arcana IA")
@@ -430,13 +430,13 @@ public struct TarotChatView: View {
                         } label: {
                             Text(suggestion)
                                 .font(.caption)
-                                .foregroundStyle(Color(red: 0.78, green: 0.58, blue: 0.18))
+                                .foregroundStyle(Color.tarotGold)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 7)
                                 .background(
                                     Capsule()
-                                        .fill(Color(red: 0.78, green: 0.58, blue: 0.18).opacity(0.10))
-                                        .overlay(Capsule().stroke(Color(red: 0.78, green: 0.58, blue: 0.18).opacity(0.30), lineWidth: 1))
+                                        .fill(Color.tarotGold.opacity(0.10))
+                                        .overlay(Capsule().stroke(Color.tarotGold.opacity(0.30), lineWidth: 1))
                                 )
                         }
                         .buttonStyle(.plain)
@@ -498,7 +498,7 @@ public struct TarotChatView: View {
                     } else {
                         Circle()
                             .fill(LinearGradient(
-                                colors: [Color(red: 0.78, green: 0.58, blue: 0.18), Color(red: 0.42, green: 0.10, blue: 0.10)],
+                                colors: [Color.tarotGold, Color.tarotGoldDeep],
                                 startPoint: .topLeading, endPoint: .bottomTrailing
                             ))
                             .frame(width: 40, height: 40)
@@ -548,7 +548,7 @@ private struct MessageBubble: View {
                 ZStack {
                     Circle()
                         .fill(LinearGradient(
-                            colors: [Color(red: 0.78, green: 0.58, blue: 0.18), Color(red: 0.42, green: 0.10, blue: 0.10)],
+                            colors: [Color.tarotGold, Color.tarotGoldDeep],
                             startPoint: .topLeading, endPoint: .bottomTrailing
                         ))
                         .frame(width: 28, height: 28)
@@ -585,7 +585,7 @@ private struct MessageBubble: View {
         if isUser {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
                 .fill(LinearGradient(
-                    colors: [Color(red: 0.78, green: 0.58, blue: 0.18), Color(red: 0.42, green: 0.10, blue: 0.10)],
+                    colors: [Color.tarotGold, Color.tarotGoldDeep],
                     startPoint: .topLeading, endPoint: .bottomTrailing
                 ))
         } else {
@@ -615,7 +615,7 @@ private struct TypingIndicator: View {
             ZStack {
                 Circle()
                     .fill(LinearGradient(
-                        colors: [Color(red: 0.78, green: 0.58, blue: 0.18), Color(red: 0.42, green: 0.10, blue: 0.10)],
+                        colors: [Color.tarotGold, Color.tarotGoldDeep],
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     ))
                     .frame(width: 28, height: 28)

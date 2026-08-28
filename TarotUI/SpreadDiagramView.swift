@@ -67,7 +67,7 @@ public struct SpreadDiagramView: View {
                 soulMirrorLayout
             case .alchemyPath:
                 alchemyPathLayout
-case .moonCycle:
+            case .moonCycle:
                 moonCycleLayout
             case .pyramid:
                 pyramidLayout
@@ -788,6 +788,11 @@ private func moonPhaseCard(index: Int, phase: String, yOffset: CGFloat) -> some 
                     .rotation3DEffect(.degrees(isRevealed ? 180 : 0), axis: (x: 0, y: 1, z: 0), perspective: 0.4)
                 }
                 .rotationEffect(cardRotation)
+                .scaleEffect(isRevealed ? 1.0 : 0.9)
+                .overlay(alignment: .topLeading) {
+                    OrderNumberBadge(number: index + 1)
+                        .padding(6)
+                }
 
                 // Position Tag Label with Foil Border
                 Text(drawn.position.displayName)
@@ -809,6 +814,9 @@ private func moonPhaseCard(index: Int, phase: String, yOffset: CGFloat) -> some 
             }
         }
         .buttonStyle(.plain)
+        .accessibilityLabel("\(drawn.card.name), \(drawn.position.displayName), \(isRevealed ? "revelada" : "oculta") número \(index+1)")
+        .accessibilityHint(isRevealed ? "Toca para ver detalles" : "Toca para revelar")
+        .accessibilityAddTraits(.isButton)
         .contextMenu {
             Button {
                 onSelectCard(drawn)

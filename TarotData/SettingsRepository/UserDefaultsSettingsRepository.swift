@@ -19,18 +19,25 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         static let activeTabs = "activeTabs"
         static let inactiveTabs = "inactiveTabs"
         static let openAIKey = "openAIKey"
+        static let userName = "userName"
+        static let biorhythmBirthDate = "biorhythmBirthDate"
+        static let natalBirthDate = "natalBirthDate"
+        static let natalBirthTime = "natalBirthTime"
+        static let natalPlace = "natalPlace"
     }
     
     // MARK: - Properties
     
     private let userDefaults: UserDefaults
+    private let keychain: KeychainServiceProtocol
     
     // MARK: - Initialization
     
     /// Initializes the repository with the specified UserDefaults instance.
     /// - Parameter userDefaults: The UserDefaults instance to use for persistence. Defaults to .standard.
-    public init(userDefaults: UserDefaults = .standard) {
+    public init(userDefaults: UserDefaults = .standard, keychain: KeychainServiceProtocol = KeychainService()) {
         self.userDefaults = userDefaults
+        self.keychain = keychain
     }
     
     // MARK: - SettingsRepository Protocol
@@ -60,15 +67,26 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         
         let inactiveTabsRaw = userDefaults.stringArray(forKey: Keys.inactiveTabs) ?? UserSettings().inactiveTabs.map { $0.rawValue }
         let inactiveTabs = inactiveTabsRaw.compactMap { AppTab(rawValue: $0) }
-        
-        // Ensure .learn tab is always included in activeTabs
+
+        // Ensure mandatory tabs are always visible (migration from older installs)
         let defaultActiveTabs = UserSettings().activeTabs
-        let updatedActiveTabs = activeTabs.isEmpty ? defaultActiveTabs : activeTabs
-        let finalActiveTabs = updatedActiveTabs.contains(.learn) ? updatedActiveTabs : (updatedActiveTabs + [.learn]).sorted(by: { defaultActiveTabs.firstIndex(of: $0) ?? 0 < defaultActiveTabs.firstIndex(of: $1) ?? 0 })
-        let finalInactiveTabs = inactiveTabs.filter { $0 != .learn }
-        
-        let openAIKey = userDefaults.string(forKey: Keys.openAIKey) ?? ""
-        
+        var updatedActiveTabs = activeTabs.isEmpty ? defaultActiveTabs : activeTabs
+        // Auto-migrate missing mandatory tabs (learn, biorhythm, natal) for users coming from old versions
+        let mandatoryTabs: [AppTab] = [.learn, .biorhythm, .natal]
+        for tab in mandatoryTabs where !updatedActiveTabs.contains(tab) {
+            updatedActiveTabs.append(tab)
+        }
+        // Keep activeTabs sorted by default order for deterministic UI
+        updatedActiveTabs.sort { (defaultActiveTabs.firstIndex(of: $0) ?? 999) < (defaultActiveTabs.firstIndex(of: $1) ?? 999) }
+        let finalInactiveTabs = inactiveTabs.filter { !mandatoryTabs.contains($0) }
+
+        let openAIKey = keychain.read(Keys.openAIKey) ?? ""
+        let userName = userDefaults.string(forKey: Keys.userName) ?? ""
+        let biorhythmBirthDate = userDefaults.object(forKey: Keys.biorhythmBirthDate) as? Date
+        let natalBirthDate = userDefaults.object(forKey: Keys.natalBirthDate) as? Date
+        let natalBirthTime = userDefaults.object(forKey: Keys.natalBirthTime) as? Date
+        let natalPlace = userDefaults.string(forKey: Keys.natalPlace) ?? ""
+
         return UserSettings(
             allowReversedCards: allowReversedCards,
             selectedLanguage: selectedLanguage,
@@ -78,8 +96,13 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
             dailyNotificationHour: dailyNotificationHour,
             notificationsEnabled: notificationsEnabled,
             openAIKey: openAIKey,
-            activeTabs: finalActiveTabs,
-            inactiveTabs: finalInactiveTabs
+            activeTabs: updatedActiveTabs,
+            inactiveTabs: finalInactiveTabs,
+            userName: userName,
+            biorhythmBirthDate: biorhythmBirthDate,
+            natalBirthDate: natalBirthDate,
+            natalBirthTime: natalBirthTime,
+            natalPlace: natalPlace
         )
     }
     
@@ -92,17 +115,24 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         userDefaults.set(settings.appearance.rawValue, forKey: Keys.appearance)
         userDefaults.set(settings.dailyNotificationHour, forKey: Keys.dailyNotificationHour)
         userDefaults.set(settings.notificationsEnabled, forKey: Keys.notificationsEnabled)
-        
-        // Ensure .learn is always in activeTabs and never in inactiveTabs when saving
+        userDefaults.set(settings.userName, forKey: Keys.userName)
+        if let d = settings.biorhythmBirthDate { userDefaults.set(d, forKey: Keys.biorhythmBirthDate) } else { userDefaults.removeObject(forKey: Keys.biorhythmBirthDate) }
+        if let d = settings.natalBirthDate { userDefaults.set(d, forKey: Keys.natalBirthDate) } else { userDefaults.removeObject(forKey: Keys.natalBirthDate) }
+        if let d = settings.natalBirthTime { userDefaults.set(d, forKey: Keys.natalBirthTime) } else { userDefaults.removeObject(forKey: Keys.natalBirthTime) }
+        userDefaults.set(settings.natalPlace, forKey: Keys.natalPlace)
+
+        // Ensure mandatory tabs are always in activeTabs and never in inactiveTabs when saving
         let defaultActiveTabs = UserSettings().activeTabs
-        let activeTabsToSave = settings.activeTabs.contains(.learn) ? settings.activeTabs : (settings.activeTabs + [.learn]).sorted(by: { defaultActiveTabs.firstIndex(of: $0) ?? 0 < defaultActiveTabs.firstIndex(of: $1) ?? 0 })
-        let inactiveTabsToSave = settings.inactiveTabs.filter { $0 != .learn }
-        
+        var activeTabsToSave = settings.activeTabs
+        let mandatory: [AppTab] = [.learn, .biorhythm, .natal]
+        for tab in mandatory where !activeTabsToSave.contains(tab) {
+            activeTabsToSave.append(tab)
+        }
+        activeTabsToSave.sort { (defaultActiveTabs.firstIndex(of: $0) ?? 999) < (defaultActiveTabs.firstIndex(of: $1) ?? 999) }
+        let inactiveTabsToSave = settings.inactiveTabs.filter { !mandatory.contains($0) }
+
         userDefaults.set(activeTabsToSave.map { $0.rawValue }, forKey: Keys.activeTabs)
         userDefaults.set(inactiveTabsToSave.map { $0.rawValue }, forKey: Keys.inactiveTabs)
-        userDefaults.set(settings.openAIKey, forKey: Keys.openAIKey)
-        
-        // Force synchronization to disk
-        userDefaults.synchronize()
+        _ = keychain.write(settings.openAIKey, for: Keys.openAIKey)
     }
 }

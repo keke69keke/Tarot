@@ -1,39 +1,43 @@
 import SwiftUI
 import TarotCore
 import TarotData
+import TarotDI
 
 struct DailyCardView: View {
     @ObservedObject var model: TarotViewModel
+    @State private var halo: CGFloat = 1.0
+
     var body: some View {
-        NavigationStack {
-            ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 24) {
-                VStack(alignment: .leading, spacing: 10) {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: LuxurySpacing.lg) {
+                // Header editorial — pequeño, no grita
+                VStack(alignment: .leading, spacing: 8) {
+                    EyebrowLabel(text: "RITUAL  ·  HOY")
                     Text("Carta del día")
-                        .font(.title2.bold())
-                        .foregroundStyle(.primary)
-                    Text(model.dailyRevealed ? "Tu guía para el día está lista." : "Toca la carta para descubrir tu orientación e inspiración diaria.")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .font(.system(size: 28, weight: .bold, design: .serif))
+                        .tracking(-0.5)
+                        .foregroundStyle(Color.tarotIvory)
+                    Text("Una sola carta. Luz suficiente para el día.")
+                        .font(.system(size: 13, weight: .regular, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.56))
+                        .lineSpacing(4)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(18)
-                .background(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .fill(Color.tarotPanel.opacity(0.90))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(Color.tarotBorder, lineWidth: 1)
-                )
+                .padding(.horizontal, 4)
+                .padding(.top, 6)
 
-Button {
-                    if !model.dailyRevealed {
-                        TarotAudioService.shared.playGoldenChime()
-                        model.revealDaily()
-                    }
-                } label: {
+                // Escenario joya — foco cenital, halo mínimo
+                ZStack {
+                    // velo de luz
+                    Ellipse()
+                        .fill(Color.tarotGold.opacity(model.dailyRevealed ? 0.09 : 0.05))
+                        .frame(width: 360, height: 360)
+                        .blur(radius: 36)
+                        .scaleEffect(halo)
+                        .offset(y: 10)
+
+                    // Card con marco joya
                     CardFace(
                         name: model.dailyCard.name,
                         imageName: model.dailyCard.imageName,
@@ -41,40 +45,78 @@ Button {
                         reversed: false,
                         back: !model.dailyRevealed,
                         useTexture: true,
-                        size: CGSize(width: 220, height: 330),
+                        size: CGSize(width: 224, height: 336),
                         activeDeck: model.settings.activeDeck,
                         backDesign: model.settings.cardBackDesign
                     )
                     .rotation3DEffect(.degrees(model.dailyRevealed ? 0 : 180), axis: (x: 0, y: 1, z: 0))
-                    .shadow(color: Color.tarotShadow.opacity(1), radius: 18, x: 0, y: 12)
+                    .shadow(color: Color.black.opacity(0.45), radius: 24, x: 0, y: 14)
+                    .shadow(color: Color.tarotGold.opacity(model.dailyRevealed ? 0.18 : 0.07), radius: 22, x: 0, y: 0)
                     .overlay(
-                        RoundedRectangle(cornerRadius: 22)
-                            .stroke(Color.tarotBorder, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .stroke(Color.tarotGold.opacity(model.dailyRevealed ? 0.22 : 0.14), lineWidth: 0.9)
                     )
-                }
-                .buttonStyle(.plain)
-                .contentShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
-                .accessibilityLabel(model.dailyRevealed ? model.dailyCard.name : "Carta del día boca abajo")
-                .padding(.vertical, 4)
+                    .scaleEffect(model.dailyRevealed ? 1.0 : 0.985)
 
-                Text(model.dailyRevealed ? "Carta revelada. Desplázate para ver la interpretación." : "Pulsa la carta para revelarla")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .center)
+                    // Tap organico — no botón plástico
+                    if !model.dailyRevealed {
+                        Button { withAnimation(LuxuryAnimation.softSpring) { model.revealDaily() } } label: {
+                            VStack(spacing: 8) {
+                                Image(systemName: "eye")
+                                    .font(.system(size: 16, weight: .thin))
+                                    .foregroundStyle(Color.tarotIvory.opacity(0.92))
+                                Text("REVELAR")
+                                    .font(.system(size: 10, weight: .semibold, design: .serif))
+                                    .tracking(1.6)
+                                    .foregroundStyle(Color.tarotIvory.opacity(0.72))
+                            }
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 14)
+                            .background(
+                                Capsule()
+                                    .fill(Color.black.opacity(0.38))
+                                    .background(Capsule().fill(.ultraThinMaterial).opacity(0.45))
+                            )
+                            .overlay(Capsule().stroke(Color.white.opacity(0.14), lineWidth: 0.75))
+                            .shadow(color: Color.black.opacity(0.35), radius: 12, x: 0, y: 8)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel(TarotStrings.tapToReveal.localized)
+                        .accessibilityHint("Revela la carta del día")
+                        .accessibilityAddTraits(.isButton)
+                    } else {
+                        EmptyView()
+                            .accessibilityHidden(true)
+                    }
+                }
+                .frame(height: 386)
+                .padding(.vertical, 4)
+                .onAppear { withAnimation(LuxuryAnimation.breathe) { halo = 1.06 } }
+
+                Text(model.dailyRevealed ? "Carta revelada" : "Toca para revelar")
+                    .font(.system(size: 11, weight: .medium, design: .serif))
+                    .tracking(0.6)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.44))
+                    .frame(maxWidth: .infinity)
 
                 if model.dailyRevealed {
-                    CardDetailText(card: model.dailyCard, orientation: .upright, repository: model.container.cards)
-                        .padding()
-                        .background(Color.tarotPanel.opacity(0.90))
-                        .cornerRadius(22)
+                    VStack(alignment: .leading, spacing: 12) {
+                        GoldDivider(opacity: 0.14)
+                        CardDetailText(card: model.dailyCard, orientation: .upright, repository: model.container.cards)
+                    }
+                    .padding(18)
+                    .luxuryGlass()
+                    .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
 
-                Spacer(minLength: 0)
+                Spacer(minLength: 12)
             }
-            .padding()
-            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 16)
         }
-        .navigationTitle("Carta del día")
-        }
+        .navigationTitle(TarotStrings.dailyCardTitle.localized)
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }

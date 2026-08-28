@@ -2,11 +2,17 @@ import Foundation
 
 public enum TarotStrings: String {
     // Reading
+    case selectSpread = "Selecciona tu tirada"
     case shuffleAndReveal = "Barajar y revelar"
     case revealAll = "Revelar todas"
     case saveReading = "Guardar lectura"
     case notesPlaceholder = "Escribe tus notas..."
-    
+    case readingNotesTitle = "Notas de la lectura"
+    case noSignificatorSelected = "No hay carta significadora"
+    case chooseRandomly = "Elegir al azar"
+    case holdToReplace = "Mantén pulsada una carta para reemplazarla"
+    case reshuffle = "Re-barajar"
+
     // Daily card
     case dailyCardTitle = "Carta del día"
     case tapToReveal = "Pulsa la carta para revelarla"
@@ -38,10 +44,60 @@ public enum TarotStrings: String {
     // Common
     case errorTitle = "Error"
     case ok = "Aceptar"
+    case startReading = "Iniciar lectura"
     case retry = "Reintentar"
     case couldNotStart = "No se pudo iniciar Tarot"
     case loadError = "Error de carga de recursos"
     
+    // Biorritmo
+    case biorhythmTitle = "Biorritmo"
+    case biorhythmEyebrow = "CICLOS  ·  RITMO NATURAL"
+    case biorhythmDescription = "Cuatro curvas sutiles que siguen tu fecha de nacimiento. Léelas como mareas, no como sentencia."
+    case biorhythmBirthDateLabel = "Fecha de nacimiento"
+    case next30Days = "Próximos 30 días"
+    case biorhythmPhysical = "Físico"
+    case biorhythmEmotional = "Emocional"
+    case biorhythmIntellectual = "Intelectual"
+    case biorhythmIntuitive = "Intuitivo"
+    case biorhythmPeak = "En pico — gran energía para actuar"
+    case biorhythmHigh = "Zona alta — favorable y positivo"
+    case biorhythmMedium = "Zona media — estable y equilibrado"
+    case biorhythmLow = "Zona baja — prioriza el descanso"
+    case biorhythmCritical = "Punto crítico — cuida tu bienestar"
+
+    // Natal
+    case natalTitle = "Hoja Natal"
+    case natalEyebrow = "CARTA  ·  CIELO NATAL"
+    case natalDescription = "Tres puntos esenciales — Sol, Luna y Ascendente — con fecha, hora y lugar."
+    case natalBirthData = "Datos de nacimiento"
+    case natalDateLabel = "Fecha"
+    case natalTimeLabel = "Hora (aprox.)"
+    case natalPlacePlaceholder = "Lugar (opcional)"
+    case natalWheelTitle = "Tu Rueda del Zodíaco"
+    case natalSun = "Sol"
+    case natalMoon = "Luna"
+    case natalAscendant = "Ascendente"
+    case natalSunDetail = "Tu esencia, identidad y propósito central."
+    case natalMoonDetail = "Tu mundo emocional e intuición (aproximado)."
+    case natalAscDetail = "Tu imagen externa al conocer (aproximado)."
+    case natalElementPrefix = "Elemento: %s · %s"
+
+    // Reading extras
+    case chooseFirstTwo = "Elegir las 2 primeras cartas"
+    case chooseFirstTwoDesc = "Opcional. Define qué sale en posición 1 y 2."
+    case removeChosen = "Quitar cartas elegidas"
+    case addCard = "AÑADIR"
+    case choose = "Elegir"
+    case significatorTitle = "Carta significadora"
+    case significatorSubtitle = "Tu carta"
+    case numberOfCards = "Número de cartas"
+    case shuffling = "Barajando…"
+    case cardRevealedShort = "Carta revelada"
+    case tapToRevealShort = "Toca para revelar"
+    case searchCard = "Buscar carta"
+    case chooseReplacement = "Elegir carta de reemplazo"
+    case cancel = "Cancelar"
+
     // Accessibility
     case cardBackDescription = "Carta boca abajo"
     case cardFrontDescription = "Carta %s"

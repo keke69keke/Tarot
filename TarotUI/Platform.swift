@@ -13,53 +13,74 @@ import AppKit
 typealias PlatformImage = NSImage
 #endif
 
-// MARK: - Color helpers
+// MARK: - Color helpers — 100k MXN Luxury Palette — Morado Tarot
+// Editorial, nocturno, místico y limpio. Conserva lujo pero en violeta tarot.
 
 extension Color {
+    // Fondo terciopelo morado profundo — obsidiana violeta
     static var tarotBackground: Color {
-        #if canImport(UIKit)
-        return Color(UIColor.systemBackground)
-        #elseif canImport(AppKit)
-        return Color(nsColor: .windowBackgroundColor)
-        #else
-        return Color(red: 0.05, green: 0.02, blue: 0.12)
-        #endif
+        Color(red: 0.06, green: 0.04, blue: 0.13) // #0F0A22
+    }
+    static var tarotBackgroundElevated: Color {
+        Color(red: 0.09, green: 0.06, blue: 0.18)
     }
 
+    // Panel de vidrio ahumado — translúcido, no opaco
     static var tarotPanel: Color {
-        #if canImport(UIKit)
-        return Color(UIColor.secondarySystemBackground)
-        #elseif canImport(AppKit)
-        return Color(nsColor: .textBackgroundColor)
-        #else
-        return Color(red: 0.22, green: 0.10, blue: 0.34).opacity(0.16)
-        #endif
+        Color.white.opacity(0.055)
     }
-
+    static var tarotPanelStrong: Color {
+        Color.white.opacity(0.08)
+    }
     static var tarotCardBase: Color {
-        #if canImport(UIKit)
-        return Color(UIColor.tertiarySystemBackground)
-        #elseif canImport(AppKit)
-        return Color(nsColor: .textBackgroundColor)
-        #else
-        return Color(red: 0.20, green: 0.10, blue: 0.30)
-        #endif
+        Color(red: 0.11, green: 0.08, blue: 0.19)
     }
 
+    // Bordes y sombras con temperatura violeta
     static var tarotBorder: Color {
-        Color(red: 0.72, green: 0.55, blue: 0.95).opacity(0.28)
+        Color(red: 0.60, green: 0.52, blue: 1.0).opacity(0.13)
     }
-
+    static var tarotBorderStrong: Color {
+        Color(red: 0.60, green: 0.52, blue: 1.0).opacity(0.20)
+    }
     static var tarotShadow: Color {
-        Color(red: 0.12, green: 0.02, blue: 0.28).opacity(0.30)
+        Color.black.opacity(0.45)
+    }
+    static var tarotShadowSoft: Color {
+        Color.black.opacity(0.28)
     }
 
+    // Violeta tarot — lavanda luminoso, no neón
     static var tarotGold: Color {
-        Color(red: 0.78, green: 0.62, blue: 0.98)
+        Color(red: 0.60, green: 0.52, blue: 1.0) // #9984FF lavanda tarot
+    }
+    static var tarotGoldHighlight: Color {
+        Color(red: 0.78, green: 0.72, blue: 1.0) // #C7B8FF
+    }
+    static var tarotGoldDeep: Color {
+        Color(red: 0.36, green: 0.28, blue: 0.78) // sombra violeta profunda
+    }
+    static var tarotIvory: Color {
+        Color(red: 0.96, green: 0.94, blue: 0.89)
     }
 
+    // Vino/bugundi editorial — solo acento, nunca fondo pleno
     static var tarotBurgundy: Color {
-        Color(red: 0.42, green: 0.12, blue: 0.42)
+        Color(red: 0.28, green: 0.08, blue: 0.14)
+    }
+    static var tarotBurgundyDeep: Color {
+        Color(red: 0.18, green: 0.04, blue: 0.08)
+    }
+
+    // Gradientes metálicos reutilizables
+    static var tarotGoldGradient: LinearGradient {
+        LinearGradient(colors: [tarotGoldHighlight, tarotGold, tarotGoldDeep], startPoint: .topLeading, endPoint: .bottomTrailing)
+    }
+    static var tarotGoldHorizontal: LinearGradient {
+        LinearGradient(colors: [tarotGoldDeep, tarotGold, tarotGoldHighlight, tarotGold, tarotGoldDeep], startPoint: .leading, endPoint: .trailing)
+    }
+    static var tarotBackgroundGradient: LinearGradient {
+        LinearGradient(colors: [Color(red: 0.09, green: 0.06, blue: 0.18), Color(red: 0.05, green: 0.03, blue: 0.11)], startPoint: .topLeading, endPoint: .bottomTrailing)
     }
 }
 

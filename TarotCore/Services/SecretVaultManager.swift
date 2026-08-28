@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import CryptoKit
 
 public struct SecretVaultEntry: Identifiable, Codable, Hashable {
     public let id: UUID
@@ -23,6 +24,7 @@ public class SecretVaultManager: ObservableObject {
     @Published public private(set) var isUnlocked: Bool = false
     
     private let pinDefaultsKey = "TarotSecretVault_PIN"
+    private let pinSaltKey = "TarotSecretVault_PIN_Salt"
     private let entriesDefaultsKey = "TarotSecretVault_Entries"
     
     public init() {
@@ -33,19 +35,46 @@ public class SecretVaultManager: ObservableObject {
         UserDefaults.standard.string(forKey: pinDefaultsKey) != nil
     }
     
+    private func hashPIN(_ pin: String, salt: Data) -> String {
+        let pinData = pin.data(using: .utf8)!
+        let combined = salt + pinData
+        let hash = SHA256.hash(data: combined)
+        return hash.map { String(format: "%02x", $0) }.joined()
+    }
+    
     public func setPIN(_ pin: String) {
-        UserDefaults.standard.set(pin, forKey: pinDefaultsKey)
+        let salt = Data((0..<16).map { _ in UInt8.random(in: 0...255) })
+        let hash = hashPIN(pin, salt: salt)
+        UserDefaults.standard.set(salt.base64EncodedString(), forKey: pinSaltKey)
+        UserDefaults.standard.set(hash, forKey: pinDefaultsKey)
         isUnlocked = true
     }
     
     public func unlock(with pin: String) -> Bool {
-        guard let savedPIN = UserDefaults.standard.string(forKey: pinDefaultsKey) else {
-            // First time setup
+        guard let savedHash = UserDefaults.standard.string(forKey: pinDefaultsKey) else {
+            // First time setup — no PIN at all
             setPIN(pin)
             return true
         }
-        
-        if savedPIN == pin {
+
+        // Migration: old version stored plain PIN without salt
+        guard let saltBase64 = UserDefaults.standard.string(forKey: pinSaltKey),
+              let salt = Data(base64Encoded: saltBase64) else {
+            // Legacy plain PIN stored; compare directly and upgrade to hashed storage if correct
+            if savedHash == pin {
+                // Upgrade to salted hash transparently
+                let newSalt = Data((0..<16).map { _ in UInt8.random(in: 0...255) })
+                let newHash = hashPIN(pin, salt: newSalt)
+                UserDefaults.standard.set(newSalt.base64EncodedString(), forKey: pinSaltKey)
+                UserDefaults.standard.set(newHash, forKey: pinDefaultsKey)
+                isUnlocked = true
+                return true
+            }
+            return false
+        }
+
+        let inputHash = hashPIN(pin, salt: salt)
+        if savedHash == inputHash {
             isUnlocked = true
             return true
         }

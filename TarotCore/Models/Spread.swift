@@ -3,7 +3,7 @@ import CoreGraphics
 
 /// Defines a specific location within a spread (e.g., "The Past", "The Goal").
 public struct SpreadPosition: Codable, Identifiable, Hashable {
-public let id: UUID
+    public let id: UUID
     public let type: SpreadPositionType?
     public var name: String
     public var displayName: String
@@ -57,7 +57,7 @@ public let id: UUID
 }
 
 /// A lightweight set of common spread presets used across the app.
-public enum SpreadType: String, CaseIterable, Codable {
+public enum SpreadType: String, CaseIterable, Codable, Identifiable {
     case dailyCard
     case threeCard
     case celticCross
@@ -67,13 +67,14 @@ public enum SpreadType: String, CaseIterable, Codable {
     case twelveMonth
     case decision
     case pathOfLife
+    case free          // Tirada libre: el usuario elige cuántas cartas
     
     // Phase 3 Extensions
     case astrological
     case chakraSpread
     case hexagram
 
-// Phase 4 — Esoteric Spreads
+    // Phase 4 — Esoteric Spreads
     case temperance       // La Templanza — Equilibrio Alquímico (6 cards)
     case treeOfLife       // Árbol de la Vida — 10 Sefirot Cabalísticas
     case starDavid        // Estrella de David — Hexagrama Sagrado (7 cards)
@@ -293,8 +294,14 @@ case .moonCycle:
                 SpreadPosition(name: "Infancia", description: "Los condicionamientos tempranos de tu vida."),
                 SpreadPosition(name: "Patrón Kármico", description: "El ciclo que se repite y debes sanar."),
                 SpreadPosition(name: "Propósito", description: "La misión que trasciende tu linaje."),
-                SpreadPosition(name: "Liberación", description: "Lo que puedes soltar para honrar tu propio camino.")
+                                SpreadPosition(name: "Liberación", description: "Lo que puedes soltar para honrar tu propio camino.")
             ]
+        case .free:
+            // Tirada libre por defecto (5 cartas); el usuario puede cambiarlo vía freeCardCount
+            return (1...5).map { i in
+                SpreadPosition(name: "Carta \(i)", displayName: "Carta \(i)",
+                               description: "Posición libre \(i) de tu tirada.")
+            }
         }
     }
 
@@ -317,10 +324,11 @@ case .moonCycle:
         case .starDavid:    return "✦ Estrella de David"
         case .soulMirror:   return "✦ Espejo del Alma"
         case .alchemyPath:  return "✦ Gran Obra Alquímica"
-case .moonCycle:    return "✦ Ciclo Lunar"
+        case .moonCycle:    return "✦ Ciclo Lunar"
         case .pyramid:      return "✦ La Pirámide"
         case .yesNo:        return "✦ Sí / No"
         case .lineage:      return "✦ El Linaje"
+        case .free:         return "Tirada libre"
         }
     }
 
@@ -344,37 +352,41 @@ case .moonCycle:    return "✦ Ciclo Lunar"
         case .starDavid:    return "Los 6 elementos sagrados + el centro integrador"
         case .soulMirror:   return "Exploración profunda del inconsciente y la sombra"
         case .alchemyPath:  return "Nigredo → Albedo → Citrinitas → Rubedo"
-case .moonCycle:    return "Las 4 fases lunares como guía espiritual"
+        case .moonCycle:    return "Las 4 fases lunares como guía espiritual"
         case .pyramid:      return "Base → Maestría → Vértice: tu crecimiento espiritual"
         case .yesNo:        return "Respuesta clara y orientadora ante una pregunta binaria"
         case .lineage:      return "Herencia, patrones familiares y propósito de tu alma"
+        case .free:         return "Elige cuántas cartas se reparten y deja que el Triunfo guíe tu lectura"
         }
     }
 
-    /// Symbol emoji for display in UI
+    public var id: String { rawValue }
+
+    /// Minimal jewel-like glyph — monocromo, se tiñe en oro en UI. Nada de emoji color.
     public var symbol: String {
         switch self {
-        case .dailyCard:    return "☀️"
-        case .threeCard:    return "🃏"
-        case .celticCross:  return "✝️"
-        case .fiveCard:     return "⭐"
-        case .horseshoe:    return "🧲"
-        case .relationship: return "💞"
-        case .twelveMonth:  return "🗓️"
-        case .decision:     return "⚖️"
-        case .pathOfLife:   return "🛤️"
-        case .astrological: return "♈"
-        case .chakraSpread: return "🔮"
-        case .hexagram:     return "✡️"
-        case .temperance:   return "⚗️"
-        case .treeOfLife:   return "🌳"
-        case .starDavid:    return "🌟"
-        case .soulMirror:   return "🪞"
-        case .alchemyPath:  return "🜂"
-case .moonCycle:    return "🌙"
-        case .pyramid:      return "🔺"
-        case .yesNo:        return "⚖️"
-        case .lineage:      return "🌳"
+        case .dailyCard:    return "○"
+        case .threeCard:    return "◇"
+        case .celticCross:  return "✚"
+        case .fiveCard:     return "⬖"
+        case .horseshoe:    return "⌒"
+        case .relationship: return "∞"
+        case .twelveMonth:  return "◎"
+        case .decision:     return "⬔"
+        case .pathOfLife:   return "⟡"
+        case .astrological: return "✶"
+        case .chakraSpread: return "◍"
+        case .hexagram:     return "⬡"
+        case .temperance:   return "⬢"
+        case .treeOfLife:   return "⟐"
+        case .starDavid:    return "✦"
+        case .soulMirror:   return "◐"
+        case .alchemyPath:  return "⬣"
+        case .moonCycle:    return "☾"
+        case .pyramid:      return "△"
+        case .yesNo:        return "⬔"
+        case .lineage:      return "⬡"
+        case .free:         return "⁂"
         }
     }
 }
@@ -458,15 +470,14 @@ public struct Spread: Codable {
         self.drawnCards = drawnCards
     }
 
-    /// Helper to get all unique positions in the spread, sorted by display name.
+    /// Helper to get all unique positions in the spread, preservando orden semántico de la tirada.
     public var allPositions: [SpreadPosition] {
         var positions = self.standardPositions
         if let custom = self.customPositions {
-            // Add custom ones, ensuring no duplicates if a standard position was also customized
             for customPos in custom where !positions.contains(where: { $0.id == customPos.id }) {
                 positions.append(customPos)
             }
         }
-        return positions.sorted { $0.displayName < $1.displayName }
+        return positions
     }
 }

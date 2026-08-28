@@ -1,6 +1,7 @@
 import SwiftUI
 import TarotCore
 import TarotData
+import TarotDI
 
 struct ReadingView: View {
     @ObservedObject var model: TarotViewModel
@@ -9,473 +10,605 @@ struct ReadingView: View {
     @State private var selectedDrawnCard: DrawnCard? = nil
     @State private var replacementIndex: Int? = nil
     @State private var cardPickerQuery = ""
-    @State private var isShowingPositionChooser = false
+    @State private var isShowingReplacementPicker = false
+    @State private var replacementPickerQuery = ""
+    @State private var chosenFirstCardSlot: Int? = nil
 
     var body: some View {
         NavigationStack {
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 20) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Tu ritual de tarot")
-                            .font(.title2.bold())
-                            .foregroundStyle(.primary)
-                        Text("Elige una tirada, baraja con intención y descubre lo que las cartas te quieren revelar hoy.")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 16) {
+                    spreadSelector
+                    spreadInfo
+                    if model.selectedSpread == .free {
+                        freeCardSection
                     }
-                    .padding(20)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 26, style: .continuous)
-                            .fill(Color.tarotPanel.opacity(0.90))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 26, style: .continuous)
-                            .stroke(Color.tarotBorder, lineWidth: 1)
-                    )
-                    .shadow(color: Color.tarotShadow, radius: 12, x: 0, y: 6)
-
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text("Selecciona tu tirada")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.primary)
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 12) {
-                                ForEach(SpreadType.allCases, id: \.self) { type in
-                                    Button(action: {
-                                        withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
-                                            model.selectedSpread = type
-                                        }
-                                    }) {
-                                        VStack(spacing: 8) {
-                                            Text(type.label)
-                                                .font(.caption.weight(.semibold))
-                                                .foregroundStyle(model.selectedSpread == type ? .primary : .secondary)
-                                                .multilineTextAlignment(.center)
-                                                .lineLimit(2)
-                                            Text("\(type.positions.count) cartas")
-                                                .font(.caption2)
-                                                .foregroundStyle(model.selectedSpread == type ? .secondary : Color.secondary.opacity(0.85))
-                                        }
-                                        .padding(.horizontal, 16)
-                                        .padding(.vertical, 14)
-                                        .frame(width: 150)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                                .fill(model.selectedSpread == type ? Color.tarotGold.opacity(0.22) : Color.tarotPanel.opacity(0.88))
-                                        )
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                                .stroke(model.selectedSpread == type ? Color.tarotGold.opacity(0.70) : Color.tarotBorder, lineWidth: 1)
-                                        )
-                                    }
-                                    .buttonStyle(.plain)
-                                }
-                            }
-                            .padding(.horizontal)
-                            .padding(.vertical, 6)
-                        }
-                        .background(
-                            RoundedRectangle(cornerRadius: 26, style: .continuous)
-                                .fill(Color.tarotPanel.opacity(0.90))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 26, style: .continuous)
-                                        .stroke(Color.tarotBorder, lineWidth: 1)
-                                )
-                        )
-                    }
-
-                    VStack(alignment: .leading, spacing: 10) {
-                        Text(model.selectedSpread.label)
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                        Text("""
-                        \(model.selectedSpread.positions.count) cartas · \(model.selectedSpread.positions.map { $0.displayName }.joined(separator: " · "))
-                        """)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(18)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .fill(Color.tarotPanel.opacity(0.90))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .stroke(Color.tarotBorder, lineWidth: 1)
-                    )
-
-                    // ── Intención de lectura ─────────────────────────
-                    VStack(alignment: .leading, spacing: 10) {
-                        Label("Intención de la lectura", systemImage: "sparkles")
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-                        Text("Opcional: escribe tu pregunta o el tema que quieres explorar. Se integrará en tu lectura.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                        TextField("Ej: ¿Qué energía me acompaña esta semana?", text: $model.readingIntention)
-                            .font(.system(size: 15, design: .serif))
-                            .padding(14)
-                            .background(Color.tarotPanel.opacity(0.95))
-                            .cornerRadius(16)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.tarotGold.opacity(0.30), lineWidth: 1)
-                            )
-                    }
-                    .padding(18)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .fill(Color.tarotPanel.opacity(0.90))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .stroke(Color.tarotBorder, lineWidth: 1)
-                    )
-
-                    // ── Carta significadora opcional ────────────────
-                    VStack(alignment: .leading, spacing: 12) {
-                        Toggle("Usar carta significadora", isOn: $model.useSignificator)
-                            .font(.headline)
-                            .foregroundStyle(.primary)
-
-                        if model.useSignificator {
-                            Text("La carta significadora te representa. Se elige al azar del mazo y se coloca como primera carta de la tirada.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-
-                            HStack(spacing: 14) {
-                                if let sig = model.significatorCard {
-                                    VStack(spacing: 6) {
-                                        CardFace(name: sig.name, imageName: sig.imageName, textureName: sig.textureImageName, reversed: false, useTexture: true, size: CGSize(width: 70, height: 104), activeDeck: model.settings.activeDeck, backDesign: model.settings.cardBackDesign)
-                                            .shadow(color: Color.tarotShadow.opacity(0.6), radius: 8, x: 0, y: 4)
-                                        Text(sig.name)
-                                            .font(.caption.weight(.semibold))
-                                            .foregroundStyle(Color.tarotGold)
-                                            .multilineTextAlignment(.center)
-                                    }
-                                } else {
-                                    VStack(spacing: 6) {
-                                        CardFace(name: "Sin carta", imageName: nil, textureName: nil, reversed: false, back: true, size: CGSize(width: 70, height: 104), activeDeck: model.settings.activeDeck, backDesign: model.settings.cardBackDesign)
-                                        Text("Sin elegir")
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-
-                                Spacer()
-
-                                Button {
-                                    TarotAudioService.shared.triggerHaptic(.medium)
-                                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                                        model.drawRandomSignificator()
-                                    }
-                                } label: {
-                                    HStack(spacing: 8) {
-                                        Image(systemName: "dice.fill")
-                                        Text("Elegir al azar")
-                                            .fontWeight(.semibold)
-                                    }
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 12)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                            .fill(LinearGradient(colors: [Color.tarotGold, Color.tarotBurgundy], startPoint: .topLeading, endPoint: .bottomTrailing))
-                                    )
-                                    .foregroundStyle(Color(red: 0.97, green: 0.93, blue: 0.82))
-                                    .shadow(color: Color.tarotGold.opacity(0.35), radius: 10, x: 0, y: 6)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                        }
-                    }
-                    .padding(18)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .fill(Color.tarotPanel.opacity(0.90))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 24, style: .continuous)
-                            .stroke(Color.tarotBorder, lineWidth: 1)
-                    )
-
-Button {
-                        TarotAudioService.shared.triggerHaptic(.medium)
-                        withAnimation(.interactiveSpring(response: 0.45, dampingFraction: 0.75)) {
-                            model.draw()
-                        }
-                    } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: model.isShuffling ? "sparkles" : "shuffle")
-                            Text(model.isShuffling ? "Barajando…" : "Iniciar tirada")
-                                .fontWeight(.semibold)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                .fill(LinearGradient(
-                                    colors: [Color(red: 0.78, green: 0.62, blue: 0.98), Color(red: 0.42, green: 0.20, blue: 0.60)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ))
-                        )
-                        .foregroundStyle(Color(red: 0.97, green: 0.93, blue: 0.82))
-                        .shadow(color: Color(red: 0.42, green: 0.20, blue: 0.60).opacity(0.45), radius: 16, x: 0, y: 10)
-                    }
-                    .disabled(model.isShuffling)
-                    .opacity(model.isShuffling ? 0.75 : 1)
-
-                    if model.isShuffling {
-                        CardFace(name: "Barajando", imageName: nil, textureName: nil, reversed: false, back: true, size: CGSize(width: 160, height: 240), backDesign: model.settings.cardBackDesign)
-                            .rotationEffect(.degrees(15))
-                            .transition(.opacity)
-                    }
-
-                    if model.spread != nil {
-                        HStack(spacing: 12) {
-                            Button {
-                                withAnimation(.interactiveSpring(response: 0.45, dampingFraction: 0.75)) {
-                                    model.reshuffleCurrentSpread()
-                                    revealedIndices.removeAll()
-                                }
-                            } label: {
-                                Text("Barajar mazo")
-                                    .fontWeight(.semibold)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.tarotPanel.opacity(0.92)))
-                                    .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(Color.tarotBorder, lineWidth: 1))
-                            }
-                            .buttonStyle(.plain)
-                            .disabled(model.isShuffling)
-
-                            Button {
-                                isShowingPositionChooser = true
-                            } label: {
-                                Text("Elegir cartas")
-                                    .fontWeight(.semibold)
-                                    .frame(maxWidth: .infinity)
-                                    .padding()
-                                    .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(Color.tarotPanel.opacity(0.92)))
-                                    .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(Color.tarotBorder, lineWidth: 1))
-                            }
-                            .buttonStyle(.plain)
-                            .disabled(model.isShuffling)
-                        }
-                        .padding(.top, 4)
-                        .foregroundStyle(.primary)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 24, style: .continuous)
-                                .stroke(Color.clear)
-                        )
-                        Text("Mantén pulsada una carta para reemplazarla o usa 'Elegir cartas'.")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, 4)
-                    }
-
-                    if let spread = model.spread {
-                        SpreadDiagramView(
-                            spread: spread,
-                            repository: model.container.cards,
-                            revealedIndices: revealedIndices,
-                            activeDeck: model.settings.activeDeck,
-                            cardBackDesign: model.settings.cardBackDesign,
-                            onSelectCard: { drawn in
-                                selectedDrawnCard = drawn
-                            },
-                            onReplaceCard: { index, _ in
-                                replacementIndex = index
-                            }
-                        )
-                        .onReceive(model.$spread) { spread in
-                            guard let spread = spread else {
-                                revealedIndices.removeAll()
-                                return
-                            }
-                            revealedIndices.removeAll()
-                            for i in 0..<spread.drawnCards.count {
-                                let delay = Double(i) * 0.18 + 0.3
-                                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                                    withAnimation(.spring(response: 0.52, dampingFraction: 0.68, blendDuration: 0)) {
-                                        _ = revealedIndices.insert(i)
-                                    }
-                                }
-                            }
-                            DispatchQueue.main.asyncAfter(deadline: .now() + Double(spread.drawnCards.count) * 0.18 + 0.5) {
-                                withAnimation {
-                                    model.isShuffling = false
-                                }
-                            }
-                        }
-
-// Narrative synthesis of the whole reading
-                        if let spread = model.spread, !spread.drawnCards.isEmpty {
-                            SpreadNarrativeCard(spread: spread, repository: model.container.cards, intention: model.readingIntention)
-                        }
-
-                        VStack(alignment: .leading, spacing: 14) {
-                            Text("Notas del diario")
-                                .font(.headline)
-                            .foregroundStyle(.primary)
-                            ZStack(alignment: .topLeading) {
-                                if notes.isEmpty {
-                                    Text("Escribe tus impresiones después de la lectura...")
-                                        .foregroundStyle(.secondary)
-                                        .padding(14)
-                                }
-                                TextEditor(text: $notes)
-                                    .padding(12)
-                                    .background(Color.tarotPanel.opacity(0.92))
-                                    .cornerRadius(22)
-                                    .frame(minHeight: 120)
-                                    .foregroundStyle(.primary)
-                            }
-Button {
-                                TarotAudioService.shared.triggerHaptic(.success)
-                                model.saveSpread(notes: notes)
-                                notes = ""
-                            } label: {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "square.and.arrow.down")
-                                    Text("Guardar en diario")
-                                        .fontWeight(.semibold)
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(
-                                    RoundedRectangle(cornerRadius: 22, style: .continuous)
-                                        .fill(LinearGradient(
-                                            colors: [Color.tarotGold, Color.tarotBurgundy],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ))
-                                )
-                                .foregroundStyle(Color(red: 0.97, green: 0.93, blue: 0.82))
-                                .shadow(color: Color.tarotGold.opacity(0.30), radius: 10, x: 0, y: 6)
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        .padding(20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                                .fill(Color.tarotPanel.opacity(0.90))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                                .stroke(Color.tarotBorder, lineWidth: 1)
-                        )
-                    }
+                    firstCardsSection
+                    intentionBanner
+                    significatorSection
+                    readingResultsSection()
                 }
-                .padding()
+                .padding(.vertical)
             }
-            .navigationTitle("Tirada")
-            .sheet(isPresented: $isShowingPositionChooser) {
-                NavigationStack {
-                    VStack {
-                        Text("Selecciona la posición para reemplazar")
-                            .font(.headline)
-                            .padding(.top, 16)
-
-                        if let spread = model.spread {
-                            List(spread.drawnCards.indices, id: \.self) { idx in
-                                let drawn = spread.drawnCards[idx]
-                                Button {
-                                    replacementIndex = idx
-                                    isShowingPositionChooser = false
-                                } label: {
-                                    HStack(spacing: 12) {
-                                        CardFace(name: drawn.card.name, imageName: drawn.card.imageName, textureName: drawn.card.textureImageName, reversed: drawn.orientation == .reversed, useTexture: true, size: CGSize(width: 58, height: 88), activeDeck: model.settings.activeDeck)
-                                            .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(drawn.position.displayName)
-                                                .font(.headline)
-                                            Text(drawn.card.name)
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-                                        }
-                                    }
-                                    .padding(.vertical, 8)
-                                }
-                            }
-                            .listStyle(.plain)
-                        }
-                        Spacer()
+        }
+        .navigationTitle(model.spread?.type?.label ?? "Tirada")
+        .sheet(isPresented: $isShowingReplacementPicker) {
+            replacementPickerSheet
+        }
+        .alert(TarotStrings.errorTitle.localized, isPresented: Binding(get: { model.errorMessage != nil }, set: { if !$0 { model.errorMessage = nil } })) {
+            Button(TarotStrings.ok.localized, role: .cancel) {}
+        } message: {
+            Text(model.errorMessage ?? "")
+        }
+        .toolbar {
+            ToolbarItem(placement: .automatic) {
+                if let spread = model.spread, !spread.drawnCards.isEmpty {
+                    Button(TarotStrings.revealAll.localized) {
+                        revealedIndices = Set(0..<spread.drawnCards.count)
                     }
-                    .navigationTitle("Elegir carta")
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            Button("Cancelar") { isShowingPositionChooser = false }
-                        }
-                    }
-                }
-            }
-            .sheet(isPresented: Binding(get: { replacementIndex != nil }, set: { if !$0 { replacementIndex = nil } })) {
-                if let selectedIndex = replacementIndex, let spread = model.spread, spread.drawnCards.indices.contains(selectedIndex) {
-                    NavigationStack {
-                        VStack {
-                            Text("Elige una carta para \(spread.drawnCards[selectedIndex].position.displayName)")
-                                .font(.headline)
-                                .padding(.top, 16)
-
-                            TextField("Buscar carta", text: $cardPickerQuery)
-                                .textFieldStyle(.roundedBorder)
-                                .padding(.horizontal)
-                                .padding(.bottom, 6)
-
-                            List(filteredCards(query: cardPickerQuery, repository: model.container.cards), id: \.self) { card in
-                                Button {
-                                    model.replaceCard(at: selectedIndex, with: card)
-                                    replacementIndex = nil
-                                    cardPickerQuery = ""
-                                } label: {
-                                    HStack(spacing: 12) {
-                                        CardFace(name: card.name, imageName: card.imageName, textureName: card.textureImageName, reversed: false, useTexture: true, size: CGSize(width: 58, height: 88), activeDeck: model.settings.activeDeck)
-                                            .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(card.name)
-                                                .font(.headline)
-                                            Text(card.suit?.displayName ?? "Arcano Mayor")
-                                                .font(.caption)
-                                                .foregroundStyle(.secondary)
-                                        }
-                                    }
-                                    .padding(.vertical, 8)
-                                }
-                            }
-                            .listStyle(.plain)
-                        }
-                        .navigationTitle("Reemplazar carta")
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Cancelar") {
-                                    replacementIndex = nil
-                                    cardPickerQuery = ""
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    Text("No hay posición seleccionada.")
-                }
-            }
-            .sheet(item: $selectedDrawnCard) { drawn in
-                NavigationStack {
-                    CardDetailView(drawn: drawn, repository: model.container.cards, activeDeck: model.settings.activeDeck, cardBackDesign: model.settings.cardBackDesign)
                 }
             }
         }
     }
 
-    private func filteredCards(query: String, repository: any CardRepository) -> [Card] {
-        let allCards = repository.allCards()
-        guard !query.isEmpty else { return allCards }
-        return repository.search(query: query)
+    // MARK: - Subviews (extraídos para evitar type-check timeout)
+
+    private var spreadSelector: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            EyebrowLabel(text: TarotStrings.selectSpread.localized)
+                .padding(.horizontal, 4)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 9) {
+                    ForEach(SpreadType.allCases, id: \.self) { type in
+                        spreadButton(for: type)
+                    }
+                }
+                .padding(.horizontal, 4)
+                .padding(.vertical, 2)
+            }
+        }
+    }
+
+    private func spreadButton(for type: SpreadType) -> some View {
+        let isSelected = model.selectedSpread == type
+        return Button {
+            withAnimation(LuxuryAnimation.softSpring) {
+                model.selectedSpread = type
+                revealedIndices.removeAll()
+            }
+        } label: {
+            HStack(spacing: 7) {
+                Text(type.symbol)
+                    .font(.system(size: 11, weight: .light, design: .serif))
+                    .foregroundStyle(isSelected ? Color.tarotGold : Color.tarotIvory.opacity(0.72))
+                Text(type.label)
+                    .font(.system(size: 12.5, weight: .medium, design: .serif))
+                    .tracking(0.12)
+                    .lineLimit(1)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 9)
+            .background(
+                Capsule()
+                    .fill(isSelected ? Color.tarotGold.opacity(0.14) : Color.white.opacity(0.05))
+                    .background(Capsule().fill(.ultraThinMaterial).opacity(isSelected ? 0.55 : 0.32))
+            )
+            .overlay(Capsule().stroke(isSelected ? Color.tarotGold.opacity(0.42) : Color.white.opacity(0.08), lineWidth: isSelected ? 0.9 : 0.6))
+            .foregroundStyle(isSelected ? Color.tarotGold : Color.tarotIvory.opacity(0.82))
+            .shadow(color: isSelected ? Color.tarotGold.opacity(0.14) : .clear, radius: 10, x: 0, y: 4)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(type.label)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
+        .accessibilityHint(isSelected ? "Seleccionada" : "Toca para seleccionar tirada")
+    }
+
+    private var spreadInfo: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("\(model.selectedSpread.label)  ·  \(spreadCardCount()) cartas")
+                .font(.system(size: 12, weight: .semibold, design: .serif))
+                .tracking(0.4)
+                .foregroundStyle(Color.tarotIvory.opacity(0.92))
+            if let desc = model.selectedSpread.positions.first?.description, !desc.isEmpty {
+                Text(desc)
+                    .font(.system(size: 12, weight: .regular, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.56))
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else if !model.selectedSpread.esotericDescription.isEmpty {
+                Text(model.selectedSpread.esotericDescription)
+                    .font(.system(size: 12, weight: .regular, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.56))
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(.horizontal, 4)
+    }
+
+    private var freeCardSection: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "dice").font(.system(size: 13, weight: .light)).foregroundStyle(Color.tarotGold.opacity(0.9))
+            Text(TarotStrings.numberOfCards.localized)
+                .font(.system(size: 13, weight: .medium, design: .serif))
+                .tracking(0.1)
+                .foregroundStyle(Color.tarotIvory.opacity(0.84))
+            Spacer()
+            Stepper("", value: $model.freeCardCount, in: 1...12).labelsHidden().tint(Color.tarotGold)
+            Text("\(model.freeCardCount)")
+                .font(.system(size: 18, weight: .bold, design: .serif))
+                .foregroundStyle(Color.tarotGold)
+                .frame(width: 30)
+        }
+        .padding(.horizontal, 14).padding(.vertical, 12)
+        .luxuryGlass(cornerRadius: LuxuryRadius.md)
+        .padding(.horizontal, 4)
+    }
+
+    private var firstCardsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 7) {
+                Image(systemName: "hand.tap").font(.system(size: 12, weight: .light)).foregroundStyle(Color.tarotGold.opacity(0.9))
+                Text(TarotStrings.chooseFirstTwo.localized)
+                    .font(.system(size: 13, weight: .semibold, design: .serif))
+                    .tracking(0.12)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.92))
+            }
+            Text(TarotStrings.chooseFirstTwoDesc.localized)
+                .font(.system(size: 11, weight: .regular, design: .serif))
+                .foregroundStyle(Color.tarotIvory.opacity(0.52))
+                .lineSpacing(2)
+
+            HStack(spacing: 12) {
+                FirstCardSlot(index: 1, card: model.firstCardChoice) { chosenFirstCardSlot = 0 }
+                FirstCardSlot(index: 2, card: model.secondCardChoice) { chosenFirstCardSlot = 1 }
+            }
+
+            if chosenFirstCardSlot != nil {
+                firstCardPicker
+            }
+
+            if model.firstCardChoice != nil || model.secondCardChoice != nil {
+                Button {
+                    withAnimation(LuxuryAnimation.softSpring) { model.clearChosenFirstCards() }
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: "xmark.circle").font(.system(size: 11, weight: .light))
+                        Text(TarotStrings.removeChosen.localized)
+                            .font(.system(size: 11, weight: .medium, design: .serif))
+                            .tracking(0.2)
+                    }.foregroundStyle(Color.tarotGold.opacity(0.9))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(14)
+        .luxuryGlass()
+        .padding(.horizontal, 4)
+    }
+
+    @ViewBuilder
+    private var intentionBanner: some View {
+        if !model.readingIntention.isEmpty {
+            HStack(alignment: .top, spacing: 8) {
+                Image(systemName: "sparkle").font(.system(size: 10, weight: .thin)).foregroundStyle(Color.tarotGold.opacity(0.9)).padding(.top, 3)
+                Text(model.readingIntention)
+                    .font(.system(size: 13, weight: .regular, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.72))
+                    .lineSpacing(3)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer()
+            }
+            .padding(.horizontal, 14).padding(.vertical, 11)
+            .luxuryGlass(cornerRadius: LuxuryRadius.sm)
+            .padding(.horizontal, 4)
+        }
+    }
+
+    @ViewBuilder
+    private var significatorSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Toggle(isOn: $model.useSignificator.animation(LuxuryAnimation.softSpring)) {
+                HStack(spacing: 7) {
+                    Image(systemName: "person.crop.circle").font(.system(size: 12, weight: .light)).foregroundStyle(Color.tarotGold.opacity(0.85))
+                    Text(TarotStrings.significatorTitle.localized)
+                        .font(.system(size: 13, weight: .medium, design: .serif))
+                        .tracking(0.1)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.88))
+                }
+            }
+            .tint(Color.tarotGold)
+            .padding(.horizontal, 4)
+
+            if model.useSignificator {
+                significatorButton
+            }
+        }
+    }
+
+    private var significatorButton: some View {
+        Button { withAnimation(LuxuryAnimation.softSpring) { model.drawRandomSignificator() } } label: {
+            HStack(spacing: 10) {
+                Circle().fill(Color.tarotGold.opacity(0.14)).frame(width: 28, height: 28).overlay(
+                    Image(systemName: "sparkles").font(.system(size: 11, weight: .light)).foregroundStyle(Color.tarotGold)
+                )
+                VStack(alignment: .leading, spacing: 2) {
+                    if let sig = model.significatorCard {
+                        Text(sig.name)
+                            .font(.system(size: 13, weight: .semibold, design: .serif))
+                            .foregroundStyle(Color.tarotIvory)
+                            .lineLimit(1)
+                        Text(TarotStrings.significatorSubtitle.localized).font(.system(size: 10, weight: .regular, design: .serif)).tracking(0.8).foregroundStyle(Color.tarotIvory.opacity(0.42))
+                    } else {
+                        Text(TarotStrings.noSignificatorSelected.localized)
+                            .font(.system(size: 12, weight: .regular, design: .serif))
+                            .foregroundStyle(Color.tarotIvory.opacity(0.56))
+                            .lineLimit(1)
+                    }
+                }
+                Spacer()
+                Text(TarotStrings.chooseRandomly.localized.uppercased())
+                    .font(.system(size: 10, weight: .bold, design: .serif))
+                    .tracking(0.8)
+                    .foregroundStyle(Color.tarotGold)
+            }
+            .padding(.horizontal, 12).padding(.vertical, 10)
+            .luxuryGlass(cornerRadius: LuxuryRadius.sm)
+        }
+        .padding(.horizontal, 4)
+    }
+
+    // MARK: - Reading results
+
+    @ViewBuilder
+    private func readingResultsSection() -> some View {
+        if let spread = model.spread, !spread.drawnCards.isEmpty {
+            revealedSpreadContent(spread: spread)
+        } else {
+            emptySpreadContent
+        }
+    }
+
+    private func revealedSpreadContent(spread: Spread) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SpreadDiagramView(
+                spread: spread,
+                repository: model.container.cards,
+                revealedIndices: revealedIndices,
+                activeDeck: model.settings.activeDeck,
+                cardBackDesign: model.settings.cardBackDesign,
+                onSelectCard: { drawn in selectedDrawnCard = drawn },
+                onReplaceCard: { index, _ in
+                    replacementIndex = index
+                    isShowingReplacementPicker = true
+                }
+            )
+            .padding(.horizontal, 4)
+
+            revealedHorizontalCards(spread: spread)
+            notesSection
+            saveButton
+            reshuffleButton
+            Text(TarotStrings.holdToReplace.localized)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 4)
+        }
+    }
+
+    private func revealedHorizontalCards(spread: Spread) -> some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ForEach(Array(spread.drawnCards.enumerated()), id: \.offset) { index, drawn in
+                    revealedCardCell(index: index, drawn: drawn)
+                }
+            }
+            .padding(.horizontal, 4)
+        }
+    }
+
+    private func revealedCardCell(index: Int, drawn: DrawnCard) -> some View {
+        let isRevealed = revealedIndices.contains(index)
+        return CardFace(
+            name: drawn.card.name,
+            imageName: drawn.card.imageName,
+            textureName: drawn.card.textureImageName,
+            reversed: drawn.orientation == .reversed,
+            back: !isRevealed,
+            useTexture: true,
+            size: CGSize(width: 110, height: 160),
+            activeDeck: model.settings.activeDeck,
+            backDesign: model.settings.cardBackDesign
+        )
+        .rotation3DEffect(.degrees(isRevealed ? 0 : 180), axis: (x: 0, y: 1, z: 0))
+        .shadow(color: Color.tarotShadow.opacity(isRevealed ? 1 : 0.3), radius: 10, x: 0, y: 6)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.tarotBorder, lineWidth: 1)
+        )
+        .scaleEffect(isRevealed ? 1.0 : 0.95)
+        .overlay(alignment: .topLeading) {
+            OrderNumberBadge(number: index + 1)
+                .padding(4)
+        }
+        .onTapGesture {
+            if !isRevealed {
+                _ = withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                    revealedIndices.insert(index)
+                }
+            }
+        }
+        .onLongPressGesture {
+            selectedDrawnCard = drawn
+            replacementIndex = index
+            isShowingReplacementPicker = true
+        }
+    }
+
+    private var notesSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            EyebrowLabel(text: TarotStrings.readingNotesTitle.localized)
+            TextEditor(text: $notes)
+                .font(.system(size: 13, weight: .regular, design: .serif))
+                .lineSpacing(3)
+                .scrollContentBackground(.hidden)
+                .padding(10)
+                .frame(minHeight: 84)
+                .luxuryGlass(cornerRadius: LuxuryRadius.sm)
+        }
+        .padding(.horizontal, 4)
+    }
+
+    private var saveButton: some View {
+        Button {
+            withAnimation(LuxuryAnimation.softSpring) { model.saveSpread(notes: notes); notes = "" }
+        } label: {
+            Text(TarotStrings.saveReading.localized.uppercased())
+                .font(.system(size: 12.5, weight: .semibold, design: .serif))
+                .tracking(1.0)
+                .foregroundStyle(Color(red: 0.09, green: 0.06, blue: 0.02))
+                .padding(.horizontal, 24)
+                .padding(.vertical, 13)
+                .background(Capsule().fill(Color.tarotGoldGradient))
+                .overlay(Capsule().stroke(Color.white.opacity(0.32), lineWidth: 0.7).blendMode(.softLight))
+                .shadow(color: Color.black.opacity(0.32), radius: 16, x: 0, y: 8)
+                .shadow(color: Color.tarotGold.opacity(0.18), radius: 16, x: 0, y: 0)
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 4)
+    }
+
+    private var reshuffleButton: some View {
+        Button {
+            withAnimation(LuxuryAnimation.softSpring) { model.reshuffleCurrentSpread(); revealedIndices.removeAll() }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "arrow.triangle.2.circlepath").font(.system(size: 11, weight: .light))
+                Text(TarotStrings.reshuffle.localized)
+                    .font(.system(size: 12, weight: .medium, design: .serif))
+                    .tracking(0.2)
+            }
+            .foregroundStyle(Color.tarotGold.opacity(0.95))
+            .padding(.horizontal, 18)
+            .padding(.vertical, 10)
+            .background(Capsule().fill(Color.white.opacity(0.05)).background(Capsule().fill(.ultraThinMaterial).opacity(0.42)))
+            .overlay(Capsule().stroke(Color.white.opacity(0.09), lineWidth: 0.75))
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 4)
+    }
+
+    private var emptySpreadContent: some View {
+        VStack(spacing: 18) {
+            Button { withAnimation(LuxuryAnimation.softSpring) { model.draw() } } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "sparkles").font(.system(size: 12, weight: .light))
+                    Text(TarotStrings.shuffleAndReveal.localized.uppercased())
+                        .font(.system(size: 13, weight: .semibold, design: .serif))
+                        .tracking(1.0)
+                }
+                .foregroundStyle(Color(red: 0.09, green: 0.06, blue: 0.02))
+                .padding(.horizontal, 32)
+                .padding(.vertical, 16)
+                .background(Capsule().fill(Color.tarotGoldGradient))
+                .overlay(Capsule().stroke(Color.white.opacity(0.34), lineWidth: 0.75).blendMode(.softLight))
+                .shadow(color: Color.black.opacity(0.34), radius: 18, x: 0, y: 10)
+                .shadow(color: Color.tarotGold.opacity(0.18), radius: 20, x: 0, y: 0)
+            }
+            .buttonStyle(.plain)
+            .disabled(model.isShuffling)
+            .opacity(model.isShuffling ? 0.72 : 1)
+
+            if model.isShuffling {
+                VStack(spacing: 10) {
+                    ProgressView().tint(Color.tarotGold)
+                    Text(TarotStrings.shuffling.localized)
+                        .font(.system(size: 11, weight: .medium, design: .serif))
+                        .tracking(0.8)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.52))
+                }
+            }
+        }
+        .padding(.vertical, 28)
+    }
+
+    private func revealAll() {
+        guard let spread = model.spread else { return }
+        withAnimation(.easeInOut(duration: 0.6)) {
+            revealedIndices = Set(0..<spread.drawnCards.count)
+        }
+    }
+
+    private func spreadCardCount() -> Int {
+        model.selectedSpread == .free ? model.freeCardCount : model.selectedSpread.positions.count
+    }
+
+    private var firstCardPicker: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            TextField(TarotStrings.searchCard.localized, text: $cardPickerQuery)
+                .textFieldStyle(.roundedBorder)
+            ScrollView(.vertical, showsIndicators: true) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 62), spacing: 8)], spacing: 8) {
+                    ForEach(cardsForPicker()) { card in
+                        Button {
+                            chooseFirstCard(card)
+                        } label: {
+                            CardFace(
+                                name: card.name,
+                                imageName: card.imageName,
+                                textureName: card.textureImageName,
+                                reversed: false,
+                                useTexture: true,
+                                size: CGSize(width: 58, height: 84),
+                                activeDeck: model.settings.activeDeck,
+                                backDesign: model.settings.cardBackDesign
+                            )
+                            .shadow(color: .black.opacity(0.2), radius: 6, x: 0, y: 3)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .frame(maxHeight: 240)
+        }
+        .padding(10)
+        .background(Color.tarotPanel.opacity(0.9))
+        .cornerRadius(14)
+    }
+
+    private var replacementPickerSheet: some View {
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 10) {
+                Text(TarotStrings.chooseReplacement.localized)
+                    .font(.system(size: 13, weight: .semibold, design: .serif))
+                    .foregroundStyle(Color.tarotIvory)
+                    .padding(.horizontal, 4)
+                TextField(TarotStrings.searchCard.localized, text: $replacementPickerQuery)
+                    .textFieldStyle(.roundedBorder)
+                ScrollView(.vertical, showsIndicators: true) {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 62), spacing: 8)], spacing: 8) {
+                        ForEach(replacementCards()) { card in
+                            Button {
+                                chooseReplacementCard(card)
+                            } label: {
+                                CardFace(
+                                    name: card.name,
+                                    imageName: card.imageName,
+                                    textureName: card.textureImageName,
+                                    reversed: false,
+                                    useTexture: true,
+                                    size: CGSize(width: 58, height: 84),
+                                    activeDeck: model.settings.activeDeck,
+                                    backDesign: model.settings.cardBackDesign
+                                )
+                                .shadow(color: .black.opacity(0.2), radius: 6, x: 0, y: 3)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, 4)
+                }
+                .frame(maxHeight: 240)
+            }
+            .padding(.vertical)
+            .navigationTitle(TarotStrings.replaceCard.localized)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(TarotStrings.cancel.localized) {
+                        isShowingReplacementPicker = false
+                        replacementPickerQuery = ""
+                        replacementIndex = nil
+                    }
+                }
+            }
+        }
+    }
+
+    private func cardsForPicker() -> [Card] {
+        let query = cardPickerQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let all = model.container.cards.allCards()
+        return query.isEmpty ? all : model.container.cards.search(query: query)
+    }
+
+    private func chooseFirstCard(_ card: Card) {
+        // Evita duplicar la misma carta en los dos slots
+        if chosenFirstCardSlot == 0 {
+            if model.secondCardChoice?.id == card.id {
+                model.secondCardChoice = nil
+            }
+            model.firstCardChoice = card
+        } else if chosenFirstCardSlot == 1 {
+            if model.firstCardChoice?.id == card.id {
+                model.firstCardChoice = nil
+            }
+            model.secondCardChoice = card
+        }
+        chosenFirstCardSlot = nil
+        cardPickerQuery = ""
+    }
+
+    private func replacementCards() -> [Card] {
+        let query = replacementPickerQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        let all = model.container.cards.allCards()
+        return query.isEmpty ? all : model.container.cards.search(query: query)
+    }
+
+    private func chooseReplacementCard(_ card: Card) {
+        model.replaceCard(at: replacementIndex ?? 0, with: card)
+        isShowingReplacementPicker = false
+        replacementPickerQuery = ""
+        replacementIndex = nil
+    }
+}
+
+// MARK: - First card slot — minimal joya
+private struct FirstCardSlot: View {
+    let index: Int
+    let card: Card?
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 7) {
+                ZStack(alignment: .topLeading) {
+                    RoundedRectangle(cornerRadius: 13, style: .continuous)
+                        .fill(Color.white.opacity(0.05))
+                        .background(RoundedRectangle(cornerRadius: 13, style: .continuous).fill(.ultraThinMaterial).opacity(0.38))
+                        .frame(width: 86, height: 126)
+                        .overlay(RoundedRectangle(cornerRadius: 13, style: .continuous).stroke(card == nil ? Color.white.opacity(0.08) : Color.tarotGold.opacity(0.28), lineWidth: 0.85))
+                        .shadow(color: Color.black.opacity(0.22), radius: 10, x: 0, y: 6)
+                        .overlay {
+                            if let c = card {
+                                Text(c.name)
+                                    .font(.system(size: 11, weight: .semibold, design: .serif))
+                                    .multilineTextAlignment(.center)
+                                    .foregroundStyle(Color.tarotIvory)
+                                    .padding(8)
+                                    .lineLimit(3)
+                                    .tracking(0.1)
+                            } else {
+                                VStack(spacing: 6) {
+                                    Image(systemName: "plus").font(.system(size: 12, weight: .thin)).foregroundStyle(Color.tarotIvory.opacity(0.42))
+                                    Text(TarotStrings.addCard.localized)
+                                        .font(.system(size: 9, weight: .bold, design: .serif)).tracking(1.0).foregroundStyle(Color.tarotIvory.opacity(0.36))
+                                }
+                            }
+                        }
+                    // badge
+                    ZStack {
+                        Circle().fill(Color.tarotGoldGradient).frame(width: 18, height: 18).shadow(color: Color.black.opacity(0.32), radius: 3, x: 0, y: 1)
+                        Text("\(index)").font(.system(size: 9, weight: .bold, design: .serif)).foregroundStyle(Color.white)
+                    }
+                    .padding(5)
+                }
+                Text(card?.name ?? TarotStrings.choose.localized)
+                    .font(.system(size: 10.5, weight: .medium, design: .serif))
+                    .tracking(0.1)
+                    .foregroundStyle(card == nil ? Color.tarotIvory.opacity(0.48) : Color.tarotIvory.opacity(0.92))
+                    .lineLimit(1)
+                    .frame(width: 86)
+            }
+        }
+        .buttonStyle(.plain)
     }
 }

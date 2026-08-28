@@ -16,6 +16,13 @@ import TarotDI
     @Published var readingIntention: String = ""
     @Published var useSignificator: Bool = false
     @Published var significatorCard: Card?
+    /// Number of cards used by the "Tirada Libre" spread.
+    @Published var freeCardCount: Int = 5
+    /// Cards the user chooses to be the first ones that come out of the deck
+    /// (slot 0 and slot 1 of the spread).
+    @Published var firstCardChoice: Card? = nil
+    @Published var secondCardChoice: Card? = nil
+
     let container: any AppContainerProtocol
     private let drawUseCase: DrawCardsUseCaseProtocol
 
@@ -38,9 +45,8 @@ import TarotDI
         isShuffling = true
         Task { @MainActor in
             do {
-                let spread = Spread(type: selectedSpread, drawnCards: [], createdAt: Date())
-                let result = try await drawUseCase.execute(for: spread)
-                var drawn = result.drawnCards
+                let positions = positionsForSelectedSpread()
+                var drawn = try await drawUseCase.execute(for: Spread(standardPositions: positions)).drawnCards
 
                 if useSignificator, let sig = significatorCard {
                     let sigPosition = SpreadPosition(name: "Significador", displayName: "Tu Carta", description: "La carta que te representa en esta lectura")
@@ -49,12 +55,61 @@ import TarotDI
                     drawn.insert(sigDrawn, at: 0)
                 }
 
-                self.spread = Spread(type: selectedSpread, drawnCards: drawn, createdAt: Date())
+                // Place the user-chosen "first cards" at the front (order of appearance).
+                drawn = applyChosenFirstCards(to: drawn, positions: positions)
+
+                var finalSpread = Spread(standardPositions: positions)
+                finalSpread.drawnCards = drawn
+                finalSpread.type = selectedSpread
+                finalSpread.createdAt = Date()
+                self.spread = finalSpread
             } catch {
                 self.errorMessage = error.localizedDescription
             }
             self.isShuffling = false
         }
+    }
+
+    /// Positions used for the current spread, honouring the free count when selected.
+    func positionsForSelectedSpread() -> [SpreadPosition] {
+        if selectedSpread == .free {
+            return (1...freeCardCount).map { i in
+                SpreadPosition(name: "Carta \(i)", displayName: "Carta \(i)",
+                               description: "Posición libre \(i) de tu tirada.")
+            }
+        }
+        return selectedSpread.positions
+    }
+
+    /// Moves the user-chosen first cards to the head of the spread (slots 0 and 1),
+    /// respetando el significador si está presente.
+    private func applyChosenFirstCards(to drawn: [DrawnCard], positions: [SpreadPosition]) -> [DrawnCard] {
+        let chosen = [firstCardChoice, secondCardChoice].compactMap { $0 }
+        guard !chosen.isEmpty else { return drawn }
+
+        // Detecta si el mazo ya contiene significador en índice 0
+        let hasSigAtFront: Bool = {
+            guard useSignificator, let sig = significatorCard, !drawn.isEmpty else { return false }
+            return drawn.first?.card.id == sig.id
+        }()
+        let offset = hasSigAtFront ? 1 : 0
+
+        var placed = drawn.filter { dc in !chosen.contains { $0.id == dc.card.id } }
+        for (slot, card) in chosen.enumerated() {
+            let targetIndex = offset + slot
+            let pos = positions.indices.contains(slot)
+                ? positions[slot]
+                : SpreadPosition(name: "Carta \(slot + 1)", displayName: "Carta \(slot + 1)")
+            // Si hay significador, mantenlo al frente y coloca elegidas justo después
+            placed.insert(DrawnCard(card: card, position: pos, orientation: .upright), at: min(targetIndex, placed.count))
+        }
+        return placed
+    }
+
+    /// Clear both chosen first-card slots.
+    func clearChosenFirstCards() {
+        firstCardChoice = nil
+        secondCardChoice = nil
     }
 
     func saveSpread(notes: String = "") {
@@ -83,8 +138,30 @@ import TarotDI
         isShuffling = true
         Task { @MainActor in
             do {
-                let result = try await drawUseCase.execute(for: currentSpread)
-                self.spread = Spread(type: currentSpread.type ?? selectedSpread, drawnCards: result.drawnCards, createdAt: currentSpread.createdAt ?? Date())
+                let positions = currentSpread.standardPositions.isEmpty
+                    ? positionsForSelectedSpread()
+                    : currentSpread.standardPositions
+                var drawn = try await drawUseCase.execute(for: currentSpread).drawnCards
+
+                // Preserva significador si la tirada actual lo tenía o si el toggle sigue activo
+                if useSignificator, let sig = significatorCard {
+                    let hasSig = currentSpread.drawnCards.first?.card.id == sig.id
+                    if hasSig || currentSpread.drawnCards.contains(where: { $0.card.id == sig.id }) || useSignificator {
+                        let sigPosition = currentSpread.drawnCards.first { $0.card.id == sig.id }?.position
+                            ?? SpreadPosition(name: "Significador", displayName: "Tu Carta", description: "La carta que te representa en esta lectura")
+                        let sigDrawn = DrawnCard(card: sig, position: sigPosition, orientation: .upright)
+                        drawn.removeAll { $0.card.id == sig.id }
+                        drawn.insert(sigDrawn, at: 0)
+                    }
+                }
+
+                drawn = applyChosenFirstCards(to: drawn, positions: positions)
+
+                var finalSpread = Spread(standardPositions: positions)
+                finalSpread.drawnCards = drawn
+                finalSpread.type = currentSpread.type ?? selectedSpread
+                finalSpread.createdAt = currentSpread.createdAt ?? Date()
+                self.spread = finalSpread
             } catch {
                 self.errorMessage = error.localizedDescription
             }

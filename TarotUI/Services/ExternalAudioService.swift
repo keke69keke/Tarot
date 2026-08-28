@@ -1,5 +1,8 @@
 import Foundation
 import Combine
+#if canImport(MediaPlayer)
+import MediaPlayer
+#endif
 
 @MainActor
 public final class ExternalAudioService: ObservableObject {

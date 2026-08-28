@@ -1,67 +1,31 @@
 import SwiftUI
 import TarotCore
 import TarotData
+import TarotDI
 
 struct SettingsView: View {
     @ObservedObject var model: TarotViewModel
 
     var body: some View {
         NavigationStack {
-            Form {
-                Section {
-                    ForEach(model.settings.activeTabs) { tab in
-                        HStack(spacing: 12) {
-                            Image(systemName: tab.systemImage)
-                                .frame(width: 26, height: 26)
-                                .foregroundStyle(Color.tarotGold)
-                            Text(tab.label)
-                                .foregroundStyle(.primary)
-                            Spacer()
-                            Image(systemName: "line.3.horizontal")
-                                .font(.caption)
-                                .foregroundStyle(.tertiary)
-                        }
+            ZStack {
+                Color.tarotBackground.ignoresSafeArea()
+                ScrollView(showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 28) {
+                        bottomMenuSection
+                        optionsSection
+                        personalizationSection
+                        appearanceSection
+                        notificationsSection
+                        openAISection
                     }
-                    .onMove { source, destination in
-                        model.settings.activeTabs.move(fromOffsets: source, toOffset: destination)
-                        model.persistSettings()
-                    }
-                    .onDelete { offsets in
-                        let removed = offsets.map { model.settings.activeTabs[$0] }
-                        model.settings.activeTabs.remove(atOffsets: offsets)
-                        model.settings.inactiveTabs.append(contentsOf: removed)
-                        model.persistSettings()
-                    }
-
-                    if !model.settings.inactiveTabs.isEmpty {
-                        inactiveTabsSection
-                    }
-                } header: {
-                    Label("Menú inferior", systemImage: "square.grid.2x2")
-                } footer: {
-                    Text("Arrastra para reordenar · Desliza para ocultar · Toca ＋ para mostrar")
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 24)
                 }
-
-                personalizationSection
-
-                Section("Opciones") {
-                    Toggle("Permitir cartas invertidas", isOn: $model.settings.allowReversedCards)
-                }
-
-                appearanceSection
-
-                notificationsSection
-
-                openAISection
             }
-            .formStyle(.grouped)
-            .navigationTitle("Ajustes")
+            .navigationTitle(TarotStrings.settingsTitle.localized)
             #if os(iOS)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    EditButton()
-                }
-            }
+            .navigationBarTitleDisplayMode(.inline)
             #endif
             .onChange(of: model.settings.allowReversedCards) { _ in model.persistSettings() }
             .onChange(of: model.settings.notificationsEnabled) { value in
@@ -85,57 +49,162 @@ struct SettingsView: View {
         }
     }
 
+    private var optionsSection: some View {
+        luxurySection(title: TarotStrings.options.localized, systemImage: "slider.horizontal.3") {
+            Toggle(TarotStrings.allowReversed.localized, isOn: $model.settings.allowReversedCards)
+                .font(.system(size: 13, weight: .medium, design: .serif))
+                .foregroundStyle(Color.tarotIvory)
+                .tint(Color.tarotGold)
+        }
+    }
+
+    private var bottomMenuSection: some View {
+        luxurySection(title: TarotStrings.bottomMenu.localized, systemImage: "square.grid.2x2") {
+            ForEach(model.settings.activeTabs) { tab in
+                HStack(spacing: 12) {
+                    Image(systemName: tab.systemImage)
+                        .font(.system(size: 13, weight: .light))
+                        .frame(width: 24, height: 24)
+                        .foregroundStyle(Color.tarotGold)
+                    Text(tab.label)
+                        .font(.system(size: 13, design: .serif))
+                        .foregroundStyle(Color.tarotIvory)
+                    Spacer()
+                    Image(systemName: "line.3.horizontal")
+                        .font(.system(size: 12, weight: .light))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.3))
+                }
+            }
+
+            if !model.settings.inactiveTabs.isEmpty {
+                Divider().overlay(Color.tarotGold.opacity(0.15))
+                ForEach(model.settings.inactiveTabs) { tab in
+                    HStack(spacing: 12) {
+                        Image(systemName: tab.systemImage)
+                            .font(.system(size: 13, weight: .light))
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(Color.tarotIvory.opacity(0.45))
+                        Text(tab.label)
+                            .font(.system(size: 13, design: .serif))
+                            .foregroundStyle(Color.tarotIvory.opacity(0.55))
+                        Spacer()
+                        Button {
+                            if let idx = model.settings.inactiveTabs.firstIndex(of: tab) {
+                                model.settings.inactiveTabs.remove(at: idx)
+                                model.settings.activeTabs.append(tab)
+                                model.persistSettings()
+                            }
+                        } label: {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 18, weight: .light))
+                                .foregroundStyle(Color.tarotGold)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+
+            Text("Arrastra para reordenar · Desliza para ocultar · Toca ＋ para mostrar")
+                .font(.system(size: 10, design: .serif))
+                .foregroundStyle(Color.tarotIvory.opacity(0.4))
+                .padding(.top, 4)
+        }
+    }
+
+    private func luxurySection<Content: View>(
+        title: String,
+        systemImage: String,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 8) {
+                Image(systemName: systemImage)
+                    .font(.system(size: 12, weight: .light))
+                    .foregroundStyle(Color.tarotGold)
+                Text(title)
+                    .font(.system(size: 11, weight: .bold, design: .serif))
+                    .tracking(1.6)
+                    .foregroundStyle(Color.tarotGold.opacity(0.85))
+                    .textCase(.uppercase)
+            }
+            VStack(alignment: .leading, spacing: 16) {
+                content()
+            }
+            .padding(18)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .luxuryGlass(cornerRadius: 20)
+        }
+    }
+
     private var notificationsSection: some View {
-        Section("Recordatorios") {
-            Toggle("Recordatorio diario", isOn: $model.settings.notificationsEnabled)
+        luxurySection(title: TarotStrings.notifications.localized, systemImage: "bell") {
+            Toggle(TarotStrings.dailyReminder.localized, isOn: $model.settings.notificationsEnabled)
+                .font(.system(size: 13, design: .serif))
+                .foregroundStyle(Color.tarotIvory)
+                .tint(Color.tarotGold)
             if model.settings.notificationsEnabled {
-                Stepper("Hora de notificación: \(model.settings.dailyNotificationHour):00", value: $model.settings.dailyNotificationHour, in: 6...22)
+                Stepper(String(format: TarotStrings.notificationHour.localized, model.settings.dailyNotificationHour), value: $model.settings.dailyNotificationHour, in: 6...22)
+                    .font(.system(size: 13, design: .serif))
+                    .foregroundStyle(Color.tarotIvory)
+                    .tint(Color.tarotGold)
             }
         }
     }
 
     private var openAISection: some View {
-        Section {
+        luxurySection(title: TarotStrings.integration.localized, systemImage: "brain.head.profile") {
             VStack(alignment: .leading, spacing: 6) {
-                Label("API Key de OpenAI", systemImage: "brain.head.profile")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.primary)
-                Text("Opcional. Sin API key, Arcana IA usa el motor local de tarot.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                HStack(spacing: 7) {
+                    Image(systemName: "brain.head.profile")
+                        .font(.system(size: 12, weight: .light))
+                        .foregroundStyle(Color.tarotGold)
+                    Text(TarotStrings.openAIKey.localized)
+                        .font(.system(size: 13, weight: .semibold, design: .serif))
+                        .foregroundStyle(Color.tarotIvory)
+                }
+                Text(TarotStrings.openAIDescription.localized)
+                    .font(.system(size: 11, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.55))
+                    .lineSpacing(2)
             }
-            .padding(.vertical, 4)
 
-            SecureField("sk-...", text: $model.settings.openAIKey)
-                .font(.system(.body, design: .monospaced))
+            SecureField(TarotStrings.openAIKeyPlaceholder.localized, text: $model.settings.openAIKey)
+                .font(.system(size: 12, design: .monospaced))
+                .foregroundStyle(Color.tarotIvory)
                 .autocorrectionDisabled()
                 #if os(iOS)
                 .textInputAutocapitalization(.never)
                 #endif
+                .padding(10)
+                .background(Color.white.opacity(0.05))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .stroke(Color.tarotGold.opacity(0.2), lineWidth: 0.75)
+                )
                 .onChange(of: model.settings.openAIKey) { _ in model.persistSettings() }
 
             if !model.settings.openAIKey.isEmpty {
                 HStack(spacing: 6) {
                     Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
                         .font(.caption)
-                    Text("API Key configurada")
+                        .foregroundStyle(Color.tarotGold)
+                    Text(TarotStrings.openAIKeyConfigured.localized)
                         .font(.caption)
-                        .foregroundStyle(.green)
+                        .foregroundStyle(Color.tarotGold)
                 }
             }
-        } header: {
-            Text("Integración")
         }
     }
 
-    // MARK: - Computed Properties for Pickers (simplified)
-
     private var personalizationSection: some View {
-        Section(header: Text("Personalización"), footer: Text("Personaliza las cartas, el reverso y el idioma para adaptarlo a tu estilo.")) {
+        luxurySection(title: TarotStrings.personalization.localized, systemImage: "wand.and.stars") {
             deckPicker
             backPicker
             languagePicker
+            Text("Personaliza las cartas, el reverso y el idioma para adaptarlo a tu estilo.")
+                .font(.system(size: 10, design: .serif))
+                .foregroundStyle(Color.tarotIvory.opacity(0.4))
         }
     }
 
@@ -145,6 +214,8 @@ struct SettingsView: View {
                 Text(deck.displayName).tag(deck.rawValue)
             }
         }
+        .font(.system(size: 13, design: .serif))
+        .foregroundStyle(Color.tarotIvory)
     }
 
     private var backPicker: some View {
@@ -153,6 +224,8 @@ struct SettingsView: View {
                 Text(design.displayName).tag(design.rawValue)
             }
         }
+        .font(.system(size: 13, design: .serif))
+        .foregroundStyle(Color.tarotIvory)
     }
 
     private var languagePicker: some View {
@@ -160,48 +233,19 @@ struct SettingsView: View {
             Text(Language.spanish.displayName).tag(Language.spanish.rawValue)
             Text(Language.english.displayName).tag(Language.english.rawValue)
         }
+        .font(.system(size: 13, design: .serif))
+        .foregroundStyle(Color.tarotIvory)
     }
 
     private var appearanceSection: some View {
-        Section(header: Text("Apariencia")) {
-            Picker("Tema", selection: appearanceSelectionBinding) {
+        luxurySection(title: TarotStrings.appearance.localized, systemImage: "paintbrush.pointed") {
+            Picker(TarotStrings.theme.localized, selection: appearanceSelectionBinding) {
                 Text(Appearance.automatic.displayName).tag(Appearance.automatic.rawValue)
                 Text(Appearance.light.displayName).tag(Appearance.light.rawValue)
                 Text(Appearance.dark.displayName).tag(Appearance.dark.rawValue)
             }
-        }
-    }
-
-    private var inactiveTabsSection: some View {
-        Section {
-            Divider()
-                .listRowInsets(EdgeInsets())
-            ForEach(model.settings.inactiveTabs) { tab in
-                inactiveTabRow(for: tab)
-            }
-        }
-    }
-
-    private func inactiveTabRow(for tab: AppTab) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: tab.systemImage)
-                .frame(width: 26, height: 26)
-                .foregroundStyle(.secondary)
-            Text(tab.label)
-                .foregroundStyle(.secondary)
-            Spacer()
-            Button {
-                if let idx = model.settings.inactiveTabs.firstIndex(of: tab) {
-                    model.settings.inactiveTabs.remove(at: idx)
-                    model.settings.activeTabs.append(tab)
-                    model.persistSettings()
-                }
-            } label: {
-                Image(systemName: "plus.circle.fill")
-                    .foregroundStyle(Color.tarotGold)
-                    .font(.title3)
-            }
-            .buttonStyle(.plain)
+            .font(.system(size: 13, design: .serif))
+            .foregroundStyle(Color.tarotIvory)
         }
     }
 
@@ -244,7 +288,4 @@ struct SettingsView: View {
             }
         )
     }
-
-    // Removed complex Pickers to resolve type-checking issues
-    // Settings are still functional with essential toggles
 }

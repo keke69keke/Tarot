@@ -1,4 +1,6 @@
 import SwiftUI
+import TarotCore
+import TarotData
 
 /// Simplified Natal Chart ("Hoja Natal"): computes sun sign, an approximate
 /// moon sign and ascendant from the birth date/time, and shows a zodiac wheel
@@ -52,8 +54,16 @@ struct NatalChartView: View {
                             .foregroundStyle(Color.tarotIvory.opacity(0.84))
                         DatePicker(TarotStrings.natalDateLabel.localized, selection: $birthDate, in: ...Date(), displayedComponents: .date)
                             .datePickerStyle(.compact).tint(Color.tarotGold).colorScheme(.dark)
-                        DatePicker(TarotStrings.natalTimeLabel.localized, selection: $birthTime, displayedComponents: .hourAndMinute)
-                            .datePickerStyle(.compact).tint(Color.tarotGold).colorScheme(.dark)
+                        HStack(spacing: 8) {
+                            DatePicker(TarotStrings.natalTimeLabel.localized, selection: $birthTime, displayedComponents: .hourAndMinute)
+                                .datePickerStyle(.compact).tint(Color.tarotGold).colorScheme(.dark)
+                            Text("· Aproximado")
+                                .font(.system(size: 10, weight: .bold, design: .serif)).tracking(0.8)
+                                .foregroundStyle(Color.tarotGold)
+                                .padding(.horizontal, 8).padding(.vertical, 4)
+                                .background(Capsule().fill(Color.tarotGold.opacity(0.14)))
+                                .overlay(Capsule().stroke(Color.tarotGold.opacity(0.22), lineWidth: 0.7))
+                        }
                         HStack(spacing: 8) {
                             Image(systemName: "mappin").font(.system(size: 11, weight: .light)).foregroundStyle(Color.tarotGold.opacity(0.85))
                             TextField(TarotStrings.natalPlacePlaceholder.localized, text: $place)
@@ -75,6 +85,29 @@ struct NatalChartView: View {
                     if showDetails {
                         positionsList
                     }
+
+                    // Guardar en Diario
+                    Button {
+                        let repo = try? CoreDataJournalRepository()
+                        let notes = "Hoja Natal — Sol \(sunSign.rawValue) (\(sunSign.element)), Luna \(moonSign.rawValue), Asc \(ascSign.rawValue) · \(place.isEmpty ? "sin lugar" : place) · \(birthDate.formatted(date: .abbreviated, time: .omitted))"
+                        let spread = Spread(type: .astrological, drawnCards: [], createdAt: Date())
+                        let entry = JournalEntry(spread: spread, notes: notes)
+                        try? repo?.save(entry: entry)
+                        #if os(iOS)
+                        UINotificationFeedbackGenerator().notificationOccurred(.success)
+                        #endif
+                    } label: {
+                        HStack(spacing: 8) {
+                            Image(systemName: "square.and.pencil").font(.system(size: 12, weight: .light))
+                            Text("Guardar lectura en Diario").font(.system(size: 13, weight: .semibold, design: .serif)).tracking(0.2)
+                        }
+                        .foregroundStyle(Color.tarotGold)
+                        .padding(.horizontal, 18).padding(.vertical, 10)
+                        .background(Capsule().fill(Color.tarotGold.opacity(0.12)).background(Capsule().fill(.ultraThinMaterial).opacity(0.35)))
+                        .overlay(Capsule().stroke(Color.tarotGold.opacity(0.22), lineWidth: 0.8))
+                    }
+                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity, alignment: .center)
                 }
                 .padding(20)
                 }

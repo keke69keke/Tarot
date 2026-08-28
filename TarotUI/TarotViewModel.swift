@@ -27,10 +27,16 @@ import TarotDI
     @Published var freeCardCount: Int = 5 {
         didSet {
             if oldValue != freeCardCount, selectedSpread == .free {
-                spread = nil
+                freeCardDebounce?.cancel()
+                freeCardDebounce = Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 300_000_000)
+                    guard !Task.isCancelled else { return }
+                    spread = nil
+                }
             }
         }
     }
+    private var freeCardDebounce: Task<Void, Never>?
     /// Cards the user chooses to be the first ones that come out of the deck
     /// (slot 0 and slot 1 of the spread).
     @Published var firstCardChoice: Card? = nil

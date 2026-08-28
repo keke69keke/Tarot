@@ -75,6 +75,9 @@ struct ReadingView: View {
     private func spreadButton(for type: SpreadType) -> some View {
         let isSelected = model.selectedSpread == type
         return Button {
+            #if os(iOS)
+            UISelectionFeedbackGenerator().selectionChanged()
+            #endif
             withAnimation(LuxuryAnimation.softSpring) {
                 model.selectedSpread = type
                 revealedIndices.removeAll()
@@ -580,7 +583,7 @@ struct ReadingView: View {
     }
 }
 
-// MARK: - First card slot — minimal joya (ahora con imagen real)
+// MARK: - First card slot — minimal joya (ahora con imagen real + haptics)
 private struct FirstCardSlot: View {
     let index: Int
     let card: Card?
@@ -589,7 +592,12 @@ private struct FirstCardSlot: View {
     let onTap: () -> Void
 
     var body: some View {
-        Button(action: onTap) {
+        Button {
+            #if os(iOS)
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            #endif
+            onTap()
+        } label: {
             VStack(spacing: 7) {
                 ZStack(alignment: .topLeading) {
                     if let c = card {

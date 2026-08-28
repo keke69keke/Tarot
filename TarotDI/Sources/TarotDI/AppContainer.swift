@@ -11,6 +11,7 @@ public protocol AppContainerProtocol: ObservableObject {
     var daily: DeterministicDailyCardService { get }
     var notifications: LocalNotificationService { get }
     var spreadSynthesizer: SpreadSynthesizerProtocol { get }
+    var library: LibraryManager { get }
 }
 
 public final class AppContainer: AppContainerProtocol {
@@ -20,7 +21,9 @@ public final class AppContainer: AppContainerProtocol {
     public let daily: DeterministicDailyCardService
     public let notifications = LocalNotificationService()
     public let spreadSynthesizer: SpreadSynthesizerProtocol
+    @MainActor public let library: LibraryManager
 
+    @MainActor
     public init() throws {
         let repo: BundleCardRepository
         if let r = try? BundleCardRepository(bundle: .tarotContent) {
@@ -35,5 +38,6 @@ public final class AppContainer: AppContainerProtocol {
         settings = UserDefaultsSettingsRepository()
         daily = DeterministicDailyCardService(cards: cards.allCards())
         spreadSynthesizer = SpreadSynthesizer(cardRepository: cards)
+        library = LibraryManager()
     }
 }

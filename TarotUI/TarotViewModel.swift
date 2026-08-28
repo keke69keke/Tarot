@@ -135,7 +135,7 @@ import TarotDI
         guard let spread else { return }
         var fullNotes = notes
         if !readingIntention.isEmpty {
-            fullNotes = "🎯 Intención: \(readingIntention)" + (notes.isEmpty ? "" : "\n\n\(notes)")
+            fullNotes = "◈ Intención: \(readingIntention)" + (notes.isEmpty ? "" : "\n\n\(notes)")
         }
         do { try container.journal.save(entry: JournalEntry(spread: spread, notes: fullNotes)); reloadEntries() }
         catch { errorMessage = error.localizedDescription }

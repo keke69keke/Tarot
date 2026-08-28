@@ -73,14 +73,14 @@ public struct SecretVaultView: View {
     // MARK: - PIN Keypad View
     private var pinKeypadView: some View {
         VStack(spacing: 24) {
-            Image(systemName: "lock.shield.fill")
-                .font(.system(size: 54))
+            Image(systemName: "lock.shield")
+                .font(.system(size: 54, weight: .thin))
                 .foregroundStyle(Color.tarotGold)
                 .padding(.bottom, 8)
             
             Text(vaultManager.hasPINSet ? "Introduce tu Código PIN" : "Crea tu Código PIN Secreto")
                 .font(.system(size: 20, weight: .bold, design: .serif))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.tarotIvory)
             
             HStack(spacing: 16) {
                 ForEach(0..<4) { index in
@@ -130,11 +130,10 @@ public struct SecretVaultView: View {
                     if !pinInput.isEmpty { pinInput.removeLast() }
                 }) {
                     Image(systemName: "delete.left")
-                        .font(.title2)
+                        .font(.title2.weight(.light))
                         .frame(width: 72, height: 72)
-                        .background(Color.tarotPanel)
-                        .cornerRadius(36)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.80))
+                        .luxuryGlass(cornerRadius: 36)
                 }
                 
                 keypadButton(number: "0")
@@ -159,10 +158,8 @@ public struct SecretVaultView: View {
             Text(number)
                 .font(.system(size: 26, weight: .bold, design: .serif))
                 .frame(width: 72, height: 72)
-                .background(Color.tarotPanel)
-                .cornerRadius(36)
-                .overlay(Circle().stroke(Color.tarotBorder, lineWidth: 1))
                 .foregroundStyle(Color.tarotGold)
+                .luxuryGlass(cornerRadius: 36)
         }
     }
     
@@ -187,25 +184,25 @@ public struct SecretVaultView: View {
                             .foregroundStyle(Color.tarotGold)
                         Text("Fotos privadas y notas confidenciales de tus lecturas")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                     Spacer()
                     
                     HStack(spacing: 8) {
                         Button { showingImagePicker = true } label: {
-                            HStack(spacing: 6) { Image(systemName: "camera.fill"); Text("Foto") }
+                            HStack(spacing: 6) { Image(systemName: "camera"); Text("Foto") }
                                 .font(.system(size: 12, weight: .bold, design: .serif))
                                 .padding(.horizontal, 12).padding(.vertical, 8)
                                 .background(Color.tarotGold).foregroundStyle(.black).cornerRadius(10)
                         }
                         Button { showingVideoPicker = true } label: {
-                            HStack(spacing: 6) { Image(systemName: "video.fill"); Text("Video") }
+                            HStack(spacing: 6) { Image(systemName: "video"); Text("Video") }
                                 .font(.system(size: 12, weight: .bold, design: .serif))
                                 .padding(.horizontal, 12).padding(.vertical, 8)
                                 .background(Color.tarotGold.opacity(0.85)).foregroundStyle(.black).cornerRadius(10)
                         }
                         Button { showingAudioRecorder = true } label: {
-                            HStack(spacing: 6) { Image(systemName: "mic.fill"); Text("Audio") }
+                            HStack(spacing: 6) { Image(systemName: "mic"); Text("Audio") }
                                 .font(.system(size: 12, weight: .bold, design: .serif))
                                 .padding(.horizontal, 12).padding(.vertical, 8)
                                 .background(Color.white.opacity(0.08)).foregroundStyle(Color.tarotGold)
@@ -223,7 +220,7 @@ public struct SecretVaultView: View {
                             .foregroundStyle(Color.tarotGold.opacity(0.6))
                         Text("No tienes lecturas secretas registradas.")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.top, 40)
@@ -257,19 +254,19 @@ public struct SecretVaultView: View {
                             if let image = phase.image {
                                 image.resizable().aspectRatio(contentMode: .fill).frame(height: 160).clipped().cornerRadius(12)
                             } else {
-                                Rectangle().fill(Color.tarotPanel).frame(height: 160).cornerRadius(12).overlay(Image(systemName: "photo").foregroundStyle(.secondary))
+                                Rectangle().fill(Color.tarotPanel).frame(height: 160).cornerRadius(12).overlay(Image(systemName: "photo").foregroundStyle(Color.tarotIvory.opacity(0.58)))
                             }
                         }
                     } else if entry.mediaType == .video {
                         Rectangle().fill(Color.tarotPanel).frame(height: 160).cornerRadius(12)
-                            .overlay(VStack(spacing: 6) { Image(systemName: "video.fill").font(.system(size: 28)).foregroundStyle(Color.tarotGold); Text("Video").font(.caption2).foregroundStyle(Color.tarotIvory.opacity(0.6)) })
+                            .overlay(VStack(spacing: 6) { Image(systemName: "video").font(.system(size: 28)).foregroundStyle(Color.tarotGold); Text("Video").font(.caption2).foregroundStyle(Color.tarotIvory.opacity(0.6)) })
                     } else {
                         Rectangle().fill(Color.tarotPanel).frame(height: 160).cornerRadius(12)
                             .overlay(VStack(spacing: 6) { Image(systemName: "waveform").font(.system(size: 28)).foregroundStyle(Color.tarotGold); if let d = entry.duration { Text(String(format: "%.0fs", d)).font(.caption2).foregroundStyle(Color.tarotIvory.opacity(0.6)) } })
                     }
                 }
                 HStack(spacing: 4) {
-                    Image(systemName: entry.mediaType == .photo ? "camera.fill" : entry.mediaType == .video ? "video.fill" : "mic.fill")
+                    Image(systemName: entry.mediaType == .photo ? "camera" : entry.mediaType == .video ? "video" : "mic")
                         .font(.system(size: 9, weight: .bold))
                     Text(entry.mediaType == .photo ? "FOTO" : entry.mediaType == .video ? "VIDEO" : "AUDIO")
                         .font(.system(size: 8, weight: .black, design: .rounded)).tracking(0.6)
@@ -283,13 +280,13 @@ public struct SecretVaultView: View {
             Text(entry.title)
                 .font(.headline)
                 .lineLimit(1)
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.tarotIvory)
             
             if !entry.notes.isEmpty {
                 Text(entry.notes)
                     .font(.caption)
                     .lineLimit(2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
             }
             
             Text(entry.dateAdded.formatted(date: .abbreviated, time: .omitted))

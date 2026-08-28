@@ -6,10 +6,20 @@ import TarotData
 /// moon sign and ascendant from the birth date/time, and shows a zodiac wheel
 /// with those three positions highlighted.
 struct NatalChartView: View {
-    @State private var birthDate: Date = (UserDefaults.standard.object(forKey: "natalBirthDate") as? Date) ?? (Calendar.current.date(byAdding: .year, value: -28, to: .now) ?? .now)
-    @State private var birthTime: Date = (UserDefaults.standard.object(forKey: "natalBirthTime") as? Date) ?? Calendar.current.startOfDay(for: .now)
-    @State private var place: String = UserDefaults.standard.string(forKey: "natalPlace") ?? ""
+    let model: TarotViewModel
+    @State private var birthDate: Date
+    @State private var birthTime: Date
+    @State private var place: String
     @State private var showDetails: Bool = true
+
+    /// Datos persistidos en `UserSettings` (una sola fuente de verdad).
+    init(model: TarotViewModel) {
+        self.model = model
+        let dateFallback = Calendar.current.date(byAdding: .year, value: -28, to: .now) ?? .now
+        _birthDate = State(initialValue: model.settings.natalBirthDate ?? dateFallback)
+        _birthTime = State(initialValue: model.settings.natalBirthTime ?? Calendar.current.startOfDay(for: .now))
+        _place = State(initialValue: model.settings.natalPlace)
+    }
 
     private let zodiacOrder: [ZodiacSign] = [
         .aries, .taurus, .gemini, .cancer, .leo, .virgo,
@@ -30,7 +40,7 @@ struct NatalChartView: View {
                             HStack(spacing: 8) {
                                 EyebrowLabel(text: TarotStrings.natalEyebrow.localized)
                                 Spacer()
-                                Image(systemName: "star.circle.fill").font(.system(size: 22, weight: .light)).foregroundStyle(Color.tarotGold.opacity(0.85))
+                                Image(systemName: "star.circle").font(.system(size: 22, weight: .light)).foregroundStyle(Color.tarotGold.opacity(0.85))
                             }
                             Text(TarotStrings.natalTitle.localized)
                                 .font(.system(size: 28, weight: .bold, design: .serif))
@@ -112,10 +122,19 @@ struct NatalChartView: View {
                 .padding(20)
                 }
             }
-            .navigationTitle("Hoja Natal")
-            .onChange(of: birthDate) { UserDefaults.standard.set($0, forKey: "natalBirthDate") }
-            .onChange(of: birthTime) { UserDefaults.standard.set($0, forKey: "natalBirthTime") }
-            .onChange(of: place) { UserDefaults.standard.set($0, forKey: "natalPlace") }
+            .navigationTitle(TarotStrings.natalTitle.localized)
+            .onChange(of: birthDate) { newValue in
+                model.settings.natalBirthDate = newValue
+                model.persistSettings()
+            }
+            .onChange(of: birthTime) { newValue in
+                model.settings.natalBirthTime = newValue
+                model.persistSettings()
+            }
+            .onChange(of: place) { newValue in
+                model.settings.natalPlace = newValue
+                model.persistSettings()
+            }
         }
     }
 

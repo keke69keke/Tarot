@@ -43,8 +43,8 @@ struct CardDetailView: View {
 
                     // Orientation badge
                     HStack(spacing: 6) {
-                        Image(systemName: orientation == .upright ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
-                            .foregroundStyle(orientation == .upright ? Color(red: 0.20, green: 0.46, blue: 0.28) : Color.tarotBurgundy)
+                        Image(systemName: orientation == .upright ? "arrow.up.circle" : "arrow.down.circle")
+                            .foregroundStyle(orientation == .upright ? Color.tarotGold : Color.tarotBurgundy)
                         Text(orientation == .upright ? "Al derecho" : "Invertida")
                             .font(.caption.weight(.semibold))
                     }
@@ -63,11 +63,11 @@ struct CardDetailView: View {
                         if let number = card.number, !number.isEmpty {
                             Text(number)
                                 .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.tarotIvory.opacity(0.58))
                         }
                         Text(card.suit?.displayName ?? (card.arcanaType == .major ? "Arcano Mayor" : "Arcano Menor"))
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.tarotIvory.opacity(0.58))
                         Text(card.arcanaType == .major ? "Mayor" : "Menor")
                             .font(.caption2.weight(.semibold))
                             .padding(.horizontal, 8)
@@ -114,17 +114,17 @@ struct CardDetailView: View {
                             Circle()
                                 .fill(Color.tarotGold.opacity(0.12))
                                 .frame(width: 44, height: 44)
-                            Image(systemName: "book.fill")
+                            Image(systemName: "book")
                                 .font(.title3)
                                 .foregroundStyle(Color.tarotGold)
                         }
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Explorar en el Libro Rider")
                                 .font(.headline)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.tarotIvory)
                             Text("Vista completa con símbolos, aspectos y contexto por posición")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.tarotIvory.opacity(0.58))
                         }
                         Spacer()
                     }

@@ -18,7 +18,7 @@ struct SpreadNarrativeCard: View {
         let synthesizer = SpreadSynthesizer(cardRepository: repository)
         var base = synthesizer.synthesize(for: spread, drawnCards: spread.drawnCards)
         if !intention.isEmpty {
-            base = "🎯 **Intención**: \(intention)\n\n\(base)"
+            base = "◈ **Intención**: \(intention)\n\n\(base)"
         }
         return base
     }
@@ -30,16 +30,16 @@ struct SpreadNarrativeCard: View {
                     .foregroundStyle(Color.tarotAccent)
                 Text("Lectura Completa")
                     .font(.system(size: 16, weight: .bold, design: .serif))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.tarotIvory)
                 Spacer()
-                Image(systemName: "book.closed.fill")
+                Image(systemName: "book.closed")
                     .foregroundStyle(Color.tarotAccent.opacity(0.6))
             }
 
             Text(narrative)
                 .font(.system(size: 14, design: .serif))
                 .lineSpacing(6)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.tarotIvory.opacity(0.58))
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .lineLimit(expanded ? nil : 6)
                 .fixedSize(horizontal: false, vertical: true)
@@ -66,14 +66,14 @@ struct SpreadNarrativeCard: View {
             RoundedRectangle(cornerRadius: 22, style: .continuous)
                 .fill(
                     LinearGradient(
-                        colors: [Color.tarotAccent.opacity(0.10), Color.tarotBurgundy.opacity(0.10)],
+                        colors: [Color.tarotAccent.opacity(0.10), Color.tarotAccent.opacity(0.04)],
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     )
                 )
         )
         .overlay(
             RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .stroke(LinearGradient(colors: [Color.tarotAccent.opacity(0.4), Color.tarotBurgundy.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)
+                .stroke(Color.tarotAccent.opacity(0.30), lineWidth: 1)
         )
         .shadow(color: Color.tarotShadow.opacity(0.2), radius: 10, x: 0, y: 6)
     }

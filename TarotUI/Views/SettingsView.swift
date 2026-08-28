@@ -102,7 +102,7 @@ struct SettingsView: View {
 
             if !model.settings.inactiveTabs.isEmpty {
                 Divider().overlay(Color.tarotGold.opacity(0.15)).padding(.vertical, 4)
-                Text("Ocultos — toca ＋ para mostrar")
+                Text(TarotStrings.hiddenTabsHint.localized)
                     .font(.system(size: 10, weight: .semibold, design: .serif)).tracking(0.8)
                     .foregroundStyle(Color.tarotIvory.opacity(0.35)).textCase(.uppercase)
                 ForEach(model.settings.inactiveTabs, id: \.id) { tab in
@@ -119,12 +119,12 @@ struct SettingsView: View {
                             if let idx = model.settings.inactiveTabs.firstIndex(of: tab) {
                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
                                     model.settings.inactiveTabs.remove(at: idx)
-                                    // Respeta límite 5 fijos + resto en More: avisa si ya hay 5
-                                    if model.settings.activeTabs.count >= 7 {
-                                        // Permite pero avisa sutilmente vía haptic
+                                    // Límite iOS 5: no exceder (evita el menú "Más" del sistema)
+                                    if model.settings.activeTabs.count >= 5 {
                                         #if os(iOS)
                                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                         #endif
+                                        return
                                     }
                                     model.settings.activeTabs.append(tab)
                                     model.persistSettings()

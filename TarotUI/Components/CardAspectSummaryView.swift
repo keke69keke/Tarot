@@ -17,7 +17,7 @@ struct CardAspectSummaryView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Aspectos clave")
                 .font(.headline)
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.tarotIvory)
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
                 ForEach(highlightKeys.filter { interpretation.aspects[$0] != nil }, id: \.self) { aspect in
                     if let value = interpretation.aspects[aspect] {
@@ -34,7 +34,7 @@ struct CardAspectSummaryView: View {
                             }
                             Text(value)
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.tarotIvory.opacity(0.58))
                                 .lineLimit(3)
                         }
                         .padding(10)

@@ -78,7 +78,10 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         }
         // Keep activeTabs sorted by default order for deterministic UI
         updatedActiveTabs.sort { (defaultActiveTabs.firstIndex(of: $0) ?? 999) < (defaultActiveTabs.firstIndex(of: $1) ?? 999) }
-        let finalInactiveTabs = inactiveTabs.filter { !mandatoryTabs.contains($0) }
+        // Límite iOS: máximo 5 tabs activos (más de 5 → iOS muestra "Más")
+        let clamped = Self.clampTabs(active: updatedActiveTabs, inactive: inactiveTabs, mandatory: mandatoryTabs)
+        let finalInactiveTabs = clamped.inactive
+        updatedActiveTabs = clamped.active
 
         let openAIKey = keychain.read(Keys.openAIKey) ?? ""
         let userName = userDefaults.string(forKey: Keys.userName) ?? ""
@@ -134,5 +137,27 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         userDefaults.set(activeTabsToSave.map { $0.rawValue }, forKey: Keys.activeTabs)
         userDefaults.set(inactiveTabsToSave.map { $0.rawValue }, forKey: Keys.inactiveTabs)
         _ = keychain.write(settings.openAIKey, for: Keys.openAIKey)
+    }
+
+    // MARK: - Tab Limit
+
+    /// iOS muestra "Más" con más de 5 tabs. Mantiene siempre los tabs
+    /// obligatorios activos; los excedentes vuelven a `inactiveTabs`.
+    /// - Returns: Tupla `(active, inactive)` con `active.count <= 5`.
+    public static func clampTabs(
+        active: [AppTab],
+        inactive: [AppTab],
+        mandatory: [AppTab] = [.learn],
+        maxActive: Int = 5
+    ) -> (active: [AppTab], inactive: [AppTab]) {
+        guard active.count > maxActive else { return (active, inactive) }
+        // Conserva el orden: los primeros `maxActive` tras respetar mandatory al frente
+        var ordered = active.filter { mandatory.contains($0) }
+        for tab in active where !ordered.contains(tab) {
+            if ordered.count >= maxActive { break }
+            ordered.append(tab)
+        }
+        let overflow = active.filter { !ordered.contains($0) }
+        return (ordered, inactive + overflow)
     }
 }

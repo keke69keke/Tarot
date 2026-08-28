@@ -76,7 +76,7 @@ struct UnifiedLibraryView: View {
                 .lineSpacing(3)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: 8) {
-                Label("78 cartas", systemImage: "rectangle.stack.fill")
+                Label("78 cartas", systemImage: "rectangle.stack")
                     .font(.system(size: 11, weight: .medium, design: .serif))
                     .foregroundStyle(Color.tarotIvory.opacity(0.82))
                     .padding(.horizontal, 10).padding(.vertical, 6)
@@ -187,7 +187,7 @@ struct UnifiedLibraryView: View {
                 Text(card.suit?.displayName ?? "Arcano Mayor").font(.system(size: 11, weight: .regular, design: .serif)).foregroundStyle(Color.tarotIvory.opacity(0.55))
                 HStack(spacing: 6) {
                     Text(card.arcanaType == .major ? "Mayor" : "Menor").font(.system(size: 10, weight: .bold, design: .serif)).tracking(0.6).padding(.horizontal, 7).padding(.vertical, 3).background(Capsule().fill(card.arcanaType == .major ? Color.tarotGold.opacity(0.16) : Color.white.opacity(0.07))).foregroundStyle(card.arcanaType == .major ? Color.tarotGold : Color.tarotIvory.opacity(0.6))
-                    if card.bookContent != nil { Image(systemName: "books.vertical.fill").font(.system(size: 10)).foregroundStyle(Color.tarotGold.opacity(0.75)) }
+                    if card.bookContent != nil { Image(systemName: "books.vertical").font(.system(size: 10)).foregroundStyle(Color.tarotGold.opacity(0.75)) }
                 }
             }
             Spacer()

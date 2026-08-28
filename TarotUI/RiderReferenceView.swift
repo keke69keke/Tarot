@@ -48,35 +48,26 @@ struct RiderReferenceView: View {
 
     private var headerView: some View {
         VStack(alignment: .leading, spacing: 12) {
+            EyebrowLabel(text: "Referencia")
             Text("Libro Rider-Waite")
-                .font(.title2).bold()
+                .font(.luxuryTitle2)
+                .foregroundStyle(Color.tarotIvory)
             Text("Explora las 78 cartas con su significado completo, su orientación al derecho e invertida y sus elementos más importantes de amor, economía, salud y carrera.")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .font(.luxurySubheadline)
+                .foregroundStyle(Color.tarotIvory.opacity(0.58))
                 .fixedSize(horizontal: false, vertical: true)
 
-            HStack(spacing: 12) {
-                Label("78 cartas", systemImage: "rectangle.stack.fill")
-                    .font(.caption)
-                    .padding(10)
-                    .background(Color.tarotPanel.opacity(0.95))
-                    .cornerRadius(12)
-                Label("Formato limpio", systemImage: "book.closed.fill")
-                    .font(.caption)
-                    .padding(10)
-                    .background(Color.tarotPanel.opacity(0.95))
-                    .cornerRadius(12)
+            HStack(spacing: 10) {
+                Label("78 cartas", systemImage: "rectangle.stack")
+                    .font(.luxuryCaption)
+                Label("Formato limpio", systemImage: "book.closed")
+                    .font(.luxuryCaption)
                 Label("Orientación y contexto", systemImage: "sparkles")
-                    .font(.caption)
-                    .padding(10)
-                    .background(Color.tarotPanel.opacity(0.95))
-                    .cornerRadius(12)
+                    .font(.luxuryCaption)
             }
-            .foregroundStyle(.primary)
-            .padding(.horizontal)
-            .padding(.bottom, 8)
-            .background(Color.tarotPanel.opacity(0.90))
-            .cornerRadius(16)
+            .foregroundStyle(Color.tarotGold.opacity(0.85))
+            .padding(10)
+            .luxuryGlass(cornerRadius: LuxuryRadius.md)
             .padding(.horizontal)
         }
         .padding(.top)
@@ -103,10 +94,10 @@ struct RiderReferenceView: View {
             VStack(alignment: .leading, spacing: 5) {
                 Text(card.name)
                     .font(.headline)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.tarotIvory)
                 Text(card.suit?.displayName ?? "Arcano Mayor")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
                 HStack(spacing: 6) {
                     Text(card.arcanaType == .major ? "Mayor" : "Menor")
                         .font(.caption2.weight(.semibold))
@@ -115,7 +106,7 @@ struct RiderReferenceView: View {
                         .background(Capsule().fill(card.arcanaType == .major ? Color.tarotGold.opacity(0.18) : Color.tarotBurgundy.opacity(0.14)))
                         .foregroundStyle(card.arcanaType == .major ? Color.tarotGold : Color.tarotBurgundy)
                     if let bc = card.bookContent, !bc.isEmpty {
-                        Image(systemName: "books.vertical.fill")
+                        Image(systemName: "books.vertical")
                             .font(.caption2)
                             .foregroundStyle(Color.tarotGold.opacity(0.80))
                     }
@@ -139,14 +130,14 @@ private struct EsotericReferencePanel: View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Ficha Esotérica").font(.headline)
             VStack(spacing: 6) {
-                disclosure(0, title: "📜 Descripción clásica", content: card.bookContent ?? interpretation.summary)
-                disclosure(1, title: "🔤 Letra Hebrea", content: card.kabbalah ?? "—")
-                disclosure(2, title: "🌳 Sendero del Árbol de la Vida", content: card.numerology ?? card.kabbalah ?? "No disponible")
-                disclosure(3, title: "🪐 Astrología", content: astrologyText())
-                disclosure(4, title: "⚗️ Principio Alquímico", content: card.element ?? card.numerology ?? "—")
-                disclosure(5, title: "🧘 Chakra Asociado", content: card.chakras ?? "—")
-                disclosure(6, title: "🎴 Respuesta Sí / No / Tal vez", content: card.yesNo ?? "—")
-                disclosure(7, title: "📿 Meditación + Afirmación", content: meditationText())
+                disclosure(0, title: "Descripción clásica", content: card.bookContent ?? interpretation.summary)
+                disclosure(1, title: "Letra Hebrea", content: card.kabbalah ?? "—")
+                disclosure(2, title: "Sendero del Árbol de la Vida", content: card.numerology ?? card.kabbalah ?? "No disponible")
+                disclosure(3, title: "Astrología", content: astrologyText())
+                disclosure(4, title: "Principio Alquímico", content: card.element ?? card.numerology ?? "—")
+                disclosure(5, title: "Chakra Asociado", content: card.chakras ?? "—")
+                disclosure(6, title: "◈ Respuesta Sí / No / Tal vez", content: card.yesNo ?? "—")
+                disclosure(7, title: "Meditación + Afirmación", content: meditationText())
             }
             .padding()
             .background(Color.tarotPanel.opacity(0.92))
@@ -159,7 +150,7 @@ private struct EsotericReferencePanel: View {
         DisclosureGroup(isExpanded: Binding(get: { expanded[idx] }, set: { expanded[idx] = $0 })) {
             Text(content)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.tarotIvory.opacity(0.58))
                 .padding(.top, 6)
                 .fixedSize(horizontal: false, vertical: true)
         } label: {
@@ -229,7 +220,7 @@ struct ReferenceCardView: View {
                         HStack(spacing: 10) {
                             Text(card.suit?.displayName ?? (card.arcanaType == .major ? "Arcano Mayor" : "Arcano Menor"))
                                 .font(.subheadline)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.tarotIvory.opacity(0.58))
                             Text(card.arcanaType == .major ? "Mayor" : "Menor")
                                 .font(.caption2.weight(.semibold))
                                 .padding(.horizontal, 8)
@@ -263,7 +254,7 @@ struct ReferenceCardView: View {
                     Text("Palabras clave relevantes").font(.headline)
                     Text(currentInterpretation.keywords.joined(separator: " · "))
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.58))
                 }
 
                 Spacer(minLength: 28)
@@ -289,28 +280,28 @@ private struct BookInfoGrid: View {
                 Spacer()
                 Text(card.suit?.displayName ?? "Arcano Mayor")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
             }
             HStack {
                 Label("Número", systemImage: "number")
                 Spacer()
                 Text(card.number ?? "—")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
             }
             HStack {
                 Label("Origen", systemImage: "book.fill")
                 Spacer()
                 Text("Rider-Waite")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
             }
             HStack {
                 Label("Ilustración", systemImage: "photo.on.rectangle.angled")
                 Spacer()
                 Text("Original Rider-Waite")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
             }
 
             // Encyclopedic Data
@@ -322,7 +313,7 @@ private struct BookInfoGrid: View {
                     HStack {
                         Text("Elemento:").bold().font(.caption)
                         Spacer()
-                        Text(element).font(.caption).foregroundStyle(.secondary)
+                        Text(element).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                 }
 
@@ -330,7 +321,7 @@ private struct BookInfoGrid: View {
                     HStack {
                         Text("Astrología:").bold().font(.caption)
                         Spacer()
-                        Text(astrology).font(.caption).foregroundStyle(.secondary)
+                        Text(astrology).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                 }
 
@@ -338,7 +329,7 @@ private struct BookInfoGrid: View {
                     HStack {
                         Text("Numerología:").bold().font(.caption)
                         Spacer()
-                        Text(numerology).font(.caption).foregroundStyle(.secondary)
+                        Text(numerology).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                 }
 
@@ -346,7 +337,7 @@ private struct BookInfoGrid: View {
                     HStack(alignment: .top) {
                         Text("Cábala:").bold().font(.caption)
                         Spacer()
-                        Text(kabbalah).font(.caption).foregroundStyle(.secondary)
+                        Text(kabbalah).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                             .multilineTextAlignment(.trailing)
                     }
                 }
@@ -354,7 +345,7 @@ private struct BookInfoGrid: View {
                 if let lightShadow = card.lightShadow {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Luz y Sombra:").bold().font(.caption)
-                        Text(lightShadow).font(.caption).foregroundStyle(.secondary)
+                        Text(lightShadow).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                 }
 
@@ -362,7 +353,7 @@ private struct BookInfoGrid: View {
                     HStack(alignment: .top) {
                         Text("Respuesta (Sí/No):").bold().font(.caption)
                         Spacer()
-                        Text(yesNo).font(.caption).foregroundStyle(.secondary)
+                        Text(yesNo).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                 }
 
@@ -370,7 +361,7 @@ private struct BookInfoGrid: View {
                     HStack(alignment: .top) {
                         Text("Chakras:").bold().font(.caption)
                         Spacer()
-                        Text(chakras).font(.caption).foregroundStyle(.secondary)
+                        Text(chakras).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                 }
 
@@ -378,7 +369,7 @@ private struct BookInfoGrid: View {
                     HStack(alignment: .top) {
                         Text("Cristales:").bold().font(.caption)
                         Spacer()
-                        Text(crystals).font(.caption).foregroundStyle(.secondary)
+                        Text(crystals).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                 }
 
@@ -386,7 +377,7 @@ private struct BookInfoGrid: View {
                     HStack(alignment: .top) {
                         Text("Mitología:").bold().font(.caption)
                         Spacer()
-                        Text(mythology).font(.caption).foregroundStyle(.secondary)
+                        Text(mythology).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                 }
 
@@ -394,14 +385,14 @@ private struct BookInfoGrid: View {
                     HStack(alignment: .top) {
                         Text("Decanato:").bold().font(.caption)
                         Spacer()
-                        Text(decan).font(.caption).foregroundStyle(.secondary)
+                        Text(decan).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                 }
 
                 if let affirmation = card.affirmation {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Afirmación:").bold().font(.caption)
-                        Text(affirmation).font(.caption).italic().foregroundStyle(.secondary)
+                        Text(affirmation).font(.caption).italic().foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                 }
             }
@@ -413,7 +404,7 @@ private struct BookInfoGrid: View {
                     if let value = interpretation.aspects[aspect] {
                         HStack(alignment: .top, spacing: 4) {
                             Text(aspect + ":").bold().font(.caption)
-                            Text(value).font(.caption).foregroundStyle(.secondary)
+                            Text(value).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                         }
                     }
                 }
@@ -433,13 +424,13 @@ private struct BookHighlightsView: View {
             Text("Consulta rápida").font(.headline)
             Text("Explora los elementos más importantes en Amor, Economía, Salud y Carrera sin perder de vista el mensaje completo del libro Rider.")
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.tarotIvory.opacity(0.58))
                 .fixedSize(horizontal: false, vertical: true)
 
             if !interpretation.keywords.isEmpty {
                 HStack(alignment: .top) {
                     Text("Palabras clave:").bold().font(.caption)
-                    Text(interpretation.keywords.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
+                    Text(interpretation.keywords.joined(separator: " · ")).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                 }
             }
 
@@ -449,7 +440,7 @@ private struct BookHighlightsView: View {
                         if let value = interpretation.aspects[aspect] {
                             HStack(alignment: .top, spacing: 8) {
                                 Text(aspect).bold().font(.caption)
-                                Text(value).font(.caption).foregroundStyle(.secondary)
+                                Text(value).font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
                                     .fixedSize(horizontal: false, vertical: true)
                             }
                         }
@@ -484,7 +475,7 @@ private struct CardBookSection: View {
                     ForEach(interpretation.aspects.sorted(by: { $0.key < $1.key }), id: \.key) { aspect, value in
                         VStack(alignment: .leading, spacing: 5) {
                             Text(aspect).bold()
-                            Text(value).font(.subheadline).foregroundStyle(.secondary)
+                            Text(value).font(.subheadline).foregroundStyle(Color.tarotIvory.opacity(0.58))
                         }
                         .padding(10)
                         .background(Color.tarotPanel.opacity(0.96))
@@ -500,7 +491,7 @@ private struct CardBookSection: View {
                     ForEach(interpretation.contextual.sorted(by: { $0.key.displayName < $1.key.displayName }), id: \.key) { position, value in
                         VStack(alignment: .leading, spacing: 6) {
                             Text(position.displayName).bold()
-                            Text(value).font(.body).foregroundStyle(.secondary)
+                            Text(value).font(.body).foregroundStyle(Color.tarotIvory.opacity(0.58))
                         }
                         .padding(12)
                         .background(Color.tarotPanel.opacity(0.96))
@@ -656,7 +647,7 @@ struct BookContentBlock: View {
                     .tracking(2)
                     .foregroundStyle(Color.tarotGold.opacity(0.60))
                 Spacer()
-                Image(systemName: "book.closed.fill")
+                Image(systemName: "book.closed")
                     .font(.system(size: 10))
                     .foregroundStyle(Color.tarotGold.opacity(0.50))
             }

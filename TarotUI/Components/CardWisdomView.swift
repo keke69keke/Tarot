@@ -16,38 +16,39 @@ struct CardWisdomView: View {
     private var items: [WisdomItem] {
         var result: [WisdomItem] = []
 
+        // Paleta monocroma lavanda — ritmo por opacidad, no por tono
         if let m = card.mythology, !m.isEmpty {
-            result.append(WisdomItem(icon: "figure.mind.and.body", title: "Mitología", value: m, color: Color(red: 0.72, green: 0.55, blue: 0.95)))
+            result.append(WisdomItem(icon: "figure.mind.and.body", title: "Mitología", value: m, color: Color.tarotGold.opacity(0.95)))
         }
         if let a = card.astrology, !a.isEmpty {
-            result.append(WisdomItem(icon: "star.fill", title: "Astrología", value: a, color: Color(red: 0.90, green: 0.72, blue: 0.30)))
+            result.append(WisdomItem(icon: "star", title: "Astrología", value: a, color: Color.tarotGold.opacity(0.80)))
         }
         if let d = card.zodiacalDecan, !d.isEmpty {
-            result.append(WisdomItem(icon: "moon.stars.fill", title: "Decanato", value: d, color: Color(red: 0.40, green: 0.72, blue: 1.0)))
+            result.append(WisdomItem(icon: "moon.stars", title: "Decanato", value: d, color: Color.tarotGold.opacity(0.90)))
         }
         if let k = card.kabbalah, !k.isEmpty {
-            result.append(WisdomItem(icon: "tree.fill", title: "Cábala", value: k, color: Color(red: 0.42, green: 0.72, blue: 0.42)))
+            result.append(WisdomItem(icon: "tree", title: "Cábala", value: k, color: Color.tarotGold.opacity(0.75)))
         }
         if let n = card.numerology, !n.isEmpty {
-            result.append(WisdomItem(icon: "number", title: "Numerología", value: n, color: Color(red: 0.78, green: 0.55, blue: 0.30)))
+            result.append(WisdomItem(icon: "number", title: "Numerología", value: n, color: Color.tarotGold.opacity(0.85)))
         }
         if let e = card.element, !e.isEmpty {
-            result.append(WisdomItem(icon: "flame.fill", title: "Elemento", value: e, color: Color(red: 0.85, green: 0.45, blue: 0.25)))
+            result.append(WisdomItem(icon: "flame", title: "Elemento", value: e, color: Color.tarotGold.opacity(0.90)))
         }
         if let c = card.chakras, !c.isEmpty {
-            result.append(WisdomItem(icon: "circle.hexagongrid.fill", title: "Chakras", value: c, color: Color(red: 0.72, green: 0.30, blue: 0.72)))
+            result.append(WisdomItem(icon: "circle.hexagongrid", title: "Chakras", value: c, color: Color.tarotGold.opacity(0.80)))
         }
         if let cr = card.crystals, !cr.isEmpty {
-            result.append(WisdomItem(icon: "sparkles", title: "Cristales", value: cr, color: Color(red: 0.45, green: 0.65, blue: 0.90)))
+            result.append(WisdomItem(icon: "sparkles", title: "Cristales", value: cr, color: Color.tarotGold.opacity(0.85)))
         }
         if let ls = card.lightShadow, !ls.isEmpty {
-            result.append(WisdomItem(icon: "sun.max.fill", title: "Luz y Sombra", value: ls, color: Color(red: 0.85, green: 0.75, blue: 0.35)))
+            result.append(WisdomItem(icon: "sun.max", title: "Luz y Sombra", value: ls, color: Color.tarotGold.opacity(0.90)))
         }
         if let yn = card.yesNo, !yn.isEmpty {
-            result.append(WisdomItem(icon: "checkmark.circle.fill", title: "Respuesta Sí/No", value: yn, color: Color(red: 0.30, green: 0.62, blue: 0.42)))
+            result.append(WisdomItem(icon: "checkmark.circle", title: "Respuesta Sí/No", value: yn, color: Color.tarotGold.opacity(0.85)))
         }
         if let af = card.affirmation, !af.isEmpty {
-            result.append(WisdomItem(icon: "hands.sparkles.fill", title: "Afirmación", value: "“\(af)”", color: Color(red: 0.78, green: 0.55, blue: 0.95)))
+            result.append(WisdomItem(icon: "hands.sparkles", title: "Afirmación", value: "“\(af)”", color: Color.tarotGold.opacity(0.95)))
         }
         return result
     }
@@ -63,7 +64,7 @@ var body: some View {
                     .foregroundStyle(Color.tarotGold)
                 Text("Sabiduría de la Carta")
                     .font(.system(size: 16, weight: .bold, design: .serif))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.tarotIvory)
                 Spacer()
             }
             .accessibilityAddTraits(.isHeader)
@@ -81,10 +82,10 @@ var body: some View {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(item.title)
                             .font(.subheadline.weight(.bold))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color.tarotIvory)
                         Text(item.value)
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.tarotIvory.opacity(0.58))
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     Spacer(minLength: 0)
@@ -105,7 +106,7 @@ var body: some View {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .fill(
                     LinearGradient(
-                        colors: [Color.tarotGold.opacity(0.08), Color.tarotBurgundy.opacity(0.08)],
+                        colors: [Color.tarotGold.opacity(0.08), Color.tarotGold.opacity(0.03)],
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     )
                 )

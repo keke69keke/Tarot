@@ -3,8 +3,16 @@ import SwiftUI
 /// Biorhythm section: computes the physical, emotional, intellectual and
 /// intuitive cycles from the user's birth date and plots the next month.
 struct BiorhythmView: View {
-    @State private var birthDate: Date = (UserDefaults.standard.object(forKey: "biorhythmBirthDate") as? Date) ?? (Calendar.current.date(byAdding: .year, value: -30, to: .now) ?? .now)
+    let model: TarotViewModel
+    @State private var birthDate: Date
     @State private var showTomorrow: Bool = false
+
+    /// Fecha persistida en `UserSettings.biorhythmBirthDate` (una sola fuente de verdad).
+    init(model: TarotViewModel) {
+        self.model = model
+        let fallback = Calendar.current.date(byAdding: .year, value: -30, to: .now) ?? .now
+        _birthDate = State(initialValue: model.settings.biorhythmBirthDate ?? fallback)
+    }
 
     private enum Cycle {
         case physical, emotional, intellectual, intuitive
@@ -100,8 +108,11 @@ struct BiorhythmView: View {
                 }
                 .padding(20)
             }
-            .navigationTitle("Biorritmo")
-            .onChange(of: birthDate) { UserDefaults.standard.set($0, forKey: "biorhythmBirthDate") }
+            .navigationTitle(TarotStrings.biorhythmTitle.localized)
+            .onChange(of: birthDate) { newValue in
+                model.settings.biorhythmBirthDate = newValue
+                model.persistSettings()
+            }
         }
     }
 

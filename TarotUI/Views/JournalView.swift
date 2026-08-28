@@ -55,6 +55,29 @@ struct JournalView: View {
                                             .foregroundStyle(Color.tarotIvory.opacity(0.42))
                                     }
                                     GoldDivider(opacity: 0.10)
+                                    // Miniaturas de las cartas de la tirada
+                                    HStack(spacing: -8) {
+                                        ForEach(entry.spread.drawnCards.prefix(5)) { drawn in
+                                            CardFace(
+                                                name: drawn.card.name,
+                                                imageName: drawn.card.imageName,
+                                                textureName: drawn.card.textureImageName,
+                                                reversed: drawn.orientation == .reversed,
+                                                back: false,
+                                                useTexture: true,
+                                                size: CGSize(width: 30, height: 45),
+                                                activeDeck: model.settings.activeDeck,
+                                                backDesign: model.settings.cardBackDesign
+                                            )
+                                            .shadow(color: Color.black.opacity(0.35), radius: 4, x: 0, y: 2)
+                                        }
+                                        if entry.spread.drawnCards.count > 5 {
+                                            Text("+\(entry.spread.drawnCards.count - 5)")
+                                                .font(.system(size: 10, weight: .semibold, design: .serif))
+                                                .foregroundStyle(Color.tarotIvory.opacity(0.45))
+                                                .padding(.leading, 12)
+                                        }
+                                    }
                                     Text(entry.spread.drawnCards.map { $0.card.name }.joined(separator: "  ·  "))
                                         .lineLimit(1)
                                         .font(.system(size: 12, weight: .regular, design: .serif))
@@ -65,7 +88,10 @@ struct JournalView: View {
                                 .padding(.vertical, 4)
                             }
                         }
-                        .onDelete { offsets in offsets.map { model.entries[$0] }.forEach(model.delete) }
+                        .onDelete { offsets in
+                            TarotAudioService.shared.triggerHaptic(.medium)
+                            offsets.map { model.entries[$0] }.forEach(model.delete)
+                        }
                         .listRowBackground(
                             RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous)
                                 .fill(Color.white.opacity(0.045))

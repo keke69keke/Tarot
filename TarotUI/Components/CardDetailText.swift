@@ -19,7 +19,7 @@ struct CardDetailText: View {
             if !interpretation.keywords.isEmpty {
                 Text(interpretation.keywords.joined(separator: " · "))
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
             }
 
             if !interpretation.aspects.isEmpty {
@@ -41,7 +41,7 @@ struct CardDetailText: View {
             }
 
             if orientation == .reversed {
-                Text("Interpretación invertida mostrada arriba.").font(.caption).foregroundStyle(.secondary)
+                Text("Interpretación invertida mostrada arriba.").font(.caption).foregroundStyle(Color.tarotIvory.opacity(0.58))
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

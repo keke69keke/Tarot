@@ -259,10 +259,10 @@ public struct TarotChatView: View {
                         VStack(alignment: .leading, spacing: 0) {
                             Text("Arcana IA")
                                 .font(.headline)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.tarotIvory)
                             Text(service.isLoading ? "escribiendo..." : "Lectora de Tarot")
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color.tarotIvory.opacity(0.58))
                         }
                     }
                 }
@@ -273,7 +273,7 @@ public struct TarotChatView: View {
                     } label: {
                         Image(systemName: "trash")
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                     .disabled(service.messages.isEmpty)
                 }
@@ -368,32 +368,23 @@ public struct TarotChatView: View {
                     .frame(width: 90, height: 90)
 
                 Circle()
-                    .stroke(
-                        LinearGradient(
-                            colors: [Color(red: 0.92, green: 0.78, blue: 0.45), Color(red: 0.65, green: 0.45, blue: 0.20)],
-                            startPoint: .topLeading, endPoint: .bottomTrailing
-                        ),
-                        lineWidth: 1.5
-                    )
+                    .stroke(Color.tarotGoldGradient, lineWidth: 1.5)
                     .frame(width: 90, height: 90)
 
-                Image(systemName: "moon.stars.fill")
-                    .font(.system(size: 36))
-                    .foregroundStyle(LinearGradient(
-                        colors: [Color(red: 0.98, green: 0.90, blue: 0.60), Color(red: 0.85, green: 0.65, blue: 0.30)],
-                        startPoint: .top, endPoint: .bottom
-                    ))
+                Image(systemName: "moon.stars")
+                    .font(.system(size: 36, weight: .thin))
+                    .foregroundStyle(Color.tarotGoldGradient)
             }
             .shadow(color: Color.tarotGold.opacity(0.40), radius: 20)
 
             VStack(spacing: 8) {
                 Text("Arcana IA")
                     .font(.title2.bold())
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.tarotIvory)
 
                 Text("Tu guía de tarot con inteligencia artificial.\nHaz preguntas sobre cartas, tiradas o pide una lectura.")
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -402,7 +393,7 @@ public struct TarotChatView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Prueba preguntando:")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
                     .padding(.leading, 4)
 
                 FlowLayout(spacing: 8) {
@@ -452,7 +443,7 @@ public struct TarotChatView: View {
                 }
                 TextEditor(text: $inputText)
                     .font(.body)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Color.tarotIvory)
                     .frame(minHeight: 38, maxHeight: 120)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)

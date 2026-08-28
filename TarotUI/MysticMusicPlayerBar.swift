@@ -26,12 +26,12 @@ public struct MysticMusicPlayerBar: View {
                     
                     Text(audioService.currentTrack.name)
                         .font(.system(size: 12, weight: .medium, design: .serif))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Color.tarotIvory)
                         .lineLimit(1)
                     
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.system(size: 10))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.58))
                 }
             }
             .buttonStyle(.plain)
@@ -59,10 +59,10 @@ public struct MysticMusicPlayerBar: View {
                 HStack(spacing: 6) {
                     Image(systemName: "music.note.list")
                         .font(.system(size: 14))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.58))
                     Text("Fuente")
                         .font(.system(size: 12))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.58))
                 }
             }
             .buttonStyle(.plain)

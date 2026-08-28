@@ -47,7 +47,7 @@ struct ReadingView: View {
             ToolbarItem(placement: .automatic) {
                 if let spread = model.spread, !spread.drawnCards.isEmpty {
                     Button(TarotStrings.revealAll.localized) {
-                        revealedIndices = Set(0..<spread.drawnCards.count)
+                        revealAll()
                     }
                 }
             }
@@ -375,6 +375,7 @@ struct ReadingView: View {
         Button {
             if notesFocused { notesFocused = false }
             withAnimation(LuxuryAnimation.softSpring) { model.saveSpread(notes: notes); notes = "" }
+            TarotAudioService.shared.triggerHaptic(.success)
         } label: {
             Text(TarotStrings.saveReading.localized.uppercased())
                 .font(.system(size: 12.5, weight: .semibold, design: .serif))
@@ -445,6 +446,7 @@ struct ReadingView: View {
 
     private func revealAll() {
         guard let spread = model.spread else { return }
+        TarotAudioService.shared.triggerHaptic(.medium)
         withAnimation(.easeInOut(duration: 0.6)) {
             revealedIndices = Set(0..<spread.drawnCards.count)
         }

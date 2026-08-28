@@ -117,8 +117,8 @@ extension ZodiacSign {
         return dailyHoroscope
             + "\n\n"
             + fortunes[seed]
-            + "\n🎴 Carta guía: \(card)"
-            + "\n🔢 Números de la suerte: \(numbers.map(String.init).joined(separator: " · "))"
+            + "\n◈ Carta guía: \(card)"
+            + "\n✦ Números de la suerte: \(numbers.map(String.init).joined(separator: " · "))"
     }
 
     func dateString(for date: Date) -> String {
@@ -278,7 +278,7 @@ public struct AskTarotView: View {
             }
         } label: {
             HStack(spacing: 10) {
-                Image(systemName: isShuffling ? "sparkles" : "hand.tap.fill")
+                Image(systemName: isShuffling ? "sparkles" : "hand.tap")
                 Text(isShuffling ? "Consultando al Oráculo…" : "Consultar Tarot")
                     .font(.system(size: 16, weight: .bold, design: .serif))
                     .tracking(0.2)
@@ -353,14 +353,14 @@ public struct AskTarotView: View {
 
     private var answerHeader: some View {
         HStack(spacing: 6) {
-            Image(systemName: "star.fill")
+            Image(systemName: "star")
                 .font(.caption2)
                 .foregroundStyle(Color.tarotGold)
             Text("RESPUESTA DEL TAROT")
                 .font(.system(size: 12, weight: .bold, design: .serif))
                 .tracking(2.4)
                 .foregroundStyle(Color.tarotGold)
-            Image(systemName: "star.fill")
+            Image(systemName: "star")
                 .font(.caption2)
                 .foregroundStyle(Color.tarotGold)
         }
@@ -389,7 +389,7 @@ public struct AskTarotView: View {
                     Text("Veredicto:")
                         .font(.system(size: 14, weight: .bold, design: .serif))
                         .foregroundStyle(Color.tarotIvory)
-                    Text(card.arcanaType == .major ? "✨ SÍ (Muy Favorable)" : "⚖️ Depende de tu voluntad")
+                    Text(card.arcanaType == .major ? "✦ SÍ (Muy Favorable)" : "◇ Depende de tu voluntad")
                         .font(.system(size: 14, weight: .semibold, design: .serif))
                         .foregroundStyle(Color.tarotGold)
                 }

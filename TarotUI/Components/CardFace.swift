@@ -62,25 +62,13 @@ struct CardFace: View {
                 .opacity(activeDeck.hasDedicatedArtwork ? 0.08 : 0.28)
             }
 
-            // Outer Metallic Gold Foil Frame & Bevel Border
+            // Outer Lavender Foil Frame & Bevel Border
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(
-                    LinearGradient(
-                        colors: [
-                            Color(red: 0.92, green: 0.80, blue: 0.45),
-                            Color(red: 0.65, green: 0.48, blue: 0.18),
-                            Color(red: 0.98, green: 0.88, blue: 0.55),
-                            Color(red: 0.70, green: 0.52, blue: 0.20)
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: max(1.5, cardSize.width * 0.015)
-                )
+                .stroke(Color.tarotGoldGradient, lineWidth: max(1.5, cardSize.width * 0.015))
 
-            // Inner Gold Inset Hairline Frame
+            // Inner Foil Inset Hairline Frame
             RoundedRectangle(cornerRadius: 13, style: .continuous)
-                .stroke(Color(red: 0.85, green: 0.72, blue: 0.38).opacity(0.50), lineWidth: 1)
+                .stroke(Color.tarotGold.opacity(0.50), lineWidth: 1)
                 .padding(4)
         }
         .frame(width: cardSize.width, height: cardSize.height)

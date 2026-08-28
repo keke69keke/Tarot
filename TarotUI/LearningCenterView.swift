@@ -19,7 +19,7 @@ private func bookCoverGradient(for title: String) -> [Color] {
 }
 
 private func bookCoverIcon(for title: String) -> String {
-    let icons = ["books.vertical.fill", "scroll.fill", "moon.stars.fill", "sparkles",
+    let icons = ["books.vertical", "scroll.fill", "moon.stars.fill", "sparkles",
                  "flame.fill", "leaf.fill", "star.fill", "eye.fill", "atom", "wand.and.stars", "sun.max.fill", "moon.fill"]
     return icons[abs(title.hashValue) % icons.count]
 }
@@ -188,7 +188,7 @@ public struct LearningCenterView: View {
                             .foregroundStyle(Color.tarotIvory.opacity(0.68))
                 }
                  Spacer()
-                 Image(systemName: "books.vertical.fill")
+                 Image(systemName: "books.vertical")
                      .font(.system(size: 28))
                      .foregroundStyle(Color.tarotGold.opacity(0.5))
             }
@@ -285,7 +285,7 @@ public struct LearningCenterView: View {
             }
             NavigationLink(destination: SecretVaultView()) {
                 VStack(spacing: 6) {
-                    Image(systemName: "lock.shield.fill").font(.system(size: 20))
+                    Image(systemName: "lock.shield").font(.system(size: 20))
                     Text("Bóveda").font(.system(size: 11, weight: .bold, design: .serif))
                 }
                 .frame(maxWidth: .infinity)
@@ -391,7 +391,7 @@ public struct LearningCenterView: View {
                     .fill(LinearGradient(colors: [Color.tarotGoldDeep, Color.tarotGoldDeep.opacity(0.4)],
                                          startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: 56, height: 72)
-                Image(systemName: "book.closed.fill").font(.title2).foregroundStyle(Color.tarotGold)
+                Image(systemName: "book.closed").font(.title2).foregroundStyle(Color.tarotGold)
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("Guía Definitiva del Tarot")
@@ -460,7 +460,7 @@ public struct LearningCenterView: View {
             ),
             SchoolCourse(
                 title: "Tiradas Prácticas",
-                icon: "rectangle.stack.fill",
+                icon: "rectangle.stack",
                 color: Color.tarotGold,
                 summary: "De 1 a 12 cartas: cuándo usar cada tirada y cómo interpretar posiciones con precisión.",
                 lessons: [
@@ -508,7 +508,7 @@ public struct LearningCenterView: View {
             ),
             SchoolCourse(
                 title: "Historia Viva del Tarot",
-                icon: "book.closed.fill",
+                icon: "book.closed",
                 color: Color.tarotGold,
                 summary: "De los Visconti al Rider-Waite: cómo el juego se volvió oráculo y por qué importa hoy.",
                 lessons: [
@@ -743,7 +743,7 @@ public struct LearningCenterView: View {
             .padding(.horizontal)
 
             NavigationLink(destination: SecretVaultView()) {
-                toolRowContent(icon: "lock.shield.fill", title: "Bóveda Secreta",
+                toolRowContent(icon: "lock.shield", title: "Bóveda Secreta",
                                subtitle: "Notas privadas protegidas con PIN y cámara",
                                color: Color.tarotGold)
             }

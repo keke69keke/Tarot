@@ -2,7 +2,10 @@ import SwiftUI
 
 /// Fondo editorial para una app joya: negro terciopelo, una sola luz cálida cenital y polvo de oro casi invisible.
 /// Nada de orbes morados infantiles. Silencio.
+/// Las animaciones (estrellas y polvo) se pausan cuando la app pasa a background para ahorrar batería (R13).
 struct AmbientBackgroundView: View {
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some View {
         ZStack {
             // Luz cenital muy suave — como foco de vitrina
@@ -16,8 +19,13 @@ struct AmbientBackgroundView: View {
             // Viñeta editorial para profundidad
             RadialGradient(colors: [.clear, Color.black.opacity(0.28)], center: .center, startRadius: 420, endRadius: 900)
                 .ignoresSafeArea()
-            twinklingStars
-            driftingDust
+            if scenePhase == .active {
+                twinklingStars
+                driftingDust
+            } else {
+                // Frame estático — las TimelineView no animan con la app en background
+                starField(time: 0)
+            }
         }
         .allowsHitTesting(false)
         .ignoresSafeArea()
@@ -27,17 +35,7 @@ struct AmbientBackgroundView: View {
     // Campo estrellado editorial — escaso, diminuto, lento
     private var twinklingStars: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 24.0)) { t in
-            let time = t.date.timeIntervalSinceReferenceDate
-            Canvas { ctx, size in
-                for s in LuxuryStars.all {
-                    let tw = 0.42 + 0.58 * sin(time * 0.55 + s.phase)
-                    let x = s.x * size.width
-                    let y = s.y * size.height
-                    let r = s.r * (0.85 + 0.22 * tw)
-                    let op = 0.07 + 0.10 * tw
-                    ctx.fill(Path(ellipseIn: CGRect(x: x - r/2, y: y - r/2, width: r, height: r)), with: .color(Color.white.opacity(op)))
-                }
-            }
+            starField(time: t.date.timeIntervalSinceReferenceDate)
         }
         .blendMode(.screen)
         .opacity(0.9)
@@ -46,19 +44,35 @@ struct AmbientBackgroundView: View {
     // Polvo de oro — 6 partículas lentas, casi imperceptibles
     private var driftingDust: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 20.0)) { t in
-            let time = t.date.timeIntervalSinceReferenceDate
-            Canvas { ctx, size in
-                for p in LuxuryDust.all {
-                    let travel = (time * p.speed + p.phase).truncatingRemainder(dividingBy: 1.0)
-                    let y = size.height * (p.startY - travel * 0.42)
-                    let x = size.width * p.x + sin(time * 0.22 + p.phase * 3.1) * size.width * 0.008
-                    let a: Double = travel < 0.22 ? travel/0.22 : max(0, 1 - (travel-0.22)/0.78)
-                    // single pixel gold
-                    ctx.fill(Path(ellipseIn: CGRect(x: x - 0.65, y: y - 0.65, width: 1.3, height: 1.3)), with: .color(Color.tarotGold.opacity(0.14 * a)))
-                }
-            }
+            dustField(time: t.date.timeIntervalSinceReferenceDate)
         }
         .blendMode(.screen)
+    }
+
+    private func starField(time: TimeInterval) -> some View {
+        Canvas { ctx, size in
+            for s in LuxuryStars.all {
+                let tw = 0.42 + 0.58 * sin(time * 0.55 + s.phase)
+                let x = s.x * size.width
+                let y = s.y * size.height
+                let r = s.r * (0.85 + 0.22 * tw)
+                let op = 0.07 + 0.10 * tw
+                ctx.fill(Path(ellipseIn: CGRect(x: x - r/2, y: y - r/2, width: r, height: r)), with: .color(Color.white.opacity(op)))
+            }
+        }
+    }
+
+    private func dustField(time: TimeInterval) -> some View {
+        Canvas { ctx, size in
+            for p in LuxuryDust.all {
+                let travel = (time * p.speed + p.phase).truncatingRemainder(dividingBy: 1.0)
+                let y = size.height * (p.startY - travel * 0.42)
+                let x = size.width * p.x + sin(time * 0.22 + p.phase * 3.1) * size.width * 0.008
+                let a: Double = travel < 0.22 ? travel/0.22 : max(0, 1 - (travel-0.22)/0.78)
+                // single pixel gold
+                ctx.fill(Path(ellipseIn: CGRect(x: x - 0.65, y: y - 0.65, width: 1.3, height: 1.3)), with: .color(Color.tarotGold.opacity(0.14 * a)))
+            }
+        }
     }
 }
 

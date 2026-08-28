@@ -55,8 +55,8 @@ public struct UserSettings {
         dailyNotificationHour: Int = 8,
         notificationsEnabled: Bool = false,
         openAIKey: String = "",
-        activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal, .settings, .biorhythm, .natal],
-        inactiveTabs: [AppTab] = [.ask, .horoscope, .library, .chat],
+        activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal],
+        inactiveTabs: [AppTab] = [.settings, .biorhythm, .natal, .ask, .horoscope, .library, .chat],
         userName: String = "",
         biorhythmBirthDate: Date? = nil,
         natalBirthDate: Date? = nil,
@@ -249,7 +249,7 @@ public enum DeckTextureStyle {
 // MARK: - AppTab
 
 /// Available navigation tabs in the app.
-public enum AppTab: String, CaseIterable, Codable, Identifiable {
+public enum AppTab: String, CaseIterable, Codable, Identifiable, Hashable {
     case reading = "reading"
     case ask = "ask"
     case horoscope = "horoscope"

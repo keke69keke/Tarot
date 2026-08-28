@@ -7,6 +7,11 @@ struct DailyCardView: View {
     @ObservedObject var model: TarotViewModel
     @State private var halo: CGFloat = 1.0
 
+    /// Texto compartible de la Carta del Día (R11).
+    private var dailyShareText: String {
+        "◈ \(TarotStrings.dailyCardTitle.localized): \(model.dailyCard.name)"
+    }
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: LuxurySpacing.lg) {
@@ -60,7 +65,10 @@ struct DailyCardView: View {
 
                     // Tap organico — no botón plástico
                     if !model.dailyRevealed {
-                        Button { withAnimation(LuxuryAnimation.softSpring) { model.revealDaily() } } label: {
+                        Button {
+                            withAnimation(LuxuryAnimation.softSpring) { model.revealDaily() }
+                            TarotAudioService.shared.triggerHaptic(.medium)
+                        } label: {
                             VStack(spacing: 8) {
                                 Image(systemName: "eye")
                                     .font(.system(size: 16, weight: .thin))
@@ -98,6 +106,27 @@ struct DailyCardView: View {
                     .tracking(0.6)
                     .foregroundStyle(Color.tarotIvory.opacity(0.44))
                     .frame(maxWidth: .infinity)
+
+                if model.dailyRevealed {
+                    ShareLink(item: dailyShareText) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.system(size: 11, weight: .light))
+                                .foregroundStyle(Color.tarotIvory.opacity(0.8))
+                            Text("Compartir")
+                                .font(.system(size: 10, weight: .medium, design: .serif))
+                                .tracking(0.8)
+                                .foregroundStyle(Color.tarotIvory.opacity(0.8))
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Capsule().fill(Color.white.opacity(0.05)))
+                        .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.7))
+                    }
+                    .buttonStyle(.plain)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 2)
+                }
 
                 if model.dailyRevealed {
                     VStack(alignment: .leading, spacing: 12) {

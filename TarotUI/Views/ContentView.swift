@@ -6,7 +6,9 @@ import TarotDI
 public struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
     @StateObject private var model: TarotViewModel
-    @State private var showWelcome = true
+    /// Welcome solo en el primer arranque — persistido entre sesiones.
+    @AppStorage("hasSeenWelcome") private var hasSeenWelcome = false
+    @State private var selectedTab: AppTab?
 
     public init(container: any AppContainerProtocol) { _model = StateObject(wrappedValue: TarotViewModel(container: container)) }
 
@@ -16,7 +18,7 @@ public struct ContentView: View {
             Color.tarotBackgroundGradient.ignoresSafeArea()
             AmbientBackgroundView()
 
-            TabView {
+            TabView(selection: $selectedTab) {
                 ForEach(model.settings.activeTabs) { tab in
                     Group {
                         switch tab {
@@ -29,8 +31,8 @@ public struct ContentView: View {
                         case .journal: JournalView(model: model)
                         case .settings: SettingsView(model: model)
                         case .chat: TarotChatView(apiKey: model.settings.openAIKey, repository: model.container.cards)
-                        case .biorhythm: BiorhythmView()
-                        case .natal: NatalChartView()
+                        case .biorhythm: BiorhythmView(model: model)
+                        case .natal: NatalChartView(model: model)
                         }
                     }
                     .tabItem {
@@ -47,17 +49,21 @@ public struct ContentView: View {
                 }
             }
             .tint(Color.tarotGold)
-            .opacity(showWelcome ? 0 : 1)
+            // Haptic sutil al cambiar de tab — feedback táctil consistente
+            .onChange(of: selectedTab) { _ in
+                TarotAudioService.shared.triggerHaptic(.light)
+            }
+            .opacity(hasSeenWelcome ? 1 : 0)
             // Hairline joya sobre tab bar
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 GoldDivider(opacity: 0.11)
-                    .opacity(showWelcome ? 0 : 1)
+                    .opacity(hasSeenWelcome ? 1 : 0)
             }
 
-            if showWelcome {
+            if !hasSeenWelcome {
                 WelcomeView(colorScheme: colorScheme, userName: model.settings.userName) {
                     withAnimation(.easeInOut(duration: 0.72)) {
-                        showWelcome = false
+                        hasSeenWelcome = true
                     }
                 }
                 .transition(.asymmetric(

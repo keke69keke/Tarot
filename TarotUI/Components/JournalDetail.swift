@@ -20,11 +20,11 @@ struct JournalDetail: View {
                             .foregroundStyle(Color.tarotGold)
                         Text(entry.savedAt.formatted(date: .long, time: .shortened))
                             .font(.system(size: 13, design: .serif))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                     Text(entry.spread.type?.label ?? "Tirada")
                         .font(.system(size: 22, weight: .bold, design: .serif))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Color.tarotIvory)
                     Text("\(entry.spread.drawnCards.count) cartas")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(Color.tarotGold)
@@ -37,12 +37,12 @@ struct JournalDetail: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 24, style: .continuous)
-                        .stroke(LinearGradient(colors: [Color.tarotGold.opacity(0.4), Color.tarotBurgundy.opacity(0.15)], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 1)
+                        .stroke(Color.tarotGold.opacity(0.30), lineWidth: 1)
                 )
 
                 // Cards in the spread
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("Cartas de la tirada", systemImage: "rectangle.stack.fill")
+                    Label("Cartas de la tirada", systemImage: "rectangle.stack")
                         .font(.system(size: 14, weight: .bold, design: .serif))
                         .foregroundStyle(Color.tarotGold)
 
@@ -69,7 +69,7 @@ struct JournalDetail: View {
                                         .foregroundStyle(Color.tarotGold)
                                     Text(drawn.card.name)
                                         .font(.system(size: 15, weight: .semibold, design: .serif))
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(Color.tarotIvory)
                                     if drawn.orientation == .reversed {
                                         Label("Invertida", systemImage: "arrow.down.circle")
                                             .font(.caption2)
@@ -104,7 +104,7 @@ struct JournalDetail: View {
 
                         Text(entry.notes)
                             .font(.system(size: 15, design: .serif))
-                            .foregroundStyle(.primary)
+                            .foregroundStyle(Color.tarotIvory)
                             .lineSpacing(6)
                             .fixedSize(horizontal: false, vertical: true)
                     }

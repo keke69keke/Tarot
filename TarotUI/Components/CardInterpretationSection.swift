@@ -21,7 +21,7 @@ struct CardInterpretationSection: View {
             if !interpretation.keywords.isEmpty {
                 Text(interpretation.keywords.joined(separator: " · "))
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
             }
 
             if !interpretation.aspects.isEmpty {
@@ -31,7 +31,7 @@ struct CardInterpretationSection: View {
                         if let value = interpretation.aspects[aspect] {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(aspect).bold()
-                                Text(value).font(.subheadline).foregroundStyle(.secondary)
+                                Text(value).font(.subheadline).foregroundStyle(Color.tarotIvory.opacity(0.58))
                             }
                         }
                     }
@@ -45,7 +45,7 @@ struct CardInterpretationSection: View {
                         if let value = interpretation.contextual[key] {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(key.displayName).bold()
-                                Text(value).font(.body).foregroundStyle(.secondary)
+                                Text(value).font(.body).foregroundStyle(Color.tarotIvory.opacity(0.58))
                             }
                         }
                     }

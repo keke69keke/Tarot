@@ -40,6 +40,7 @@ public enum TarotStrings: String {
     case openAIKeyPlaceholder = "sk-..."
     case openAIKeyConfigured = "API Key configurada"
     case openAIDescription = "Opcional. Sin API key, Arcana IA usa el motor local de tarot."
+    case hiddenTabsHint = "Ocultos — toca ＋ para mostrar"
     
     // Common
     case errorTitle = "Error"

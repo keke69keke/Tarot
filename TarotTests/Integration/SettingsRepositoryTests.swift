@@ -174,4 +174,36 @@ class UserDefaultsSettingsRepositoryTests: XCTestCase {
         repository.save(maxHourSettings)
         XCTAssertEqual(repository.load().dailyNotificationHour, 22)
     }
+    
+    // MARK: - Tab Limit (Requirement R6)
+    
+    func testClampTabsUnderLimitIsNoOp() {
+        let active: [AppTab] = [.reading, .daily, .reference, .learn]
+        let inactive: [AppTab] = [.chat]
+        let result = UserDefaultsSettingsRepository.clampTabs(active: active, inactive: inactive)
+        XCTAssertEqual(result.active, active)
+        XCTAssertEqual(result.inactive, inactive)
+    }
+    
+    func testClampTabsOverLimitKeepsMandatoryAndOrder() {
+        // 7 activos con .learn obligatorio en posición 4 → activos = 5, 2 excedentes a inactivos
+        let active: [AppTab] = [.reading, .daily, .reference, .learn, .journal, .chat, .settings]
+        let inactive: [AppTab] = [.ask, .horoscope]
+        let result = UserDefaultsSettingsRepository.clampTabs(active: active, inactive: inactive)
+        
+        XCTAssertEqual(result.active.count, 5)
+        XCTAssertTrue(result.active.contains(.learn)) // obligatorio se conserva
+        XCTAssertEqual(Array(result.active.prefix(4)), [.learn, .reading, .daily, .reference]) // mandatory al frente, resto en orden
+        XCTAssertEqual(result.inactive, [.ask, .horoscope, .chat, .settings]) // excedentes al final
+    }
+    
+    func testLoadClampsLegacyConfigsWithMoreThanFiveTabs() {
+        // Simula una instalación antigua con 8 tabs activos
+        let legacyActive = UserSettings().activeTabs.map { $0.rawValue }
+        testUserDefaults.set(legacyActive + [AppTab.chat.rawValue], forKey: "activeTabs")
+        
+        let settings = repository.load()
+        XCTAssertLessThanOrEqual(settings.activeTabs.count, 5)
+        XCTAssertTrue(settings.activeTabs.contains(.learn))
+    }
 }

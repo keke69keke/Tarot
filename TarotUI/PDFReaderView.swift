@@ -25,7 +25,7 @@ public struct PDFBookView: View {
                         VStack(spacing: 1) {
                             Text(book?.title ?? "Guía Definitiva")
                                 .font(.system(size: 15, weight: .semibold, design: .serif))
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Color.tarotIvory)
                             Text(book == nil ? "Fiebig & Bürger · Rider-Waite" : book!.fileName)
                                 .font(.system(size: 11, weight: .regular, design: .serif))
                                 .foregroundStyle(Color.tarotGold)
@@ -73,10 +73,10 @@ private struct PDFReaderContainerView: View {
                 .foregroundStyle(Color.tarotGold.opacity(0.55))
             Text("Libro no disponible")
                 .font(.system(size: 20, weight: .semibold, design: .serif))
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.tarotIvory)
             Text("El archivo del libro no se encontró en el paquete de la app.")
                 .font(.system(size: 15, design: .serif))
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.tarotIvory.opacity(0.58))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
         }
@@ -91,14 +91,14 @@ private struct MacPDFPlaceholderView: View {
     let url: URL
     var body: some View {
         VStack(spacing: 16) {
-            Image(systemName: "book.closed.fill")
+            Image(systemName: "book.closed")
                 .font(.system(size: 56))
                 .foregroundStyle(Color.tarotGold)
             Text("Lector disponible en iPhone / iPad")
                 .font(.system(size: 16, weight: .semibold, design: .serif))
             Text(url.lastPathComponent)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Color.tarotIvory.opacity(0.58))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -139,10 +139,10 @@ private struct IOSPDFReaderView: View {
                 VStack(spacing: 2) {
                     Text("Página \(currentPage)")
                         .font(.system(size: 13, weight: .semibold, design: .serif))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Color.tarotIvory)
                     Text("de \(totalPages)")
                         .font(.system(size: 11, design: .serif))
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.58))
                 }
 
                 Spacer()

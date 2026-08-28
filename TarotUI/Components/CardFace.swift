@@ -32,7 +32,8 @@ struct CardFace: View {
                 let imageAspect = imageH > 0 ? imageW / imageH : 1.0
                 let frameAspect = cardSize.height > 0 ? cardSize.width / cardSize.height : 0.66
                 let useFit: Bool = {
-                    if activeDeck == .helloKitty { return false }
+                    // HK cards have ratio ~0.682 matching the frame — use fit to avoid crops
+                    if activeDeck == .helloKitty { return true }
                     return imageAspect > frameAspect + 0.03
                 }()
 

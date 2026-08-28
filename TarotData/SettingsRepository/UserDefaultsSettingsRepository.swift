@@ -76,8 +76,7 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         for tab in mandatoryTabs where !updatedActiveTabs.contains(tab) {
             updatedActiveTabs.append(tab)
         }
-        // Keep activeTabs sorted by default order for deterministic UI
-        updatedActiveTabs.sort { (defaultActiveTabs.firstIndex(of: $0) ?? 999) < (defaultActiveTabs.firstIndex(of: $1) ?? 999) }
+        // Preserve user-defined tab order (do NOT sort by default order)
         // Límite iOS: máximo 5 tabs activos (más de 5 → iOS muestra "Más")
         let clamped = Self.clampTabs(active: updatedActiveTabs, inactive: inactiveTabs, mandatory: mandatoryTabs)
         let finalInactiveTabs = clamped.inactive
@@ -131,7 +130,7 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         for tab in mandatory where !activeTabsToSave.contains(tab) {
             activeTabsToSave.append(tab)
         }
-        activeTabsToSave.sort { (defaultActiveTabs.firstIndex(of: $0) ?? 999) < (defaultActiveTabs.firstIndex(of: $1) ?? 999) }
+        // Preserve user-defined tab order
         let inactiveTabsToSave = settings.inactiveTabs.filter { !mandatory.contains($0) }
 
         userDefaults.set(activeTabsToSave.map { $0.rawValue }, forKey: Keys.activeTabs)
@@ -148,7 +147,7 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         active: [AppTab],
         inactive: [AppTab],
         mandatory: [AppTab] = [.learn],
-        maxActive: Int = 5
+        maxActive: Int = 8
     ) -> (active: [AppTab], inactive: [AppTab]) {
         guard active.count > maxActive else { return (active, inactive) }
         // Conserva el orden: los primeros `maxActive` tras respetar mandatory al frente

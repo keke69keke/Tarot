@@ -191,10 +191,10 @@ class UserDefaultsSettingsRepositoryTests: XCTestCase {
         let inactive: [AppTab] = [.ask, .horoscope]
         let result = UserDefaultsSettingsRepository.clampTabs(active: active, inactive: inactive)
         
-        XCTAssertEqual(result.active.count, 5)
+        XCTAssertEqual(result.active.count, 7) // todos caben en nuevo límite de 8
         XCTAssertTrue(result.active.contains(.learn)) // obligatorio se conserva
-        XCTAssertEqual(Array(result.active.prefix(4)), [.learn, .reading, .daily, .reference]) // mandatory al frente, resto en orden
-        XCTAssertEqual(result.inactive, [.ask, .horoscope, .chat, .settings]) // excedentes al final
+        XCTAssertEqual(result.active, active) // orden del usuario preservado
+        XCTAssertEqual(result.inactive, [.ask, .horoscope]) // inactivos sin cambios
     }
     
     func testLoadClampsLegacyConfigsWithMoreThanFiveTabs() {
@@ -203,7 +203,7 @@ class UserDefaultsSettingsRepositoryTests: XCTestCase {
         testUserDefaults.set(legacyActive + [AppTab.chat.rawValue], forKey: "activeTabs")
         
         let settings = repository.load()
-        XCTAssertLessThanOrEqual(settings.activeTabs.count, 5)
+        XCTAssertLessThanOrEqual(settings.activeTabs.count, 8) // nuevo límite
         XCTAssertTrue(settings.activeTabs.contains(.learn))
     }
 }

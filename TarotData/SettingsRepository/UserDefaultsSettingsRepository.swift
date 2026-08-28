@@ -71,8 +71,8 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         // Ensure mandatory tabs are always visible (migration from older installs)
         let defaultActiveTabs = UserSettings().activeTabs
         var updatedActiveTabs = activeTabs.isEmpty ? defaultActiveTabs : activeTabs
-        // Auto-migrate missing mandatory tabs (learn, biorhythm, natal) for users coming from old versions
-        let mandatoryTabs: [AppTab] = [.learn, .biorhythm, .natal]
+        // Auto-migrate: asegurar que horoscope y chat siempre estén activos (migración v2)
+        let mandatoryTabs: [AppTab] = [.learn, .horoscope, .chat]
         for tab in mandatoryTabs where !updatedActiveTabs.contains(tab) {
             updatedActiveTabs.append(tab)
         }
@@ -126,7 +126,7 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         // Ensure mandatory tabs are always in activeTabs and never in inactiveTabs when saving
         let defaultActiveTabs = UserSettings().activeTabs
         var activeTabsToSave = settings.activeTabs
-        let mandatory: [AppTab] = [.learn, .biorhythm, .natal]
+        let mandatory: [AppTab] = [.learn, .horoscope, .chat]
         for tab in mandatory where !activeTabsToSave.contains(tab) {
             activeTabsToSave.append(tab)
         }

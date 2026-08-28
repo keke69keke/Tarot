@@ -205,5 +205,7 @@ class UserDefaultsSettingsRepositoryTests: XCTestCase {
         let settings = repository.load()
         XCTAssertLessThanOrEqual(settings.activeTabs.count, 8) // nuevo límite
         XCTAssertTrue(settings.activeTabs.contains(.learn))
+        XCTAssertTrue(settings.activeTabs.contains(.horoscope)) // migración v2
+        XCTAssertTrue(settings.activeTabs.contains(.chat)) // migración v2
     }
 }

@@ -32,10 +32,10 @@ public struct UserSettings {
     public var openAIKey: String = ""
 
     /// Active tabs — 5 fijos (Tirada/Hoy/Biblioteca/Aprender/Diario) + resto en More vía Ajustes
-    public var activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal]
+    public var activeTabs: [AppTab] = [.reading, .daily, .horoscope, .chat, .learn]
     
     /// Inactive tabs hidden from the bottom navigation menu
-    public var inactiveTabs: [AppTab] = [.settings, .biorhythm, .natal, .ask, .horoscope, .library, .chat]
+    public var inactiveTabs: [AppTab] = [.settings, .biorhythm, .natal, .ask, .reference, .library, .journal]
 
     /// User display name used for personalized greetings in the UI.
     public var userName: String = ""
@@ -55,8 +55,8 @@ public struct UserSettings {
         dailyNotificationHour: Int = 8,
         notificationsEnabled: Bool = false,
         openAIKey: String = "",
-        activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal],
-        inactiveTabs: [AppTab] = [.settings, .biorhythm, .natal, .ask, .horoscope, .library, .chat],
+        activeTabs: [AppTab] = [.reading, .daily, .horoscope, .chat, .learn],
+        inactiveTabs: [AppTab] = [.settings, .biorhythm, .natal, .ask, .reference, .library, .journal],
         userName: String = "",
         biorhythmBirthDate: Date? = nil,
         natalBirthDate: Date? = nil,

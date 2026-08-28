@@ -1,20 +1,42 @@
 import Foundation
 import Combine
 import CryptoKit
+import LocalAuthentication
+
+public enum VaultMediaType: String, Codable {
+    case photo, video, audio
+}
 
 public struct SecretVaultEntry: Identifiable, Codable, Hashable {
     public let id: UUID
     public var title: String
     public var notes: String
-    public var imageFileName: String
+    public var imageFileName: String // generic fileName (photo jpg, video mov, audio m4a)
+    public var mediaType: VaultMediaType
     public let dateAdded: Date
+    public var duration: Double? // audio/video seconds
     
-    public init(id: UUID = UUID(), title: String, notes: String = "", imageFileName: String, dateAdded: Date = Date()) {
+    public init(id: UUID = UUID(), title: String, notes: String = "", imageFileName: String, mediaType: VaultMediaType = .photo, dateAdded: Date = Date(), duration: Double? = nil) {
         self.id = id
         self.title = title
         self.notes = notes
         self.imageFileName = imageFileName
+        self.mediaType = mediaType
         self.dateAdded = dateAdded
+        self.duration = duration
+    }
+
+    // Backward compat: decode old entries without mediaType as .photo
+    enum CodingKeys: String, CodingKey { case id, title, notes, imageFileName, mediaType, dateAdded, duration }
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        title = try c.decode(String.self, forKey: .title)
+        notes = try c.decode(String.self, forKey: .notes)
+        imageFileName = try c.decode(String.self, forKey: .imageFileName)
+        mediaType = try c.decodeIfPresent(VaultMediaType.self, forKey: .mediaType) ?? .photo
+        dateAdded = try c.decode(Date.self, forKey: .dateAdded)
+        duration = try c.decodeIfPresent(Double.self, forKey: .duration)
     }
 }
 
@@ -33,6 +55,43 @@ public class SecretVaultManager: ObservableObject {
     
     public var hasPINSet: Bool {
         UserDefaults.standard.string(forKey: pinDefaultsKey) != nil
+    }
+
+    public var biometricEnabled: Bool {
+        get { UserDefaults.standard.bool(forKey: "TarotSecretVault_BiometricEnabled") }
+        set { UserDefaults.standard.set(newValue, forKey: "TarotSecretVault_BiometricEnabled") }
+    }
+
+    public var biometricTypeName: String {
+        let ctx = LAContext()
+        _ = ctx.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: nil)
+        switch ctx.biometryType {
+        case .faceID: return "Face ID"
+        case .touchID: return "Touch ID"
+        default: return "Biometría"
+        }
+    }
+
+    public func canUseBiometrics() -> Bool {
+        let ctx = LAContext()
+        var err: NSError?
+        return ctx.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &err)
+    }
+
+    public func authenticateWithBiometrics() async -> Bool {
+        guard biometricEnabled, canUseBiometrics() else { return false }
+        let ctx = LAContext()
+        do {
+            let ok = try await ctx.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Desbloquear Bóveda Secreta")
+            if ok { isUnlocked = true }
+            return ok
+        } catch { return false }
+    }
+
+    public func changePIN(oldPIN: String, newPIN: String) -> Bool {
+        guard unlock(with: oldPIN) else { return false }
+        setPIN(newPIN)
+        return true
     }
     
     private func hashPIN(_ pin: String, salt: Data) -> String {
@@ -98,15 +157,45 @@ public class SecretVaultManager: ObservableObject {
     public func savePhoto(data: Data, title: String, notes: String) -> SecretVaultEntry? {
         let fileName = "\(UUID().uuidString).jpg"
         let destinationURL = getVaultDirectory().appendingPathComponent(fileName)
-        
         do {
             try data.write(to: destinationURL)
-            let entry = SecretVaultEntry(title: title.isEmpty ? "Lectura Fásica \(Date().formatted(date: .numeric, time: .shortened))" : title, notes: notes, imageFileName: fileName)
+            let entry = SecretVaultEntry(title: title.isEmpty ? "Lectura \(Date().formatted(date: .numeric, time: .shortened))" : title, notes: notes, imageFileName: fileName, mediaType: .photo)
             entries.insert(entry, at: 0)
             saveEntries()
             return entry
         } catch {
             print("Error saving vault photo: \(error)")
+            return nil
+        }
+    }
+
+    public func saveVideo(from sourceURL: URL, title: String, notes: String) -> SecretVaultEntry? {
+        let fileName = "\(UUID().uuidString).mov"
+        let dest = getVaultDirectory().appendingPathComponent(fileName)
+        do {
+            if FileManager.default.fileExists(atPath: dest.path) { try FileManager.default.removeItem(at: dest) }
+            try FileManager.default.copyItem(at: sourceURL, to: dest)
+            let entry = SecretVaultEntry(title: title.isEmpty ? "Video \(Date().formatted(date: .numeric, time: .shortened))" : title, notes: notes, imageFileName: fileName, mediaType: .video)
+            entries.insert(entry, at: 0)
+            saveEntries()
+            return entry
+        } catch {
+            print("Error saving vault video: \(error)")
+            return nil
+        }
+    }
+
+    public func saveAudio(data: Data, title: String, notes: String, duration: Double? = nil) -> SecretVaultEntry? {
+        let fileName = "\(UUID().uuidString).m4a"
+        let dest = getVaultDirectory().appendingPathComponent(fileName)
+        do {
+            try data.write(to: dest)
+            let entry = SecretVaultEntry(title: title.isEmpty ? "Audio \(Date().formatted(date: .numeric, time: .shortened))" : title, notes: notes, imageFileName: fileName, mediaType: .audio, duration: duration)
+            entries.insert(entry, at: 0)
+            saveEntries()
+            return entry
+        } catch {
+            print("Error saving vault audio: \(error)")
             return nil
         }
     }

@@ -7,7 +7,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.gvstii.tarotapp</string>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleName</key>
 	<string>Tarot</string>
 	<key>CFBundlePackageType</key>
@@ -24,6 +24,12 @@
 	<string>Tarot usa Apple Music para ofrecerte música ambiente opcional durante tus lecturas.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Accede a tu cámara para capturar y guardar lecturas de tarot privadas en la bóveda secreta.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Usa Face ID / Touch ID para desbloquear tu bóveda secreta de tarot de forma segura.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Permite grabar audio para guardar lecturas de voz en tu bóveda secreta.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Selecciona fotos y videos de tu biblioteca para guardar lecturas en la bóveda.</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UILaunchStoryboardName</key>

@@ -1,15 +1,24 @@
 import SwiftUI
 import TarotCore
+import LocalAuthentication
+import AVFoundation
 
 public struct SecretVaultView: View {
     @StateObject private var vaultManager = SecretVaultManager()
     @State private var pinInput: String = ""
     @State private var pinError: String? = nil
     @State private var showingImagePicker = false
+    @State private var showingVideoPicker = false
+    @State private var showingAudioRecorder = false
     @State private var showingAddSheet = false
+    @State private var showingChangePIN = false
     @State private var selectedImageData: Data? = nil
+    @State private var selectedVideoURL: URL? = nil
     @State private var newTitle: String = ""
     @State private var newNotes: String = ""
+    @State private var oldPIN = ""
+    @State private var newPIN = ""
+    @State private var changePINError: String? = nil
     
     public init() {}
     
@@ -31,11 +40,12 @@ public struct SecretVaultView: View {
             .toolbar {
                 if vaultManager.isUnlocked {
                     ToolbarItem(placement: .automatic) {
-                        Button {
-                            vaultManager.lock()
+                        Menu {
+                            Button { showingChangePIN = true } label: { Label("Cambiar código", systemImage: "key.fill") }
+                            Button { vaultManager.biometricEnabled.toggle() } label: { Label(vaultManager.biometricEnabled ? "Desactivar \(vaultManager.biometricTypeName)" : "Activar \(vaultManager.biometricTypeName)", systemImage: vaultManager.biometricTypeName == "Face ID" ? "faceid" : "touchid") }
+                            Button(role: .destructive) { vaultManager.lock() } label: { Label("Bloquear", systemImage: "lock.fill") }
                         } label: {
-                            Label("Bloquear", systemImage: "lock.fill")
-                                .foregroundStyle(Color.tarotGold)
+                            Image(systemName: "ellipsis.circle").foregroundStyle(Color.tarotGold)
                         }
                     }
                 }
@@ -43,6 +53,20 @@ public struct SecretVaultView: View {
             .sheet(isPresented: $showingAddSheet) {
                 addEntrySheet
             }
+            .sheet(isPresented: $showingChangePIN) { changePINSheet }
+            #if os(iOS)
+            .sheet(isPresented: $showingVideoPicker) {
+                VideoCapturePicker(videoURL: $selectedVideoURL, onVideoPicked: { url in
+                    self.selectedVideoURL = url
+                    self.showingAddSheet = true
+                })
+            }
+            .sheet(isPresented: $showingAudioRecorder) {
+                AudioRecorderSheet { data, duration in
+                    _ = vaultManager.saveAudio(data: data, title: "Audio \(Date().formatted(date: .abbreviated, time: .omitted))", notes: "", duration: duration)
+                }
+            }
+            #endif
         }
     }
     
@@ -72,6 +96,28 @@ public struct SecretVaultView: View {
                 Text(error)
                     .font(.caption)
                     .foregroundStyle(.red)
+            }
+
+            if vaultManager.hasPINSet && vaultManager.canUseBiometrics() {
+                Button {
+                    Task { _ = await vaultManager.authenticateWithBiometrics() }
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: vaultManager.biometricTypeName == "Face ID" ? "faceid" : "touchid")
+                        Text("Desbloquear con \(vaultManager.biometricTypeName)")
+                            .font(.system(size: 13, weight: .semibold, design: .serif))
+                    }
+                    .foregroundStyle(Color.tarotGold)
+                    .padding(.horizontal, 14).padding(.vertical, 8)
+                    .background(Capsule().fill(Color.tarotGold.opacity(0.12)))
+                    .overlay(Capsule().stroke(Color.tarotGold.opacity(0.22), lineWidth: 0.7))
+                }
+                .buttonStyle(.plain)
+                Toggle(isOn: Binding(get: { vaultManager.biometricEnabled }, set: { vaultManager.biometricEnabled = $0 })) {
+                    Text("Activar \(vaultManager.biometricTypeName)")
+                        .font(.system(size: 11, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.6))
+                }.tint(Color.tarotGold).padding(.horizontal, 32).padding(.top, 4)
             }
             
             // Keypad 1-9 & 0
@@ -145,19 +191,27 @@ public struct SecretVaultView: View {
                     }
                     Spacer()
                     
-                    Button {
-                        showingImagePicker = true
-                    } label: {
-                        HStack(spacing: 6) {
-                            Image(systemName: "camera.fill")
-                            Text("Capturar")
+                    HStack(spacing: 8) {
+                        Button { showingImagePicker = true } label: {
+                            HStack(spacing: 6) { Image(systemName: "camera.fill"); Text("Foto") }
+                                .font(.system(size: 12, weight: .bold, design: .serif))
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color.tarotGold).foregroundStyle(.black).cornerRadius(10)
                         }
-                        .font(.subheadline.bold())
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(Color.tarotGold)
-                        .foregroundStyle(.black)
-                        .cornerRadius(12)
+                        Button { showingVideoPicker = true } label: {
+                            HStack(spacing: 6) { Image(systemName: "video.fill"); Text("Video") }
+                                .font(.system(size: 12, weight: .bold, design: .serif))
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color.tarotGold.opacity(0.85)).foregroundStyle(.black).cornerRadius(10)
+                        }
+                        Button { showingAudioRecorder = true } label: {
+                            HStack(spacing: 6) { Image(systemName: "mic.fill"); Text("Audio") }
+                                .font(.system(size: 12, weight: .bold, design: .serif))
+                                .padding(.horizontal, 12).padding(.vertical, 8)
+                                .background(Color.white.opacity(0.08)).foregroundStyle(Color.tarotGold)
+                                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.tarotGold.opacity(0.22), lineWidth: 0.7))
+                                .cornerRadius(10)
+                        }
                     }
                 }
                 .padding(.horizontal)
@@ -196,21 +250,34 @@ public struct SecretVaultView: View {
     
     private func vaultCardView(entry: SecretVaultEntry) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            AsyncImage(url: vaultManager.getImageURL(for: entry)) { phase in
-                if let image = phase.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(height: 160)
-                        .clipped()
-                        .cornerRadius(12)
-                } else {
-                    Rectangle()
-                        .fill(Color.tarotPanel)
-                        .frame(height: 160)
-                        .cornerRadius(12)
-                        .overlay(Image(systemName: "photo").foregroundStyle(.secondary))
+            ZStack(alignment: .topTrailing) {
+                Group {
+                    if entry.mediaType == .photo {
+                        AsyncImage(url: vaultManager.getImageURL(for: entry)) { phase in
+                            if let image = phase.image {
+                                image.resizable().aspectRatio(contentMode: .fill).frame(height: 160).clipped().cornerRadius(12)
+                            } else {
+                                Rectangle().fill(Color.tarotPanel).frame(height: 160).cornerRadius(12).overlay(Image(systemName: "photo").foregroundStyle(.secondary))
+                            }
+                        }
+                    } else if entry.mediaType == .video {
+                        Rectangle().fill(Color.tarotPanel).frame(height: 160).cornerRadius(12)
+                            .overlay(VStack(spacing: 6) { Image(systemName: "video.fill").font(.system(size: 28)).foregroundStyle(Color.tarotGold); Text("Video").font(.caption2).foregroundStyle(Color.tarotIvory.opacity(0.6)) })
+                    } else {
+                        Rectangle().fill(Color.tarotPanel).frame(height: 160).cornerRadius(12)
+                            .overlay(VStack(spacing: 6) { Image(systemName: "waveform").font(.system(size: 28)).foregroundStyle(Color.tarotGold); if let d = entry.duration { Text(String(format: "%.0fs", d)).font(.caption2).foregroundStyle(Color.tarotIvory.opacity(0.6)) } })
+                    }
                 }
+                HStack(spacing: 4) {
+                    Image(systemName: entry.mediaType == .photo ? "camera.fill" : entry.mediaType == .video ? "video.fill" : "mic.fill")
+                        .font(.system(size: 9, weight: .bold))
+                    Text(entry.mediaType == .photo ? "FOTO" : entry.mediaType == .video ? "VIDEO" : "AUDIO")
+                        .font(.system(size: 8, weight: .black, design: .rounded)).tracking(0.6)
+                }
+                .foregroundStyle(Color.white)
+                .padding(.horizontal, 6).padding(.vertical, 4)
+                .background(Capsule().fill(Color.black.opacity(0.55)))
+                .padding(8)
             }
             
             Text(entry.title)
@@ -264,12 +331,48 @@ public struct SecretVaultView: View {
                     Button("Guardar") {
                         if let data = selectedImageData {
                             _ = vaultManager.savePhoto(data: data, title: newTitle, notes: newNotes)
+                        } else if let url = selectedVideoURL {
+                            _ = vaultManager.saveVideo(from: url, title: newTitle, notes: newNotes)
                         }
-                        newTitle = ""
-                        newNotes = ""
-                        selectedImageData = nil
+                        newTitle = ""; newNotes = ""; selectedImageData = nil; selectedVideoURL = nil
                         showingAddSheet = false
                     }
+                    .disabled((selectedImageData == nil && selectedVideoURL == nil) && newTitle.isEmpty && newNotes.isEmpty)
+                }
+            }
+        }
+    }
+
+    private var changePINSheet: some View {
+        NavigationStack {
+            Form {
+                Section(header: Text("Cambiar código")) {
+                    SecureField("Código actual (4 dígitos)", text: $oldPIN)
+                    SecureField("Nuevo código (4 dígitos)", text: $newPIN)
+                    if let err = changePINError { Text(err).font(.caption).foregroundStyle(.red) }
+                }
+                Section {
+                    HStack {
+                        Image(systemName: vaultManager.biometricTypeName == "Face ID" ? "faceid" : "touchid").foregroundStyle(Color.tarotGold)
+                        Toggle("Usar \(vaultManager.biometricTypeName)", isOn: Binding(get: { vaultManager.biometricEnabled }, set: { vaultManager.biometricEnabled = $0 }))
+                            .tint(Color.tarotGold)
+                    }
+                }
+            }
+            .navigationTitle("Cambiar código")
+            #if os(iOS)
+            .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Cancelar") { showingChangePIN = false; oldPIN=""; newPIN=""; changePINError=nil } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Guardar") {
+                        if vaultManager.changePIN(oldPIN: oldPIN, newPIN: newPIN) {
+                            showingChangePIN=false; oldPIN=""; newPIN=""; changePINError=nil
+                        } else {
+                            changePINError = "Código actual incorrecto o nuevo inválido (4 dígitos)"
+                        }
+                    }.disabled(newPIN.count != 4 || oldPIN.count != 4)
                 }
             }
         }
@@ -279,6 +382,101 @@ public struct SecretVaultView: View {
 // MARK: - Photo Capture Picker Wrapper
 #if os(iOS)
 import PhotosUI
+import UniformTypeIdentifiers
+
+private struct VideoCapturePicker: UIViewControllerRepresentable {
+    @Binding var videoURL: URL?
+    let onVideoPicked: (URL) -> Void
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let p = UIImagePickerController()
+        p.delegate = context.coordinator
+        p.sourceType = UIImagePickerController.isSourceTypeAvailable(.camera) ? .camera : .photoLibrary
+        p.mediaTypes = [UTType.movie.identifier]
+        p.videoQuality = .typeMedium
+        return p
+    }
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: VideoCapturePicker
+        init(_ parent: VideoCapturePicker) { self.parent = parent }
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            if let url = info[.mediaURL] as? URL {
+                parent.videoURL = url
+                parent.onVideoPicked(url)
+            }
+            picker.dismiss(animated: true)
+        }
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) { picker.dismiss(animated: true) }
+    }
+}
+
+private struct AudioRecorderSheet: View {
+    @Environment(\.dismiss) private var dismiss
+    let onSave: (Data, Double) -> Void
+    @StateObject private var recorder = AudioRecorder()
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 24) {
+                Image(systemName: recorder.isRecording ? "waveform.circle.fill" : "mic.circle.fill")
+                    .font(.system(size: 72)).foregroundStyle(Color.tarotGold)
+                    .scaleEffect(recorder.isRecording ? 1.1 : 1.0)
+                    .animation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true), value: recorder.isRecording)
+                Text(recorder.isRecording ? String(format: "%.0fs", recorder.elapsed) : "Listo para grabar")
+                    .font(.system(size: 14, weight: .semibold, design: .serif)).foregroundStyle(Color.tarotIvory)
+                HStack(spacing: 16) {
+                    Button(recorder.isRecording ? "Detener" : "Grabar") {
+                        if recorder.isRecording { recorder.stop() } else { try? recorder.start() }
+                    }
+                    .font(.system(size: 15, weight: .bold, design: .serif))
+                    .padding(.horizontal, 24).padding(.vertical, 12)
+                    .background(Capsule().fill(recorder.isRecording ? Color.red.opacity(0.85) : Color.tarotGold))
+                    .foregroundStyle(.white)
+                    if let url = recorder.fileURL, !recorder.isRecording, FileManager.default.fileExists(atPath: url.path) {
+                        Button("Guardar") {
+                            if let data = try? Data(contentsOf: url) {
+                                onSave(data, recorder.elapsed)
+                            }
+                            dismiss()
+                        }
+                        .font(.system(size: 15, weight: .bold, design: .serif))
+                        .padding(.horizontal, 24).padding(.vertical, 12)
+                        .background(Capsule().fill(Color.tarotGoldGradient))
+                        .foregroundStyle(Color.black)
+                    }
+                }
+            }
+            .padding().frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.tarotBackground)
+            .navigationTitle("Grabar Audio").toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cerrar") { dismiss() } } }
+        }
+    }
+}
+
+@MainActor
+private final class AudioRecorder: NSObject, ObservableObject {
+    @Published var isRecording = false
+    @Published var elapsed: Double = 0
+    @Published var fileURL: URL?
+    private var recorder: AVAudioRecorder?
+    private var timer: Timer?
+    func start() throws {
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playAndRecord, mode: .default)
+        try session.setActive(true)
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".m4a")
+        fileURL = url
+        let settings: [String: Any] = [AVFormatIDKey: Int(kAudioFormatMPEG4AAC), AVSampleRateKey: 44100, AVNumberOfChannelsKey: 1, AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue]
+        recorder = try AVAudioRecorder(url: url, settings: settings)
+        recorder?.record()
+        isRecording = true
+        elapsed = 0
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in Task { @MainActor in self.elapsed += 1 } }
+    }
+    func stop() {
+        recorder?.stop(); isRecording = false; timer?.invalidate(); timer = nil
+        try? AVAudioSession.sharedInstance().setActive(false)
+    }
+}
 
 private struct PhotoCapturePicker: UIViewControllerRepresentable {
     @Binding var imageData: Data?

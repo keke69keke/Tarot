@@ -1,18 +1,34 @@
 import Foundation
 import Combine
 
+public struct WebBookmark: Codable, Identifiable, Hashable {
+    public let id: UUID
+    public var url: String
+    public var title: String
+    public var isPinned: Bool
+    public var dateAdded: Date
+    public init(id: UUID = UUID(), url: String, title: String, isPinned: Bool = false, dateAdded: Date = Date()) {
+        self.id = id; self.url = url; self.title = title; self.isPinned = isPinned; self.dateAdded = dateAdded
+    }
+}
+
 @MainActor
 public class LibraryManager: ObservableObject {
     @Published public private(set) var importedBooks: [ImportedBook] = []
+    @Published public private(set) var bookmarks: [WebBookmark] = []
 
     private let userDefaultsKey = "TarotLibrary_ImportedBooks"
+    private let bookmarksKey = "TarotLibrary_WebBookmarks"
     /// Minimum size (in bytes) a PDF must be to be considered a real, non-stub file.
     private let minimumRealPDFSize: Int = 5_000
 
     public init() {
         loadBooks()
+        loadBookmarks()
         preloadBundledBooksIfNeeded()
     }
+
+    public var pinnedBookmarks: [WebBookmark] { bookmarks.filter { $0.isPinned }.sorted { $0.dateAdded > $1.dateAdded } }
 
     public func getDocumentsDirectory() -> URL {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
@@ -256,6 +272,49 @@ public class LibraryManager: ObservableObject {
     private func saveBooks() {
         if let data = try? JSONEncoder().encode(importedBooks) {
             UserDefaults.standard.set(data, forKey: userDefaultsKey)
+        }
+    }
+
+    // MARK: - Web Bookmarks (navegador)
+
+    public func addBookmark(url: String, title: String) {
+        let cleanURL = url.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanURL.isEmpty, !bookmarks.contains(where: { $0.url == cleanURL }) else { return }
+        let bm = WebBookmark(url: cleanURL, title: title.isEmpty ? cleanURL : title)
+        bookmarks.append(bm); saveBookmarks()
+    }
+
+    public func togglePin(_ bookmark: WebBookmark) {
+        guard let idx = bookmarks.firstIndex(where: { $0.id == bookmark.id }) else { return }
+        bookmarks[idx].isPinned.toggle(); saveBookmarks()
+    }
+
+    public func togglePin(url: String) {
+        if let idx = bookmarks.firstIndex(where: { $0.url == url }) {
+            bookmarks[idx].isPinned.toggle()
+        } else {
+            let bm = WebBookmark(url: url, title: url, isPinned: true)
+            bookmarks.append(bm)
+        }
+        saveBookmarks()
+    }
+
+    public func isPinned(url: String) -> Bool { bookmarks.first(where: { $0.url == url })?.isPinned ?? false }
+
+    public func removeBookmark(_ bookmark: WebBookmark) {
+        bookmarks.removeAll { $0.id == bookmark.id }; saveBookmarks()
+    }
+
+    private func loadBookmarks() {
+        if let data = UserDefaults.standard.data(forKey: bookmarksKey),
+           let bms = try? JSONDecoder().decode([WebBookmark].self, from: data) {
+            self.bookmarks = bms
+        }
+    }
+
+    private func saveBookmarks() {
+        if let data = try? JSONEncoder().encode(bookmarks) {
+            UserDefaults.standard.set(data, forKey: bookmarksKey)
         }
     }
 

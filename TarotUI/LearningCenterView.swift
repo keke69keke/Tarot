@@ -148,7 +148,7 @@ public struct LearningCenterView: View {
             }
             .sheet(isPresented: $showingBrowser) {
                 NavigationStack {
-                    TarotWebBrowserView()
+                    TarotWebBrowserView(libraryManager: libraryManager)
                         .navigationTitle("Navegador Arcano")
                         #if os(iOS)
                         .navigationBarTitleDisplayMode(.inline)
@@ -249,6 +249,13 @@ public struct LearningCenterView: View {
         VStack(alignment: .leading, spacing: 20) {
             quickActionsBar.padding(.horizontal)
 
+            if !libraryManager.pinnedBookmarks.isEmpty {
+                pinnedBookmarksSection.padding(.horizontal)
+            }
+            if !libraryManager.bookmarks.isEmpty {
+                bookmarksSection.padding(.horizontal)
+            }
+
             sectionLabel("📖 Guía Integrada").padding(.horizontal)
             NavigationLink(destination: PDFBookView(book: builtInGuideBook, libraryManager: libraryManager)) {
                 builtInBookRow
@@ -306,6 +313,68 @@ public struct LearningCenterView: View {
             .foregroundStyle(color)
         }
         .buttonStyle(.plain)
+    }
+
+    private var pinnedBookmarksSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 6) {
+                Image(systemName: "pin.fill").font(.system(size: 11, weight: .bold)).foregroundStyle(Color.tarotGold)
+                Text("Fijados — acceso rápido").font(.system(size: 11, weight: .bold, design: .serif)).tracking(1.1).foregroundStyle(Color.tarotGold).textCase(.uppercase)
+                Spacer()
+            }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 10) {
+                    ForEach(libraryManager.pinnedBookmarks) { bm in
+                        Button { showingBrowser = true } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "pin.fill").font(.system(size: 10)).foregroundStyle(Color.tarotGold)
+                                Text(bm.title.isEmpty ? bm.url : bm.title).font(.system(size: 12, weight: .medium, design: .serif)).foregroundStyle(Color.tarotIvory).lineLimit(1)
+                            }
+                            .padding(.horizontal, 12).padding(.vertical, 8)
+                            .background(Capsule().fill(Color.tarotGold.opacity(0.12)).background(Capsule().fill(.ultraThinMaterial).opacity(0.35)))
+                            .overlay(Capsule().stroke(Color.tarotGold.opacity(0.22), lineWidth: 0.7))
+                        }.buttonStyle(.plain)
+                        .contextMenu {
+                            Button(role: .destructive) { libraryManager.removeBookmark(bm) } label: { Label("Eliminar", systemImage: "trash") }
+                            Button { libraryManager.togglePin(bm) } label: { Label("Desfijar", systemImage: "pin.slash") }
+                        }
+                    }
+                }
+            }
+        }
+        .padding(12)
+        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.white.opacity(0.04)).background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(.ultraThinMaterial).opacity(0.28)))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.tarotGold.opacity(0.14), lineWidth: 0.7))
+    }
+
+    private var bookmarksSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(spacing: 6) {
+                Image(systemName: "star.fill").font(.system(size: 11, weight: .bold)).foregroundStyle(Color.tarotGold.opacity(0.85))
+                Text("Favoritos — \(libraryManager.bookmarks.count)").font(.system(size: 11, weight: .bold, design: .serif)).tracking(1.1).foregroundStyle(Color.tarotIvory.opacity(0.7)).textCase(.uppercase)
+                Spacer()
+            }
+            ForEach(libraryManager.bookmarks.prefix(5)) { bm in
+                HStack(spacing: 10) {
+                    Image(systemName: bm.isPinned ? "pin.fill" : "star").font(.system(size: 11)).foregroundStyle(bm.isPinned ? Color.tarotGold : Color.tarotIvory.opacity(0.45))
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(bm.title.isEmpty ? bm.url : bm.title).font(.system(size: 12, weight: .medium, design: .serif)).foregroundStyle(Color.tarotIvory).lineLimit(1)
+                        Text(bm.url).font(.system(size: 10, design: .monospaced)).foregroundStyle(Color.tarotIvory.opacity(0.45)).lineLimit(1)
+                    }
+                    Spacer()
+                    Button { libraryManager.togglePin(bm) } label: {
+                        Image(systemName: bm.isPinned ? "pin.slash" : "pin").font(.system(size: 12)).foregroundStyle(Color.tarotGold.opacity(0.85))
+                    }.buttonStyle(.plain)
+                }
+                .padding(.horizontal, 10).padding(.vertical, 8)
+                .background(RoundedRectangle(cornerRadius: 10, style: .continuous).fill(Color.white.opacity(0.03)))
+                .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.white.opacity(0.06), lineWidth: 0.6))
+                .contextMenu { Button(role: .destructive) { libraryManager.removeBookmark(bm) } label: { Label("Eliminar", systemImage: "trash") } }
+            }
+        }
+        .padding(12)
+        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.white.opacity(0.03)))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.07), lineWidth: 0.6))
     }
 
     private var builtInGuideBook: ImportedBook {
@@ -375,61 +444,88 @@ public struct LearningCenterView: View {
         }
     }
 
-private var schoolCourses: [SchoolCourse] {
+ private var schoolCourses: [SchoolCourse] {
         [
             SchoolCourse(
                 title: "Interpretación de Arcanos",
                 icon: "arcade.stick",
                 color: Color.tarotGold,
-                summary: "Domina el significado de los 22 Arcanos Mayores y los 56 Menores, con sus símbolos, arquetipos y mensajes.",
+                summary: "Domina los 22 Mayores y 56 Menores: arquetipos, símbolos y lectura contextual profunda.",
                 lessons: [
-                    SchoolLesson(title: "Los Arcanos Mayores", subtitle: "22 arquetipos que narran el viaje del alma", icon: "star.fill", content: "Los Arcanos Mayores representan el camino de la vida: desde El Loco (0) que inicia el viaje con fe y espontaneidad, hasta El Mundo (21) que alcanza la plenitud. Cada carta es un arquetipo universal que refleja una etapa de tu evolución. Aprende a identificar cuál de estos arquetipos resuena con tu situación actual y cómo integrar su energía."),
-                    SchoolLesson(title: "Los Arcanos Menores", subtitle: "La vida cotidiana en 4 palos y 56 cartas", icon: "suit.club.fill", content: "Los Arcanos Menores se dividen en cuatro palos que corresponden a los elementos: Bastos (fuego, acción), Copas (agua, emociones), Espadas (aire, mente) y Oros (tierra, materia). Cada palo narra la evolución de un área de tu vida, desde el As (el comienzo) hasta el Rey (la maestría). Aprende a leerlos en contexto."),
-                    SchoolLesson(title: "Símbolos y numerología", subtitle: "El lenguaje oculto de cada carta", icon: "number", content: "Cada carta esconde múltiples capas de significado: los números (del 1 al 10 y las figuras de corte), los colores, los objetos y las posturas de los personajes. El número indica el nivel de desarrollo de la energía, mientras que los símbolos aportan matices. El Sol, la luna, la estrella y la torre son arquetipos universales que se repiten."),
+                    SchoolLesson(title: "Los Arcanos Mayores — El Viaje del Héroe", subtitle: "22 arquetipos del alma", icon: "star.fill", content: "Los Mayores narran el Viaje del Héroe (Campbell) desde El Loco (0, potencial puro, Aleph, Urano) hasta El Mundo (21, integración, Saturno). Cada carta es una estación iniciática: El Mago (voluntad, Mercurio), La Papisa (intuición, Luna), La Emperatriz (Venus, creación), El Emperador (Aries, estructura), El Papa (Tauro, tradición), Los Enamorados (Géminis, elección), El Carro (Cáncer, dirección), La Fuerza (Leo, coraje), El Ermitaño (Virgo, introspección), La Rueda (Júpiter, ciclos), La Justicia (Libra, equilibrio), El Colgado (Neptuno, sacrificio), La Muerte (Escorpio, transmutación), La Templanza (Sagitario, alquimia), El Diablo (Capricornio, sombra), La Torre (Marte, ruptura), La Estrella (Acuario, esperanza), La Luna (Piscis, inconsciente), El Sol (Sol, vitalidad), El Juicio (Plutón, renacimiento) y El Mundo (Saturno, culminación).\n\nPráctica: Elige un Mayor que represente tu momento actual y escribe 3 palabras clave, su sombra y su consejo. Medita 5 minutos con la carta frente a ti."),
+                    SchoolLesson(title: "Arcanos Menores — La Vida Cotidiana", subtitle: "4 palos × 14 cartas", icon: "suit.club.fill", content: "Los Menores son la vida concreta. Bastos (Fuego, Wands) = acción, creatividad, impulso; Copas (Agua) = emociones, vínculos, intuición; Espadas (Aire) = mente, verdad, conflicto; Oros/Pentáculos (Tierra) = cuerpo, trabajo, dinero. Cada palo va del As (semilla, potencial puro) al 10 (culminación) y luego las cortes: Paje (aprendiz, mensaje), Caballero (acción, movimiento), Reina (maestría receptiva), Rey (maestría activa).\n\nNumerología: As= inicio, 2= dualidad/decisión, 3= expansión, 4= estabilidad, 5= crisis/cambio, 6= armonía, 7= reflexión/desafío, 8= poder/movimiento, 9= culminación interior, 10= final/completitud.\n\nEjercicio: Para cada palo, ordena del As al Rey y cuenta una historia continua; notarás el arco narrativo."),
+                    SchoolLesson(title: "Símbolos, Colores y Numerología", subtitle: "El lenguaje oculto", icon: "number", content: "Cada detalle es un código. Colores: rojo (pasión/voluntad), azul (intuición/inconsciente), amarillo (consciencia), verde (crecimiento), gris (neutralidad). Posturas: figura de pie (acción), sentado (reflexión), de espaldas (inconsciente). Objetos: espadas = mente, bastos = fuego, copas = corazón, oros = materia. Números + palo = matiz: 5 de Espadas es crisis mental, 5 de Copas es pérdida emocional, 5 de Oros es carencia material.\n\nSímbolos recurrentes: Sol blanco (consciencia pura), Luna (ciclo), Montaña (obstáculo/meta), Río (inconsciente), Muralla (protección/límite). Aprende a leerlos como un sueño: ¿qué te provoca cada símbolo?"),
+                    SchoolLesson(title: "Lectura Contextual y Combinaciones", subtitle: "De carta aislada a relato", icon: "link", content: "Una carta sola es una palabra; tres cartas son una frase. La clave es la sintaxis posicional. Ejemplo: En pasado-presente-futuro, El Loco (pasado) + La Torre (presente) + La Estrella (futuro) = un inicio ingenuo que hoy se derrumba para abrir esperanza. Las combinaciones modifican: El Diablo + La Estrella = atadura que se libera; La Luna + El Sol = confusión que se aclara.\n\nMétodo: 1) Lee cada carta en su posición (contextual del Deck), 2) Busca el hilo narrativo (¿qué elemento domina? ¿qué palo falta?), 3) Síntesis en una frase oracular que puedas recordar."),
                 ]
             ),
             SchoolCourse(
                 title: "Tiradas Prácticas",
                 icon: "rectangle.stack.fill",
                 color: Color.tarotGold,
-                summary: "Aprende a realizar las tiradas más usadas y a interpretar las posiciones de cada carta.",
+                summary: "De 1 a 12 cartas: cuándo usar cada tirada y cómo interpretar posiciones con precisión.",
                 lessons: [
-                    SchoolLesson(title: "Tirada de 3 cartas", subtitle: "Pasado, presente y futuro", icon: "3.circle.fill", content: "La tirada más versátil y sencilla. La primera carta revela el pasado que te trajo hasta aquí, la segunda describe el presente o el corazón de la cuestión, y la tercera apunta al futuro probable. Es ideal para preguntas rápidas y consultas diarias. Cada posición se lee en relación con las demás para formar una historia coherente."),
-                    SchoolLesson(title: "La Cruz Celta", subtitle: "La tirada más completa del tarot", icon: "xmark.circle.fill", content: "Con 10 cartas, es la tirada reina del tarot. Analiza el corazón de la cuestión, el desafío, el pasado, el futuro, tu objetivo consciente, la base inconsciente, el consejo, el entorno, tus esperanzas y temores, y el resultado final. Cada posición ilumina una faceta distinta de tu situación."),
-                    SchoolLesson(title: "Tirada de la Herradura", subtitle: "7 cartas para visión de conjunto", icon: "7.circle.fill", content: "La herradura despliega 7 cartas en arco: pasado lejano, presente, fuerzas ocultas, consejo, futuro cercano, futuro lejano y resultado. Es excelente para obtener una panorámica general de una situación compleja y entender cómo se desarrollarán los acontecimientos."),
+                    SchoolLesson(title: "Tirada de 3 Cartas — Pasado/Presente/Futuro", subtitle: "La más versátil", icon: "3.circle.fill", content: "Tres cartas, infinitas historias. Posiciones: 1 Pasado (raíz, influencia que te trae aquí), 2 Presente (corazón de la cuestión, energía dominante), 3 Futuro (probabilidad si mantienes el rumbo). No es destino fatal, es tendencia.\n\nVariantes: Mente-Cuerpo-Espíritu; Situación-Acción-Resultado; Tú-Otro-Vínculo. Cada variante reencuadra la misma tríada.\n\nLectura profunda: Mira el elemento dominante. ¿Tres Espadas = mente saturada? ¿Tres Copas = emociones desbordadas? Usa los vacíos: si no hay Oros, falta tierra/acción concreta."),
+                    SchoolLesson(title: "Cruz Celta — 10 Cartas", subtitle: "La tirada reina", icon: "xmark.circle.fill", content: "10 posiciones que mapean psique y destino: 1 Presente, 2 Desafío (lo que cruza), 3 Pasado reciente, 4 Futuro próximo, 5 Encima (consciencia/meta), 6 Debajo (inconsciente/base), 7 Consejo (actitud recomendada), 8 Entorno (otros, influencias externas), 9 Esperanzas/Temores, 10 Resultado.\n\nCómo leerla sin abrumarte: Lee primero el eje central (1-2), luego la línea temporal (3-4-10), luego el eje vertical (5-6), finalmente el entorno (7-8-9). La síntesis es la historia que conecta estos cuatro ejes.\n\nPista morada: Las posiciones 1-6 son el diagrama en cruz, 7-10 el bastón lateral — visualiza la cruz, no solo la lista."),
+                    SchoolLesson(title: "Herradura, Relaciones y 12 Meses", subtitle: "Panorámicas", icon: "7.circle.fill", content: "Herradura (7): Pasado lejano, Presente, Oculto, Consejo, Futuro cercano, Futuro lejano, Resultado — ideal para visión completa sin la densidad de la Cruz.\n\nRelaciones (7): Tú, Pareja, Fortalezas, Desafíos, Camino mutuo, Consejo, Resultado — lee Tú vs Pareja como polaridad (¿Fuego vs Agua?). Si Fortalezas es 3 de Copas y Desafíos es 5 de Espadas, la amistad sostiene pero la comunicación hiere.\n\n12 Meses: Una carta por mes, de Enero a Diciembre. Úsala en Ano Nuevo o cumpleaños. Busca el arco anual: ¿dónde cae La Muerte? Ese mes pide transformación."),
+                    SchoolLesson(title: "Tiradas Libres y Esotéricas", subtitle: "Árbol, Estrella, Luna, Pirámide", icon: "sparkles", content: "Esotéricas: Templanza (6, equilibrio de opuestos), Árbol de la Vida (10 sefirot, de Kether a Malkuth), Estrella de David (7, integración de 6 elementos + centro), Espejo del Alma (9, sombra junguiana), Alquimia (4 fases Nigredo→Rubedo), Ciclo Lunar (4 fases), Pirámide (6, base→vértice).\n\nClave: Cada tirada esotérica tiene una narrativa mítica. No memorices posiciones, entiende el mito: En Alquimia, Nigredo es putrefacción (qué debe morir), Albedo purificación, Citrinitas iluminación, Rubedo perfección. La tirada te inicia, no solo te informa."),
                 ]
             ),
             SchoolCourse(
-                title: "Cábala y Tarot",
+                title: "Cábala y Árbol de la Vida",
                 icon: "tree.fill",
                 color: Color.tarotGold,
-                summary: "Conecta las cartas con el Árbol de la Vida y la sabiduría hermética.",
+                summary: "Las 22 letras, 10 sefirot y 32 senderos: el mapa hermético que une Tarot y creación.",
                 lessons: [
-                    SchoolLesson(title: "El Árbol de la Vida", subtitle: "Las 10 sefirot y sus correspondencias", icon: "tree", content: "La Cábala estructura el universo en 10 esferas (sefirot) conectadas por 22 senderos, los mismos que los 22 Arcanos Mayores. Cada sefirá es una emanación divina: desde Kether (la corona) hasta Malkuth (el reino). El tarot y la cábala comparten este mapa sagrado de la creación."),
-                    SchoolLesson(title: "Los Arcanos y los senderos", subtitle: "El camino del iniciado", icon: "arrow.right.circle.fill", content: "Cada Arcano Mayor corresponde a un sendero del Árbol de la Vida y a una letra hebrea. El Loco es Aleph, el aire primordial; El Mundo es Tav, la culminación. Estudiar estas correspondencias te permite leer el tarot como un mapa de iniciación espiritual y de desarrollo personal."),
-                    SchoolLesson(title: "Visiertoes y prácticas", subtitle: "Meditaciones con el Árbol", icon: "sparkles", content: "Una práctica poderosa es meditar ascendiendo por el Árbol de la Vida mientras contemplas los Arcanos. Coloca las cartas en la posición de las sefirot y observa cómo cada energía se conecta. Esta práctica integra cuerpo, mente y espíritu revelando bloqueos y dones ocultos."),
+                    SchoolLesson(title: "Las 10 Sefirot", subtitle: "De Kether a Malkuth", icon: "tree", content: "Kether (Corona, unidad), Chokmah (Sabiduría, fuerza paterna), Binah (Comprensión, matriz), Chesed (Misericordia, expansión), Geburah (Rigor, disciplina), Tiphareth (Belleza, corazón/Sol), Netzach (Victoria, emociones/Venus), Hod (Esplendor, intelecto/Mercurio), Yesod (Fundamento, Luna/inconsciente), Malkuth (Reino, materia). El Árbol es el cuerpo de Dios y tu psique.\n\nPráctica: Coloca 10 cartas (una por sefirá) y lee tu Árbol personal: ¿dónde hay cartas difíciles? Esa sefirá pide atención."),
+                    SchoolLesson(title: "22 Senderos y Letras Hebreas", subtitle: "Cada Mayor es una letra", icon: "arrow.right.circle.fill", content: "Aleph (El Loco, aire), Beth (El Mago, Mercurio), Gimel (La Papisa, Luna), Daleth (La Emperatriz, Venus), Heh (El Emperador, Aries), Vav (El Papa, Tauro), Zayin (Los Enamorados, Géminis), Cheth (El Carro, Cáncer), Teth (La Fuerza, Leo), Yod (El Ermitaño, Virgo), Kaph (La Rueda, Júpiter), Lamed (La Justicia, Libra), Mem (El Colgado, Agua), Nun (La Muerte, Escorpio), Samekh (La Templanza, Sagitario), Ayin (El Diablo, Capricornio), Peh (La Torre, Marte), Tzaddi (La Estrella, Acuario), Qoph (La Luna, Piscis), Resh (El Sol, Sol), Shin (El Juicio, Fuego), Tav (El Mundo, Saturno/Tierra).\n\nMeditación: Recorre el alfabeto hebreo con los Mayores como flashcards místicas."),
+                    SchoolLesson(title: "Meditación Cabalística", subtitle: "Ascenso por el Árbol", icon: "sparkles", content: "Meditación guiada: Visualiza Malkuth (tus pies en tierra) con 10 de Oros, sube a Yesod (Luna, sueños) con La Luna, a Tiphareth (corazón solar) con El Sol, a Kether (corona) con El Mundo. En cada sefirá, respira 4 tiempos y pregunta: ¿qué me enseña esta esfera hoy? Anota sincronicidades.\n\nTip lujo: Usa la textura 'sacredGeometry' del mazo Thoth para este ascenso; la geometría sagrada resuena con la Cábala."),
+                    SchoolLesson(title: "Cábala Práctica — Cuatro Mundos", subtitle: "Atziluth, Briah, Yetzirah, Assiah", icon: "atom", content: "Cuatro mundos: Atziluth (Fuego, arquetipos, Bastos), Briah (Agua, creación, Copas), Yetzirah (Aire, formación, Espadas), Assiah (Tierra, manifestación, Oros). Los Mayores cruzan todos los mundos; los Menores viven en uno.\n\nLectura: Si en una tirada hay muchos Bastos, estás en Atziluth (idea); muchos Oros, en Assiah (materia). El equilibrio de mundos revela dónde está tu energía y dónde falta."),
                 ]
             ),
             SchoolCourse(
                 title: "Astrología Aplicada",
                 icon: "moon.stars.fill",
                 color: Color.tarotGold,
-                summary: "Integra los 12 signos, planetas y casas con las cartas del tarot.",
+                summary: "Signos, planetas, casas y elementos: tarot como espejo del cielo natal.",
                 lessons: [
-                    SchoolLesson(title: "Signos y Arcanos Mayores", subtitle: "Correspondencias zodiacales", icon: "star.fill", content: "Varios Arcanos Mayores se asocian a signos zodiacales: El Emperador es Aries, La Templanza es Sagitario, La Estrella es Acuario, La Rueda es Júpiter. Conocer estas correspondencias enriquece tus lecturas y te permite usar el tarot como una herramienta astrológica."),
-                    SchoolLesson(title: "Los palos y los elementos", subtitle: "Fuego, tierra, aire y agua", icon: "flame.fill", content: "Los cuatro palos del tarot corresponden a los cuatro elementos: Bastos = Fuego, Oros = Tierra, Espadas = Aire y Copas = Agua. Estos elementos se relacionan con los signos zodiacales según su naturaleza. Esta correspondencia te ayuda a equilibrar las energías en una lectura."),
-                    SchoolLesson(title: "La rueda de 12 casas", subtitle: "La tirada astrológica", icon: "circle.grid.cross.fill", content: "La tirada astrológica coloca 12 cartas en las 12 casas. Cada casa rige un área de la vida: la 1ª tu identidad, la 2ª tus recursos, la 7ª tus relaciones, la 10ª tu carrera. Es una herramienta poderosa para una lectura anual o para entender tu cielo natal con el tarot."),
+                    SchoolLesson(title: "Signos y Mayores — Correspondencias", subtitle: "Zodiaco en 22 cartas", icon: "star.fill", content: "Aries–El Emperador (liderazgo), Tauro–El Papa (tradición), Géminis–Los Enamorados (dualidad), Cáncer–El Carro (dirección emocional), Leo–La Fuerza (coraje), Virgo–El Ermitaño (análisis), Libra–La Justicia (equilibrio), Escorpio–La Muerte (transmutación), Sagitario–La Templanza (alquimia), Capricornio–El Diablo (ambición/sombra), Acuario–La Estrella (esperanza), Piscis–La Luna (inconsciente). Planetas: Mercurio–El Mago, Venus–La Emperatriz, Luna–La Papisa, Sol–El Sol, Marte–La Torre, Júpiter–La Rueda, Saturno–El Mundo.\n\nUsa esto para fechar eventos: Si sale La Torre (Marte) con 3 de Bastos (Aries), el evento es ariano/marcial y rápido."),
+                    SchoolLesson(title: "Elementos y Casas Astrológicas", subtitle: "Fuego, Tierra, Aire, Agua + 12 casas", icon: "flame.fill", content: "Bastos=Fuego (Aries, Leo, Sagitario), Oros=Tierra (Tauro, Virgo, Capricornio), Espadas=Aire (Géminis, Libra, Acuario), Copas=Agua (Cáncer, Escorpio, Piscis). En una lectura, cuenta elementos: ¿falta Agua? Falta empatía. ¿Exceso de Aire? Parálisis por análisis.\n\n12 casas (tirada astrológica): 1 Yo, 2 Recursos, 3 Comunicación, 4 Hogar, 5 Creatividad, 6 Salud/Trabajo, 7 Pareja, 8 Transformación, 9 Filosofía, 10 Carrera, 11 Amigos, 12 Inconsciente. Cada posición es una casa; la carta es el planeta huésped."),
+                    SchoolLesson(title: "Decanatos y Timing", subtitle: "Cuándo sucede", icon: "clock.fill", content: "Cada signo tiene 3 decanatos de 10° (36 decanatos = 36 cartas numeradas del 2 al 10). Ejemplo: 2 de Bastos es Marte en Aries (primer decanato de Aries), 5 de Copas es Marte en Escorpio. Esto permite afinar timing: Bastos rápido (días), Copas medio (semanas), Espadas variable, Oros lento (meses).\n\nPráctica: Cuando preguntes '¿cuándo?', mira el palo y el decanato de la carta de Futuro/Resultado para estimar tempo."),
+                    SchoolLesson(title: "Carta Natal y Tarot — Hoja Natal", subtitle: "Sol, Luna, Ascendente", icon: "star.circle.fill", content: "Tu Sol es tu esencia (Mayores solares), Luna tu mundo emocional (Copas/Luna), Ascendente tu máscara (cómo te ven). En la app, Hoja Natal calcula Sol/Luna/Asc aproximados y puedes meditar con esas tres cartas como tirada personal.\n\nEjercicio: Saca tu Sol (ej. Leo–La Fuerza), Luna (ej. Escorpio–Muerte) y Asc (Géminis–Los Enamorados) y lee la historia: ¿cómo tu Fuerza se transforma (Muerte) para elegir con amor (Enamorados)?"),
                 ]
             ),
             SchoolCourse(
                 title: "Trabajo con la Sombra",
                 icon: "moon.fill",
                 color: Color.tarotGold,
-                summary: "Explora el inconsciente, integra tu sombra y sana heridas profundas.",
+                summary: "Jung + Tarot: integra tu sombra, sana heridas y transforma patrones kármicos.",
                 lessons: [
-                    SchoolLesson(title: "La sombra en el tarot", subtitle: "Los arcanos que nos confrontan", icon: "moon.haze.fill", content: "Cartas como La Torre, La Luna, El Diablo o La Muerte suelen asustar, pero son las más sanadoras. La Torre derrumba lo falso, La Luna ilumina lo inconsciente, El Diablo revela tus ataduras, y La Muerte abre paso a la transformación. Trabajarlas conscientemente integra tu sombra."),
-                    SchoolLesson(title: "El Espejo del Alma", subtitle: "Sanación con la tirada de 9 cartas", icon: "camera.macro", content: "La tirada del Espejo del Alma explora tu máscara, tu sombra, tu herida de infancia, tu don oculto, tus patrones kármicos y tu llamado del alma. Es una herramienta de autoindagación profunda inspirada en Carl Jung. Cada carta te invita a mirar dentro sin juicio."),
-                    SchoolLesson(title: "Integración y práctica", subtitle: "Transformar la herida en don", icon: "heart.fill", content: "No se trata de eliminar la sombra, sino de integrarla. Lleva un diario de tus lecturas, pregunta a las cartas qué patrón repites y cómo transformarlo. La oscuridad no es enemiga de la luz: es su complemento. Cuando integras tu sombra, recuperas una energía vital preciosa."),
+                    SchoolLesson(title: "La Sombra en el Tarot — Arcanos Incómodos", subtitle: "Torre, Diablo, Luna, Muerte", icon: "moon.haze.fill", content: "La Sombra no es maldad, es lo no mirado. La Torre (Marte) derrumba estructuras falsas (ego, relación, trabajo) para liberar verdad. El Diablo (Capricornio) muestra ataduras: adicciones, dinero, poder, miedo. La Luna (Piscis) revela inconsciente, sueños, confusión fértil. La Muerte (Escorpio) no es muerte física, es poda necesaria.\n\nReencuadre: Pregunta no '¿qué me pasa?' sino '¿qué me libera esta carta incómoda?' La incomodidad es la brújula."),
+                    SchoolLesson(title: "Espejo del Alma — 9 Posiciones Junguianas", subtitle: "Tirada sanadora", icon: "camera.macro", content: "Máscara (cómo te muestras), Sombra (lo negado), Anima/Animus (polaridad interna), Herida de Infancia, Don Oculto (perla en la herida), Patrón Kármico (bucle), Llamado del Alma (vocación), Obstáculo, Sí-Mismo (integración).\n\nLectura profunda: Si Sombra es 9 de Espadas (ansiedad) y Don Oculto es 9 de Copas (deseo cumplido), tu ansiedad esconde un deseo de plenitud. Si Patrón es 5 de Oros (carencia) y Llamado es 6 de Oros (dar/recibir), sanas al aprender a pedir y dar."),
+                    SchoolLesson(title: "Integración — Diario y Ritual", subtitle: "De herida a don", icon: "heart.fill", content: "Ritual: 1) Saca una carta sombra al día (pregunta: ¿qué parte de mí necesita luz hoy?), 2) Escribe 5 líneas sin censura, 3) Responde con una carta consejo (¿cómo la integro?). En 21 días verás tu patrón.\n\nIntegración no es eliminar la sombra, es darle asiento a tu mesa interna. Cuando La Torre cae, no reconstruyas igual; cuando El Diablo aprieta, pregunta qué poder cedes."),
+                    SchoolLesson(title: "Linaje y Propósito — Tirada del Linaje", subtitle: "7 posiciones ancestrales", icon: "person.3.fill", content: "Posiciones: Linaje, Abuelos, Padres, Infancia, Patrón Kármico, Propósito, Liberación. El Tarot puede leer herencias emocionales: Si Abuelos es 10 de Espadas (derrota) y Liberación es As de Bastos (nuevo fuego), honras al linaje no repitiendo, sino iniciando tu propio fuego.\n\nTip: Usa el Diario para anotar patrones familiares que se repiten en tiradas distintas; el tarot es espejo genealógico."),
+                ]
+            ),
+            SchoolCourse(
+                title: "Historia Viva del Tarot",
+                icon: "book.closed.fill",
+                color: Color.tarotGold,
+                summary: "De los Visconti al Rider-Waite: cómo el juego se volvió oráculo y por qué importa hoy.",
+                lessons: [
+                    SchoolLesson(title: "Orígenes — Visconti, Marsella, Etteilla", subtitle: "Del juego al espejo", icon: "scroll.fill", content: "1441: Filippo Visconti encarga a Bonifacio Bembo los Tarocchi dorados para la corte de Milán (oro, amor cortés). Siglo XVI: el Tarot de Marsella fija el canon iconográfico que Waite heredará. 1781: Court de Gébelin inventa origen egipcio; Etteilla crea el primer mazo adivinatorio y la tirada. 1888: Golden Dawn sistematiza correspondencias cabalísticas/astrológicas. 1909: Waite-Smith publican el Rider-Waite (Pamela Colman Smith ilustra 78 cartas narrativas, no solo pips). Comprender esta historia te libera de dogma: el tarot es un lenguaje vivo, no una reliquia."),
+                    SchoolLesson(title: "Iconografía — Leer como Renacimiento", subtitle: "Cada detalle cuenta", icon: "eye.fill", content: "Smith pintó teatros simbólicos: en 3 de Espadas, corazón atravesado bajo nubes de tormenta; en 6 de Copas, niños intercambian flores (nostalgia). Waite añadió detalles dorados de la Golden Dawn: el velo de la Papisa (Boaz/Jachin), el infinito del Mago (lemniscata), los girasoles de la Reina de Bastos (vitalidad). Leer es iconología: ¿qué mira el personaje? ¿qué oculta? ¿qué elemento domina el paisaje?"),
+                    SchoolLesson(title: "Ética del Tarotista", subtitle: "Poder y responsabilidad", icon: "hand.raised.fill", content: "El tarot no predice fatalidad; revela probabilidades y agencia. Principios: 1) No leer sin permiso, 2) No diagnosticar salud/legal/financiero como profesional, 3) Lenguaje empoderador ('¿qué puedes hacer?' vs 'qué te pasará'), 4) Confidencialidad, 5) Derivación cuando hay riesgo. La carta no es veredicto, es espejo para elegir mejor."),
+                ]
+            ),
+            SchoolCourse(
+                title: "Numerología y Destino",
+                icon: "number",
+                color: Color.tarotGold,
+                summary: "Del 1 al 10, Maestros 11/22, año personal y sinergia carta-número.",
+                lessons: [
+                    SchoolLesson(title: "1 al 10 — Ciclo de Manifestación", subtitle: "La escalera del 1 al 10", icon: "number.circle.fill", content: "1 Inicio (As), 2 Dualidad, 3 Creación, 4 Estructura, 5 Crisis, 6 Armonía, 7 Evaluación, 8 Poder, 9 Culminación interior, 10 Plenitud/fin de ciclo. En Mayores, reduce: La Rueda (10) = 1 (nuevo ciclo), El Mundo (21=3) = creación. Tu número de vida (fecha reducida) resuena con un Mayor: si eres Life Path 7, tu maestro es El Carro (7) y El Ermitaño (7)."),
+                    SchoolLesson(title: "Maestros 11 y 22 — Justicia y Loco", subtitle: "Números que no se reducen", icon: "star.circle.fill", content: "11 (La Fuerza/La Justicia según mazo) es intuición elevada, canal; 22 (El Loco/El Mundo) es maestro constructor. Si tu carta de año es 11 o 22, es año bisagra: no pidas normalidad, pide propósito. En lecturas, 11 y 22 como suma de cartas señalan tema kármico mayor."),
+                    SchoolLesson(title: "Año Personal y Carta del Año", subtitle: "Tu carta anual", icon: "calendar", content: "Suma día+mes+año en curso, reduce a 1-22 y mapea a Mayor. Ejemplo: 14/06/2026 = 1+4+6+2+0+2+6=21 → El Mundo (año de culminación). Saca esa carta y medita el año con ella. Combina con tirada de 12 meses para timing mensual."),
                 ]
             ),
         ]

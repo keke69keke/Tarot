@@ -288,31 +288,13 @@ public struct TarotChatView: View {
         }
     }
 
-    // MARK: - Background
+    // MARK: - Background — morado lujo integrado
 
     private var backgroundGradient: some View {
         ZStack {
-            LinearGradient(
-                colors: colorScheme == .dark
-                    ? [Color(red: 0.04, green: 0.06, blue: 0.14), Color(red: 0.06, green: 0.03, blue: 0.12)]
-                    : [Color(red: 0.97, green: 0.95, blue: 0.90), Color(red: 0.92, green: 0.88, blue: 0.80)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-
-            // Ambient orbs
-            Circle()
-                .fill(Color.tarotGold.opacity(colorScheme == .dark ? 0.08 : 0.05))
-                .frame(width: 300, height: 300)
-                .blur(radius: 80)
-                .offset(x: -100, y: -200)
-
-            Circle()
-                .fill(Color.tarotGoldDeep.opacity(colorScheme == .dark ? 0.10 : 0.04))
-                .frame(width: 250, height: 250)
-                .blur(radius: 60)
-                .offset(x: 140, y: 100)
+            Color.tarotBackground.ignoresSafeArea()
+            Color.tarotBackgroundGradient.ignoresSafeArea()
+            AmbientBackgroundView().opacity(0.45)
         }
     }
 
@@ -479,11 +461,9 @@ public struct TarotChatView: View {
             }
             .background(
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
-                    .fill(Color.tarotPanel.opacity(0.95))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 22, style: .continuous)
-                            .stroke(Color.tarotBorder.opacity(inputText.isEmpty ? 1 : 2), lineWidth: 1)
-                    )
+                    .fill(Color.white.opacity(0.06))
+                    .background(RoundedRectangle(cornerRadius: 22, style: .continuous).fill(.ultraThinMaterial).opacity(0.35))
+                    .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(Color.tarotGold.opacity(inputText.isEmpty ? 0.14 : 0.32), lineWidth: 0.9))
             )
 
             // Send button
@@ -588,13 +568,13 @@ private struct MessageBubble: View {
                     colors: [Color.tarotGold, Color.tarotGoldDeep],
                     startPoint: .topLeading, endPoint: .bottomTrailing
                 ))
+                .shadow(color: Color.tarotGold.opacity(0.18), radius: 8, x: 0, y: 4)
         } else {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(Color.tarotPanel.opacity(0.95))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(Color.tarotBorder.opacity(0.5), lineWidth: 1)
-                )
+                .fill(Color.white.opacity(0.06))
+                .background(RoundedRectangle(cornerRadius: 18, style: .continuous).fill(.ultraThinMaterial).opacity(0.38))
+                .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color.tarotGold.opacity(0.14), lineWidth: 0.8))
+                .shadow(color: Color.black.opacity(0.18), radius: 8, x: 0, y: 4)
         }
     }
 

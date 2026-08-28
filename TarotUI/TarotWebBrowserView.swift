@@ -1,5 +1,6 @@
 import SwiftUI
 import WebKit
+import TarotCore
 
 public struct TarotWebBrowserView: View {
     @State private var webView = WKWebView()
@@ -7,8 +8,11 @@ public struct TarotWebBrowserView: View {
     @State private var canGoBack = false
     @State private var canGoForward = false
     @State private var isLoading = false
+    @ObservedObject var libraryManager: LibraryManager
     
-    public init() {}
+    public init(libraryManager: LibraryManager) {
+        self.libraryManager = libraryManager
+    }
     
     public var body: some View {
         VStack(spacing: 0) {
@@ -44,6 +48,22 @@ public struct TarotWebBrowserView: View {
                     loadURL()
                 }) {
                     Image(systemName: "arrow.clockwise")
+                        .padding(8)
+                }
+
+                Button {
+                    libraryManager.addBookmark(url: urlString, title: webView.title ?? urlString)
+                } label: {
+                    Image(systemName: libraryManager.bookmarks.contains(where: { $0.url == urlString }) ? "star.fill" : "star")
+                        .foregroundStyle(Color.tarotGold)
+                        .padding(8)
+                }
+
+                Button {
+                    libraryManager.togglePin(url: urlString)
+                } label: {
+                    Image(systemName: libraryManager.isPinned(url: urlString) ? "pin.fill" : "pin")
+                        .foregroundStyle(libraryManager.isPinned(url: urlString) ? Color.tarotGold : Color.secondary)
                         .padding(8)
                 }
             }

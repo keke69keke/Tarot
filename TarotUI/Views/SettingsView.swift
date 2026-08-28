@@ -209,13 +209,27 @@ struct SettingsView: View {
     }
 
     private var deckPicker: some View {
-        Picker("Baraja", selection: deckSelectionBinding) {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Baraja")
+                .font(.system(size: 11, weight: .bold, design: .serif))
+                .tracking(1.2)
+                .foregroundStyle(Color.tarotGold.opacity(0.85))
+                .textCase(.uppercase)
             ForEach(DeckType.allCases, id: \.rawValue) { deck in
-                Text(deck.displayName).tag(deck.rawValue)
+                DeckRow(deck: deck, isSelected: model.settings.activeDeck == deck) {
+                    model.settings.activeDeck = deck
+                    model.persistSettings()
+                }
+            }
+            if !model.settings.activeDeck.hasDedicatedArtwork {
+                Text("Este mazo usa arte Rider-Waite con textura y tinte \(model.settings.activeDeck.displayName) — arte dedicado próximamente.")
+                    .font(.system(size: 10, weight: .regular, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.42))
+                    .lineSpacing(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 2)
             }
         }
-        .font(.system(size: 13, design: .serif))
-        .foregroundStyle(Color.tarotIvory)
     }
 
     private var backPicker: some View {
@@ -287,5 +301,90 @@ struct SettingsView: View {
                 model.persistSettings()
             }
         )
+    }
+}
+
+private struct DeckRow: View {
+    let deck: DeckType
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 12) {
+                // Mini texture preview
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .fill(Color.tarotCardBase)
+                    CardTextureOverlayView(cardSize: CGSize(width: 36, height: 48), textureStyle: deck.textureStyle)
+                        .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                    if let tint = deck.tintColor {
+                        Color(red: tint.r, green: tint.g, blue: tint.b)
+                            .opacity(tint.opacity * 1.8)
+                            .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                            .blendMode(.multiply)
+                    }
+                    RoundedRectangle(cornerRadius: 6, style: .continuous)
+                        .stroke(Color.white.opacity(0.08), lineWidth: 0.6)
+                }
+                .frame(width: 36, height: 48)
+                .overlay(
+                    Group {
+                        if isSelected {
+                            RoundedRectangle(cornerRadius: 6, style: .continuous)
+                                .stroke(Color.tarotGold.opacity(0.55), lineWidth: 1.1)
+                        }
+                    }
+                )
+                .shadow(color: Color.black.opacity(0.18), radius: 4, x: 0, y: 2)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(spacing: 6) {
+                        Text(deck.displayName)
+                            .font(.system(size: 12.5, weight: isSelected ? .semibold : .medium, design: .serif))
+                            .foregroundStyle(isSelected ? Color.tarotIvory : Color.tarotIvory.opacity(0.86))
+                            .lineLimit(1)
+                        if !deck.hasDedicatedArtwork {
+                            Text("TEXTURA")
+                                .font(.system(size: 8, weight: .bold, design: .rounded))
+                                .tracking(0.6)
+                                .foregroundStyle(Color.tarotGold.opacity(0.9))
+                                .padding(.horizontal, 5).padding(.vertical, 2)
+                                .background(Capsule().fill(Color.tarotGold.opacity(0.12)))
+                                .overlay(Capsule().stroke(Color.tarotGold.opacity(0.22), lineWidth: 0.5))
+                        }
+                    }
+                    Text(deck.description)
+                        .font(.system(size: 10.5, weight: .regular, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.52))
+                        .lineSpacing(1.5)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 18, weight: .light))
+                        .foregroundStyle(Color.tarotGold)
+                } else {
+                    Image(systemName: "circle")
+                        .font(.system(size: 18, weight: .light))
+                        .foregroundStyle(Color.white.opacity(0.18))
+                }
+            }
+            .padding(.horizontal, 12).padding(.vertical, 10)
+            .background(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(isSelected ? Color.tarotGold.opacity(0.08) : Color.white.opacity(0.04))
+                    .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(.ultraThinMaterial).opacity(isSelected ? 0.45 : 0.28))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(isSelected ? Color.tarotGold.opacity(0.28) : Color.white.opacity(0.07), lineWidth: isSelected ? 0.9 : 0.6)
+            )
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(deck.displayName)
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }

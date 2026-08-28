@@ -280,15 +280,19 @@ struct ReadingView: View {
                     isShowingReplacementPicker = true
                 },
                 onRevealCard: { index in
-                    withAnimation(LuxuryAnimation.softSpring) { revealedIndices.insert(index) }
+                    withAnimation(LuxuryAnimation.softSpring) { _ = revealedIndices.insert(index) }
                 }
             )
             .padding(.horizontal, 4)
 
             revealedHorizontalCards(spread: spread)
             notesSection
-            saveButton
-            reshuffleButton
+            HStack(spacing: 12) {
+                Spacer()
+                saveButton
+                reshuffleButton
+                Spacer()
+            }
             Text(TarotStrings.holdToReplace.localized)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -377,7 +381,6 @@ struct ReadingView: View {
                 .shadow(color: Color.tarotGold.opacity(0.18), radius: 16, x: 0, y: 0)
         }
         .buttonStyle(.plain)
-        .padding(.horizontal, 4)
     }
 
     private var reshuffleButton: some View {
@@ -397,7 +400,6 @@ struct ReadingView: View {
             .overlay(Capsule().stroke(Color.white.opacity(0.09), lineWidth: 0.75))
         }
         .buttonStyle(.plain)
-        .padding(.horizontal, 4)
     }
 
     private var emptySpreadContent: some View {

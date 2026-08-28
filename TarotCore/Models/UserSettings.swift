@@ -202,6 +202,36 @@ public enum DeckType: String, CaseIterable, Codable {
         case .botanical:  return .leafVeins
         }
     }
+
+    /// Whether this deck has dedicated image assets in the bundle (Rider-Waite base + Hello Kitty).
+    public var hasDedicatedArtwork: Bool {
+        switch self {
+        case .riderWaite, .helloKitty: return true
+        case .thoth, .marseille, .osho, .darkSide, .celestial, .botanical: return false
+        }
+    }
+
+    /// Prefix used for deck-specific image names (e.g. "helloKitty_card_00...")
+    public var assetPrefix: String? {
+        switch self {
+        case .helloKitty: return "helloKitty"
+        default: return nil
+        }
+    }
+
+    /// Deck-specific color tint applied over base artwork when the deck has no dedicated images.
+    /// Keeps luxury minimal but gives each deck a distinct mood.
+    public var tintColor: (r: Double, g: Double, b: Double, opacity: Double)? {
+        switch self {
+        case .riderWaite, .helloKitty: return nil
+        case .thoth:      return (0.45, 0.20, 0.80, 0.10) // violeta sagrado
+        case .marseille:  return (0.65, 0.45, 0.20, 0.10) // sepia medieval
+        case .osho:       return (0.90, 0.55, 0.30, 0.08) // acuarela cálida
+        case .darkSide:   return (0.12, 0.05, 0.08, 0.16) // grunge oscuro
+        case .celestial:  return (0.10, 0.18, 0.45, 0.12) // noche estrellada
+        case .botanical:  return (0.18, 0.38, 0.22, 0.09) // verde botánico
+        }
+    }
 }
 
 /// Visual texture style for card overlays.

@@ -24,7 +24,7 @@ struct CardFace: View {
             if back {
                 // Ornate Tarot Card Back
                 CardBackView(cardSize: cardSize, design: backDesign)
-            } else if let imageName, let platformImage = PlatformImageLoader.image(named: imageName) {
+            } else if let platformImage = resolvedPlatformImage {
                 // Card Front Image: Edge-to-edge display matching reference card designs.
                 let cornerRadius: CGFloat = max(10, cardSize.width * 0.08)
                 let imageH = platformImage.size.height
@@ -59,6 +59,14 @@ struct CardFace: View {
                     cardSize: cardSize,
                     textureStyle: activeDeck.textureStyle
                 )
+                // Deck tint for decks without dedicated artwork — gives distinct mood over Rider-Waite base
+                if let tint = activeDeck.tintColor {
+                    Color(red: tint.r, green: tint.g, blue: tint.b)
+                        .opacity(tint.opacity)
+                        .blendMode(.multiply)
+                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .allowsHitTesting(false)
+                }
             }
 
             // Outer Metallic Gold Foil Frame & Bevel Border
@@ -89,6 +97,19 @@ struct CardFace: View {
         .contentShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(back ? "Carta boca abajo" : name)
+    }
+
+    /// Resolves the correct image for the active deck (e.g. helloKitty prefix) with fallback to base Rider-Waite.
+    private var resolvedPlatformImage: PlatformImage? {
+        guard let imageName else { return nil }
+        // Try deck-prefixed variant first (Hello Kitty has dedicated assets)
+        if let prefix = activeDeck.assetPrefix {
+            let prefixed = "\(prefix)_\(imageName)"
+            if let img = PlatformImageLoader.image(named: prefixed) { return img }
+        }
+        // Fallback to base Rider-Waite image (exists for all 78 cards)
+        if let img = PlatformImageLoader.image(named: imageName) { return img }
+        return nil
     }
 }
 

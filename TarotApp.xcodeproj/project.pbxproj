@@ -19,6 +19,7 @@ WIDGET000000000000000005 /* WidgetKit in Frameworks */ = {isa = PBXBuildFile; fi
 		WIDGET000000000000000007 /* SwiftUI in Frameworks */ = {isa = PBXBuildFile; fileRef = WIDGET000000000000000018 /* SwiftUI.framework */; };
 		WIDGET000000000000000009 /* TarotCore in Frameworks */ = {isa = PBXBuildFile; productRef = WIDGET00000000000000000A /* TarotCore */; };
 		WIDGET00000000000000000B /* TarotContent in Frameworks */ = {isa = PBXBuildFile; productRef = WIDGET00000000000000000C /* TarotContent */; };
+		WIDGET000000000000000019 /* TarotData in Frameworks */ = {isa = PBXBuildFile; productRef = WIDGET00000000000000001A /* TarotData */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,6 +58,7 @@ BB35DF15301CDBA100111978 /* SystemPackage in Frameworks */,
 				WIDGET000000000000000007 /* SwiftUI in Frameworks */,
 				WIDGET000000000000000009 /* TarotCore in Frameworks */,
 				WIDGET00000000000000000B /* TarotContent in Frameworks */,
+				WIDGET000000000000000019 /* TarotData in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,6 +148,7 @@ name = TarotWidget;
 			packageProductDependencies = (
 				WIDGET00000000000000000A /* TarotCore */,
 				WIDGET00000000000000000C /* TarotContent */,
+				WIDGET00000000000000001A /* TarotData */,
 			);
 			productName = TarotWidget;
 			productReference = WIDGET00000000000000000E /* TarotWidget.appex */;
@@ -330,7 +333,7 @@ runOnlyForDeploymentPostprocessing = 0;
 				INFOPLIST_FILE = TarotApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Nicole´s Tarot";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
-				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gvstii.tarotapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -355,7 +358,7 @@ runOnlyForDeploymentPostprocessing = 0;
 				INFOPLIST_FILE = TarotApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Nicole´s Tarot";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
-				IPHONEOS_DEPLOYMENT_TARGET = "$(RECOMMENDED_IPHONEOS_DEPLOYMENT_TARGET)";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gvstii.tarotapp;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -363,7 +366,7 @@ runOnlyForDeploymentPostprocessing = 0;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -377,7 +380,7 @@ SWIFT_COMPILATION_MODE = wholemodule;
 				DEVELOPMENT_TEAM = CGS6FL7L59;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TarotWidget/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gvstii.tarotapp.TarotWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -397,7 +400,7 @@ SWIFT_COMPILATION_MODE = wholemodule;
 				DEVELOPMENT_TEAM = CGS6FL7L59;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = TarotWidget/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.gvstii.tarotapp.TarotWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -506,6 +509,11 @@ BBCDDA3A301B465A00EC8A82 /* Algorithms */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A10000000000000000000011 /* XCLocalSwiftPackageReference "." */;
 			productName = TarotContent;
+		};
+		WIDGET00000000000000001A /* TarotData */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A10000000000000000000011 /* XCLocalSwiftPackageReference "." */;
+			productName = TarotData;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

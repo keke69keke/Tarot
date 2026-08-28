@@ -2,6 +2,7 @@ import WidgetKit
 import SwiftUI
 import TarotCore
 import TarotContent
+import TarotData
 
 // MARK: - Timeline Provider
 

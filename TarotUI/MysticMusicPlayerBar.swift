@@ -1,109 +1,87 @@
 import SwiftUI
 
+// MARK: - Mystic Music Player Bar — Frecuencias del Tarot
+
 public struct MysticMusicPlayerBar: View {
     @StateObject private var audioService = MysticAudioService.shared
-    @StateObject private var externalAudio = ExternalAudioService.shared
-    @State private var showingTrackSelector = false
-    
     public init() {}
-    
-    public var body: some View {
-        HStack(spacing: 12) {
-            // Track Info / Selector button
-            Menu {
-                ForEach(AmbientTrack.availableTracks) { track in
-                    Button {
-                        audioService.selectTrack(track)
-                    } label: {
-                        Label(track.name, systemImage: track.icon)
-                    }
-                }
-            } label: {
-                HStack(spacing: 8) {
-                    Image(systemName: audioService.currentTrack.icon)
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(Color.tarotGold)
-                    
-                    Text(audioService.currentTrack.name)
-                        .font(.system(size: 12, weight: .medium, design: .serif))
-                        .foregroundStyle(Color.tarotIvory)
-                        .lineLimit(1)
-                    
-                    Image(systemName: "chevron.up.chevron.down")
-                        .font(.system(size: 10))
-                        .foregroundStyle(Color.tarotIvory.opacity(0.58))
-                }
-            }
-            .buttonStyle(.plain)
 
-            // External Source Menu (Apple Music / Spotify)
-            Menu {
-                Button {
-                    // Request authorization if needed, then attempt playback
-                    externalAudio.requestAppleMusicAuthorization { granted in
-                        if granted {
-                            externalAudio.playAppleMusic()
+    public var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            // Descripción del track actual
+            HStack(spacing: 6) {
+                Image(systemName: "waveform.circle")
+                    .font(.system(size: 11, weight: .light))
+                    .foregroundStyle(Color.tarotGold.opacity(0.7))
+                Text("FRECUENCIAS DEL TAROT")
+                    .font(.system(size: 10, weight: .bold, design: .serif))
+                    .tracking(1.8)
+                    .foregroundStyle(Color.tarotGold.opacity(0.7))
+            }
+
+            HStack(spacing: 12) {
+                // Selector de frecuencia
+                Menu {
+                    ForEach(AmbientTrack.availableTracks) { track in
+                        Button {
+                            audioService.selectTrack(track)
+                        } label: {
+                            Label(track.name, systemImage: track.icon)
                         }
                     }
                 } label: {
-                    Label("Apple Music", systemImage: "music.note.house.fill")
-                }
-
-                Button {
-                    // Open Spotify app (will open app if installed)
-                    externalAudio.openSpotifyURL("spotify:")
-                } label: {
-                    Label("Abrir en Spotify", systemImage: "music.note.list")
-                }
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "music.note.list")
-                        .font(.system(size: 14))
-                        .foregroundStyle(Color.tarotIvory.opacity(0.58))
-                    Text("Fuente")
-                        .font(.system(size: 12))
-                        .foregroundStyle(Color.tarotIvory.opacity(0.58))
-                }
-            }
-            .buttonStyle(.plain)
-
-            Spacer()
-            
-            // Play / Pause Button
-            Button {
-                TarotAudioService.shared.playCardSelect()
-                audioService.togglePlay()
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: audioService.isPlaying ? "pause.fill" : "play.fill")
-                        .font(.system(size: 14))
-                        .foregroundStyle(Color.tarotGold)
-                    
-                    if audioService.isPlaying {
-                        WaveformAnimationView()
+                    HStack(spacing: 8) {
+                        Image(systemName: audioService.currentTrack.icon)
+                            .font(.system(size: 13, weight: .light))
+                            .foregroundStyle(Color.tarotGold)
+                            .frame(width: 28, height: 28)
+                            .background(Circle().fill(Color.tarotGold.opacity(0.14)))
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(audioService.currentTrack.name)
+                                .font(.system(size: 13, weight: .semibold, design: .serif))
+                                .foregroundStyle(Color.tarotIvory)
+                                .lineLimit(1)
+                            Text(audioService.currentTrack.description)
+                                .font(.system(size: 10, design: .serif))
+                                .foregroundStyle(Color.tarotIvory.opacity(0.5))
+                                .lineLimit(1)
+                        }
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.system(size: 9))
+                            .foregroundStyle(Color.tarotIvory.opacity(0.4))
                     }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(Capsule().fill(Color.tarotGold.opacity(0.18)))
+                .buttonStyle(.plain)
+
+                Spacer()
+
+                // Play / Pause
+                Button {
+                    TarotAudioService.shared.triggerHaptic(.light)
+                    audioService.togglePlay()
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: audioService.isPlaying ? "pause.fill" : "play.fill")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundStyle(Color.tarotGold)
+                        if audioService.isPlaying {
+                            WaveformAnimationView()
+                        }
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(Color.tarotGold.opacity(0.18)))
+                    .overlay(Capsule().stroke(Color.tarotGold.opacity(0.3), lineWidth: 0.75))
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 8)
-        .background(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(Color.tarotPanel.opacity(0.92))
-                .shadow(color: Color.black.opacity(0.25), radius: 10, x: 0, y: 4)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(Color.tarotGold.opacity(0.3), lineWidth: 0.8)
-        )
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .luxuryGlass(cornerRadius: 18)
         .padding(.horizontal)
     }
 }
-
 private struct WaveformAnimationView: View {
     @State private var animating = false
     

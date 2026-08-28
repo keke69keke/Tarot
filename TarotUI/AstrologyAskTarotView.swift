@@ -193,17 +193,7 @@ public struct AskTarotView: View {
         }
         .padding(22)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(Color.tarotPanel.opacity(0.92))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .stroke(
-                    LinearGradient(colors: [Color.tarotGold.opacity(0.5), Color.tarotBurgundy.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing),
-                    lineWidth: 1
-                )
-        )
+        .luxuryGlass(cornerRadius: 26)
     }
 
     private var topicSelector: some View {
@@ -236,14 +226,14 @@ public struct AskTarotView: View {
                 .background(
                     Capsule()
                         .fill(selectedTopic == topic
-                            ? AnyShapeStyle(LinearGradient(colors: [Color.tarotGold, Color.tarotGoldDeep], startPoint: .top, endPoint: .bottom))
+                            ? AnyShapeStyle(Color.tarotGold.opacity(0.22))
                             : AnyShapeStyle(Color.tarotPanel.opacity(0.9))
                         )
                 )
                 .overlay(
-                    Capsule().stroke(selectedTopic == topic ? Color.clear : Color.tarotGold.opacity(0.25), lineWidth: 0.75)
+                    Capsule().stroke(selectedTopic == topic ? Color.tarotGold.opacity(0.55) : Color.tarotGold.opacity(0.25), lineWidth: 0.75)
                 )
-                .foregroundStyle(selectedTopic == topic ? Color.tarotBackground : Color.tarotIvory)
+                .foregroundStyle(selectedTopic == topic ? Color.tarotGold : Color.tarotIvory)
                 .shadow(color: selectedTopic == topic ? Color.tarotGold.opacity(0.35) : Color.clear, radius: 8)
         }
         .buttonStyle(.plain)
@@ -297,11 +287,20 @@ public struct AskTarotView: View {
             .padding(.vertical, 16)
             .background(
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .fill(LinearGradient(colors: [Color.tarotGold, Color.tarotGoldDeep], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .fill(Color.white.opacity(0.07))
+                    .background(
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .fill(.ultraThinMaterial)
+                            .opacity(0.5)
+                    )
             )
-            .foregroundStyle(Color.tarotBackground)
-            .shadow(color: Color.tarotGold.opacity(0.4), radius: 14, x: 0, y: 6)
-            .opacity(question.isEmpty ? 0.5 : 1)
+            .overlay(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .stroke(Color.tarotGold.opacity(0.35), lineWidth: 0.75)
+            )
+            .foregroundStyle(Color.tarotGold)
+            .shadow(color: Color.tarotGold.opacity(0.25), radius: 12)
+            .opacity(question.isEmpty || isShuffling ? 0.45 : 1.0)
         }
         .disabled(question.isEmpty || isShuffling)
     }
@@ -333,9 +332,9 @@ public struct AskTarotView: View {
             answerHeader
             ZStack {
                 Circle()
-                    .fill(Color.tarotGold.opacity(0.30))
+                    .fill(Color.tarotGold.opacity(0.18))
                     .frame(width: 160, height: 160)
-                    .blur(radius: 20)
+                    .blur(radius: 16)
 
                 CardFace(name: card.name, imageName: card.imageName, textureName: card.textureImageName, reversed: false, useTexture: true, size: CGSize(width: 150, height: 225))
                     .shadow(color: Color.tarotGold.opacity(0.5), radius: 18, x: 0, y: 8)
@@ -348,17 +347,7 @@ public struct AskTarotView: View {
             answerSummary(for: card)
         }
         .padding(22)
-        .background(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .fill(Color.tarotGold.opacity(0.04))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 28, style: .continuous)
-                .stroke(
-                    LinearGradient(colors: [Color.tarotGold.opacity(0.5), Color.tarotBurgundy.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing),
-                    lineWidth: 1
-                )
-        )
+        .luxuryGlass(cornerRadius: 26)
         .transition(.opacity.combined(with: .scale(scale: 0.95)))
     }
 
@@ -424,6 +413,15 @@ public struct HoroscopeView: View {
         self.repository = repository
     }
 
+    // MARK: - Background Layer (morado lujo)
+    private var backgroundLayer: some View {
+        ZStack {
+            Color.tarotBackground.ignoresSafeArea()
+            Color.tarotBackgroundGradient.ignoresSafeArea()
+            AmbientBackgroundView().opacity(0.35)
+        }
+    }
+
     public var body: some View {
         NavigationStack {
             ScrollView(.vertical, showsIndicators: false) {
@@ -451,17 +449,7 @@ public struct HoroscopeView: View {
                     }
                     .padding(22)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(
-                        RoundedRectangle(cornerRadius: 28, style: .continuous)
-                            .fill(Color.tarotPanel.opacity(0.92))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 28, style: .continuous)
-                            .stroke(
-                                LinearGradient(colors: [Color.tarotGold.opacity(0.5), Color.tarotBurgundy.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing),
-                                lineWidth: 1
-                            )
-                    )
+                    .luxuryGlass(cornerRadius: 26)
 
                     // Zodiac Grid Selector
                     ScrollView(.horizontal, showsIndicators: false) {
@@ -541,18 +529,7 @@ public struct HoroscopeView: View {
                                 .foregroundStyle(Color.tarotIvory.opacity(0.92))
                     }
                     .padding(24)
-                    .background(
-                        RoundedRectangle(cornerRadius: 28, style: .continuous)
-                            .fill(Color.tarotPanel.opacity(0.92))
-                    )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 28, style: .continuous)
-                            .stroke(
-                                LinearGradient(colors: [Color.tarotGold.opacity(0.4), Color.tarotBurgundy.opacity(0.15)], startPoint: .topLeading, endPoint: .bottomTrailing),
-                                lineWidth: 1
-                            )
-                    )
-                    .shadow(color: Color.tarotShadow.opacity(0.3), radius: 12)
+                    .luxuryGlass(cornerRadius: 26)
                 }
                 .padding(20)
             }

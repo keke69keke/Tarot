@@ -16,24 +16,33 @@ struct NatalChartView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 22) {
+            ZStack {
+                Color.tarotBackground.ignoresSafeArea()
+                Color.tarotBackgroundGradient.ignoresSafeArea()
+                AmbientBackgroundView().opacity(0.5)
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 22) {
 
-                    // Header — editorial
-                    VStack(alignment: .leading, spacing: 8) {
-                        EyebrowLabel(text: TarotStrings.natalEyebrow.localized)
-                        Text(TarotStrings.natalTitle.localized)
-                            .font(.system(size: 26, weight: .bold, design: .serif))
-                            .tracking(-0.4)
-                            .foregroundStyle(Color.tarotIvory)
-                        Text(TarotStrings.natalDescription.localized)
-                            .font(.system(size: 13, weight: .regular, design: .serif))
-                            .foregroundStyle(Color.tarotIvory.opacity(0.58))
-                            .lineSpacing(4)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                    .luxuryGlass()
+                        // Header — editorial lujo morado
+                        VStack(alignment: .leading, spacing: 10) {
+                            HStack(spacing: 8) {
+                                EyebrowLabel(text: TarotStrings.natalEyebrow.localized)
+                                Spacer()
+                                Image(systemName: "star.circle.fill").font(.system(size: 22, weight: .light)).foregroundStyle(Color.tarotGold.opacity(0.85))
+                            }
+                            Text(TarotStrings.natalTitle.localized)
+                                .font(.system(size: 28, weight: .bold, design: .serif))
+                                .tracking(-0.5)
+                                .foregroundStyle(Color.tarotIvory)
+                            Text(TarotStrings.natalDescription.localized)
+                                .font(.system(size: 13, weight: .regular, design: .serif))
+                                .foregroundStyle(Color.tarotIvory.opacity(0.60))
+                                .lineSpacing(4)
+                                .fixedSize(horizontal: false, vertical: true)
+                            GoldDivider().padding(.top, 4)
+                        }
+                        .padding(20).frame(maxWidth: .infinity, alignment: .leading)
+                        .luxuryGlass(cornerRadius: 22)
 
                     // Inputs
                     VStack(alignment: .leading, spacing: 12) {
@@ -68,6 +77,7 @@ struct NatalChartView: View {
                     }
                 }
                 .padding(20)
+                }
             }
             .navigationTitle("Hoja Natal")
             .onChange(of: birthDate) { UserDefaults.standard.set($0, forKey: "natalBirthDate") }

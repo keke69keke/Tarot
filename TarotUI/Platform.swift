@@ -108,31 +108,51 @@ extension CardSuit {
 // MARK: - Image loading
 
 enum PlatformImageLoader {
+    private static let cache = NSCache<NSString, PlatformImage>()
     static func image(named name: String) -> PlatformImage? {
+        if let cached = cache.object(forKey: name as NSString) { return cached }
         let cleanName = (name as NSString).deletingPathExtension
         let candidates = ["\(cleanName)", cleanName]
 
         for candidate in candidates {
             if let resourceURL = Bundle.tarotContent.url(forResource: candidate, withExtension: "png") {
                 #if canImport(UIKit)
-                if let img = UIImage(contentsOfFile: resourceURL.path) { return img }
+                if let img = UIImage(contentsOfFile: resourceURL.path) {
+                    cache.setObject(img, forKey: name as NSString)
+                    return img
+                }
                 #elseif canImport(AppKit)
-                if let img = NSImage(contentsOf: resourceURL) { return img }
+                if let img = NSImage(contentsOf: resourceURL) {
+                    cache.setObject(img, forKey: name as NSString)
+                    return img
+                }
                 #endif
             }
 
             if let resourceURL = Bundle.tarotContent.url(forResource: candidate, withExtension: nil) {
                 #if canImport(UIKit)
-                if let img = UIImage(contentsOfFile: resourceURL.path) { return img }
+                if let img = UIImage(contentsOfFile: resourceURL.path) {
+                    cache.setObject(img, forKey: name as NSString)
+                    return img
+                }
                 #elseif canImport(AppKit)
-                if let img = NSImage(contentsOf: resourceURL) { return img }
+                if let img = NSImage(contentsOf: resourceURL) {
+                    cache.setObject(img, forKey: name as NSString)
+                    return img
+                }
                 #endif
             }
 
             #if canImport(UIKit)
-            if let img = UIImage(named: candidate, in: .tarotContent, compatibleWith: nil) { return img }
+            if let img = UIImage(named: candidate, in: .tarotContent, compatibleWith: nil) {
+                cache.setObject(img, forKey: name as NSString)
+                return img
+            }
             #elseif canImport(AppKit)
-            if let img = Bundle.tarotContent.image(forResource: candidate) { return img }
+            if let img = Bundle.tarotContent.image(forResource: candidate) {
+                cache.setObject(img, forKey: name as NSString)
+                return img
+            }
             #endif
         }
 

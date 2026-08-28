@@ -46,10 +46,6 @@ struct UnifiedLibraryView: View {
                             .padding(.top, 10)
                     }
 
-                    searchBar
-                        .padding(.horizontal, 16)
-                        .padding(.top, 12)
-
                     if mode == .galeria {
                         galeriaContent
                     } else {
@@ -116,25 +112,6 @@ struct UnifiedLibraryView: View {
             Text("Invertida").tag(CardOrientation.reversed)
         }
         .pickerStyle(.segmented)
-    }
-
-    private var searchBar: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "magnifyingglass").foregroundStyle(Color.tarotGold.opacity(0.85))
-            TextField(mode == .galeria ? "Buscar carta, palo o número" : "Buscar en el libro Rider", text: $query)
-                .font(.system(size: 13, design: .serif))
-                .foregroundStyle(Color.tarotIvory)
-                .tint(Color.tarotGold)
-                .autocorrectionDisabled()
-            if !query.isEmpty {
-                Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { query = "" } } label: {
-                    Image(systemName: "xmark.circle.fill").foregroundStyle(Color.tarotIvory.opacity(0.45))
-                }.buttonStyle(.plain)
-            }
-        }
-        .padding(12)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Color.white.opacity(0.06)).background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(.ultraThinMaterial).opacity(0.32)))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.tarotGold.opacity(0.14), lineWidth: 0.7))
     }
 
     // MARK: - Galería (grid por arcanos)

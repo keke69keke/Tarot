@@ -60,7 +60,8 @@ struct SettingsView: View {
 
     private var bottomMenuSection: some View {
         luxurySection(title: TarotStrings.bottomMenu.localized, systemImage: "square.grid.2x2") {
-            ForEach(model.settings.activeTabs) { tab in
+            // Activos — arrastrables y deslizables para ocultar
+            ForEach(Array(model.settings.activeTabs.enumerated()), id: \.element.id) { idx, tab in
                 HStack(spacing: 12) {
                     Image(systemName: tab.systemImage)
                         .font(.system(size: 13, weight: .light))
@@ -70,15 +71,41 @@ struct SettingsView: View {
                         .font(.system(size: 13, design: .serif))
                         .foregroundStyle(Color.tarotIvory)
                     Spacer()
-                    Image(systemName: "line.3.horizontal")
-                        .font(.system(size: 12, weight: .light))
-                        .foregroundStyle(Color.tarotIvory.opacity(0.3))
+                    HStack(spacing: 10) {
+                        if idx > 0 {
+                            Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { model.settings.activeTabs.move(fromOffsets: IndexSet(integer: idx), toOffset: idx - 1); model.persistSettings() } } label: {
+                                Image(systemName: "chevron.up").font(.system(size: 10, weight: .bold)).foregroundStyle(Color.tarotIvory.opacity(0.35))
+                            }.buttonStyle(.plain)
+                        }
+                        if idx < model.settings.activeTabs.count - 1 {
+                            Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { model.settings.activeTabs.move(fromOffsets: IndexSet(integer: idx), toOffset: idx + 2); model.persistSettings() } } label: {
+                                Image(systemName: "chevron.down").font(.system(size: 10, weight: .bold)).foregroundStyle(Color.tarotIvory.opacity(0.35))
+                            }.buttonStyle(.plain)
+                        }
+                        Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            model.settings.activeTabs.remove(at: idx)
+                            model.settings.inactiveTabs.append(tab)
+                            // Mantener mínimo 2 activos para no vaciar el tab bar
+                            if model.settings.activeTabs.isEmpty, let first = model.settings.inactiveTabs.first {
+                                model.settings.activeTabs.append(first)
+                                model.settings.inactiveTabs.removeFirst()
+                            }
+                            model.persistSettings()
+                        }} label: {
+                            Image(systemName: "eye.slash").font(.system(size: 12, weight: .light)).foregroundStyle(Color.tarotIvory.opacity(0.35))
+                        }.buttonStyle(.plain)
+                    }
                 }
+                .padding(.vertical, 6)
+                .contentShape(Rectangle())
             }
 
             if !model.settings.inactiveTabs.isEmpty {
-                Divider().overlay(Color.tarotGold.opacity(0.15))
-                ForEach(model.settings.inactiveTabs) { tab in
+                Divider().overlay(Color.tarotGold.opacity(0.15)).padding(.vertical, 4)
+                Text("Ocultos — toca ＋ para mostrar")
+                    .font(.system(size: 10, weight: .semibold, design: .serif)).tracking(0.8)
+                    .foregroundStyle(Color.tarotIvory.opacity(0.35)).textCase(.uppercase)
+                ForEach(model.settings.inactiveTabs, id: \.id) { tab in
                     HStack(spacing: 12) {
                         Image(systemName: tab.systemImage)
                             .font(.system(size: 13, weight: .light))
@@ -90,9 +117,18 @@ struct SettingsView: View {
                         Spacer()
                         Button {
                             if let idx = model.settings.inactiveTabs.firstIndex(of: tab) {
-                                model.settings.inactiveTabs.remove(at: idx)
-                                model.settings.activeTabs.append(tab)
-                                model.persistSettings()
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    model.settings.inactiveTabs.remove(at: idx)
+                                    // Respeta límite 5 fijos + resto en More: avisa si ya hay 5
+                                    if model.settings.activeTabs.count >= 7 {
+                                        // Permite pero avisa sutilmente vía haptic
+                                        #if os(iOS)
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                                        #endif
+                                    }
+                                    model.settings.activeTabs.append(tab)
+                                    model.persistSettings()
+                                }
                             }
                         } label: {
                             Image(systemName: "plus.circle.fill")
@@ -101,13 +137,15 @@ struct SettingsView: View {
                         }
                         .buttonStyle(.plain)
                     }
+                    .padding(.vertical, 4)
                 }
             }
 
-            Text("Arrastra para reordenar · Desliza para ocultar · Toca ＋ para mostrar")
+            Text("Toca ↑↓ para reordenar · Desliza para ocultar · Toca ＋ para mostrar · 5 fijos + resto en More")
                 .font(.system(size: 10, design: .serif))
-                .foregroundStyle(Color.tarotIvory.opacity(0.4))
-                .padding(.top, 4)
+                .foregroundStyle(Color.tarotIvory.opacity(0.35))
+                .padding(.top, 6)
+                .lineSpacing(2)
         }
     }
 
@@ -210,24 +248,27 @@ struct SettingsView: View {
 
     private var deckPicker: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Baraja")
-                .font(.system(size: 11, weight: .bold, design: .serif))
-                .tracking(1.2)
-                .foregroundStyle(Color.tarotGold.opacity(0.85))
-                .textCase(.uppercase)
-            ForEach(DeckType.allCases, id: \.rawValue) { deck in
+            HStack(spacing: 8) {
+                Text("Baraja")
+                    .font(.system(size: 11, weight: .bold, design: .serif))
+                    .tracking(1.2)
+                    .foregroundStyle(Color.tarotGold.opacity(0.85))
+                    .textCase(.uppercase)
+                Text("· \(DeckType.allCases.filter(\.hasDedicatedArtwork).count) disponibles")
+                    .font(.system(size: 10, weight: .regular, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.35))
+            }
+            ForEach(DeckType.allCases.filter { $0.hasDedicatedArtwork }, id: \.rawValue) { deck in
                 DeckRow(deck: deck, isSelected: model.settings.activeDeck == deck) {
                     model.settings.activeDeck = deck
                     model.persistSettings()
                 }
             }
+        }
+        .onAppear {
             if !model.settings.activeDeck.hasDedicatedArtwork {
-                Text("Este mazo usa arte Rider-Waite con textura y tinte \(model.settings.activeDeck.displayName) — arte dedicado próximamente.")
-                    .font(.system(size: 10, weight: .regular, design: .serif))
-                    .foregroundStyle(Color.tarotIvory.opacity(0.42))
-                    .lineSpacing(2)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.top, 2)
+                model.settings.activeDeck = .riderWaite
+                model.persistSettings()
             }
         }
     }

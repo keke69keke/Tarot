@@ -53,13 +53,13 @@ struct CardFace: View {
                 CardFallbackIllustration(name: name, size: cardSize, textureStyle: activeDeck.textureStyle)
             }
 
-            // Visible Tactile Deck-Specific Texture Overlay — sutil sobre imagen, más visible en fallback
+            // Texture sutil — 0.08 para mazos con arte dedicado (evita glitch/pixelado)
             if useTexture {
                 CardTextureOverlayView(
                     cardSize: cardSize,
                     textureStyle: activeDeck.textureStyle
                 )
-                .opacity(0.35) // reducido para no saturar la ilustración
+                .opacity(activeDeck.hasDedicatedArtwork ? 0.08 : 0.28)
             }
 
             // Outer Metallic Gold Foil Frame & Bevel Border

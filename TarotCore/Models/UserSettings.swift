@@ -31,11 +31,11 @@ public struct UserSettings {
     /// OpenAI API Key for AI chat feature (optional).
     public var openAIKey: String = ""
 
-    /// Active tabs in the bottom navigation menu
-    public var activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal, .settings, .biorhythm, .natal]
+    /// Active tabs — 5 fijos (Tirada/Hoy/Biblioteca/Aprender/Diario) + resto en More vía Ajustes
+    public var activeTabs: [AppTab] = [.reading, .daily, .reference, .learn, .journal]
     
     /// Inactive tabs hidden from the bottom navigation menu
-    public var inactiveTabs: [AppTab] = [.ask, .horoscope, .library, .chat]
+    public var inactiveTabs: [AppTab] = [.settings, .biorhythm, .natal, .ask, .horoscope, .library, .chat]
 
     /// User display name used for personalized greetings in the UI.
     public var userName: String = ""

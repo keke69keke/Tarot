@@ -296,6 +296,7 @@ struct ReadingView: View {
                 reshuffleButton
                 Spacer()
             }
+            .frame(minHeight: 44)
             Text(TarotStrings.holdToReplace.localized)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -369,7 +370,7 @@ struct ReadingView: View {
 
     private var saveButton: some View {
         Button {
-            notesFocused = false
+            if notesFocused { notesFocused = false }
             withAnimation(LuxuryAnimation.softSpring) { model.saveSpread(notes: notes); notes = "" }
         } label: {
             Text(TarotStrings.saveReading.localized.uppercased())
@@ -541,21 +542,24 @@ struct ReadingView: View {
     }
 
     private func chooseFirstCard(_ card: Card) {
-        // Evita duplicar la misma carta en los dos slots
-        if chosenFirstCardSlot == 0 {
-            if model.secondCardChoice?.id == card.id {
-                model.secondCardChoice = nil
+        // Resign keyboard antes de remover el picker para evitar warning "keyboard was not even present"
+        if cardPickerFocused { cardPickerFocused = false }
+        // Pequeño delay para que el teclado se oculte antes de quitar la vista
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            if chosenFirstCardSlot == 0 {
+                if model.secondCardChoice?.id == card.id {
+                    model.secondCardChoice = nil
+                }
+                model.firstCardChoice = card
+            } else if chosenFirstCardSlot == 1 {
+                if model.firstCardChoice?.id == card.id {
+                    model.firstCardChoice = nil
+                }
+                model.secondCardChoice = card
             }
-            model.firstCardChoice = card
-        } else if chosenFirstCardSlot == 1 {
-            if model.firstCardChoice?.id == card.id {
-                model.firstCardChoice = nil
-            }
-            model.secondCardChoice = card
+            chosenFirstCardSlot = nil
+            cardPickerQuery = ""
         }
-        chosenFirstCardSlot = nil
-        cardPickerQuery = ""
-        cardPickerFocused = false
     }
 
     private func replacementCards() -> [Card] {
@@ -565,11 +569,14 @@ struct ReadingView: View {
     }
 
     private func chooseReplacementCard(_ card: Card) {
-        model.replaceCard(at: replacementIndex ?? 0, with: card)
-        isShowingReplacementPicker = false
-        replacementPickerQuery = ""
-        replacementPickerFocused = false
-        replacementIndex = nil
+        if replacementPickerFocused { replacementPickerFocused = false }
+        // Delay dismiss para dejar que el teclado se oculte primero
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            model.replaceCard(at: replacementIndex ?? 0, with: card)
+            isShowingReplacementPicker = false
+            replacementPickerQuery = ""
+            replacementIndex = nil
+        }
     }
 }
 

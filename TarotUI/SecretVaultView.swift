@@ -458,7 +458,7 @@ private final class AudioRecorder: NSObject, ObservableObject {
     @Published var elapsed: Double = 0
     @Published var fileURL: URL?
     private var recorder: AVAudioRecorder?
-    private var timer: Timer?
+    private var tickTask: Task<Void, Never>?
     func start() throws {
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.playAndRecord, mode: .default)
@@ -470,10 +470,16 @@ private final class AudioRecorder: NSObject, ObservableObject {
         recorder?.record()
         isRecording = true
         elapsed = 0
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in Task { @MainActor in self.elapsed += 1 } }
+        tickTask = Task { @MainActor in
+            while isRecording {
+                try? await Task.sleep(nanoseconds: 1_000_000_000)
+                guard isRecording else { break }
+                elapsed += 1
+            }
+        }
     }
     func stop() {
-        recorder?.stop(); isRecording = false; timer?.invalidate(); timer = nil
+        recorder?.stop(); isRecording = false; tickTask?.cancel(); tickTask = nil
         try? AVAudioSession.sharedInstance().setActive(false)
     }
 }

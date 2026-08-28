@@ -53,20 +53,13 @@ struct CardFace: View {
                 CardFallbackIllustration(name: name, size: cardSize, textureStyle: activeDeck.textureStyle)
             }
 
-            // Visible Tactile Deck-Specific Texture Overlay
+            // Visible Tactile Deck-Specific Texture Overlay — sutil sobre imagen, más visible en fallback
             if useTexture {
                 CardTextureOverlayView(
                     cardSize: cardSize,
                     textureStyle: activeDeck.textureStyle
                 )
-                // Deck tint for decks without dedicated artwork — gives distinct mood over Rider-Waite base
-                if let tint = activeDeck.tintColor {
-                    Color(red: tint.r, green: tint.g, blue: tint.b)
-                        .opacity(tint.opacity)
-                        .blendMode(.multiply)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        .allowsHitTesting(false)
-                }
+                .opacity(0.35) // reducido para no saturar la ilustración
             }
 
             // Outer Metallic Gold Foil Frame & Bevel Border

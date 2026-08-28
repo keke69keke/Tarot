@@ -26,7 +26,7 @@
 /* Begin PBXContainerItemProxy section */
 		WIDGET000000000000000023 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = A10000000000000000000F /* Project object */;
+			containerPortal = A1000000000000000000000F /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = WIDGET000000000000000010;
 			remoteInfo = TarotWidget;

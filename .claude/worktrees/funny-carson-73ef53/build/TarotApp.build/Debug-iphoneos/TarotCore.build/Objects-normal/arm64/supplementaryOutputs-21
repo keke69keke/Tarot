@@ -1,0 +1,23 @@
+{
+  "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/TarotCore/Models/ImportedBook.swift" : {
+    "const-values" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/ImportedBook.swiftconstvalues",
+    "dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/ImportedBook.d",
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/ImportedBook.dia",
+    "object" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/ImportedBook.o",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/ImportedBook.swiftdeps"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/TarotCore/Models/Interpretation.swift" : {
+    "const-values" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/Interpretation.swiftconstvalues",
+    "dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/Interpretation.d",
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/Interpretation.dia",
+    "object" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/Interpretation.o",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/Interpretation.swiftdeps"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/TarotCore/Models/JournalEntry.swift" : {
+    "const-values" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/JournalEntry.swiftconstvalues",
+    "dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/JournalEntry.d",
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/JournalEntry.dia",
+    "object" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/JournalEntry.o",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/JournalEntry.swiftdeps"
+  }
+}

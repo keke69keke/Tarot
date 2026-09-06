@@ -162,6 +162,8 @@ public enum DeckType: String, CaseIterable, Codable {
     case darkSide   = "darkSide"
     case celestial  = "celestial"
     case botanical  = "botanical"
+    case cyberpunk  = "cyberpunk"
+    case egyptian   = "egyptian"
 
     public var displayName: String {
         switch self {
@@ -173,6 +175,8 @@ public enum DeckType: String, CaseIterable, Codable {
         case .darkSide:   return "Dark Side (Oscuro)"
         case .celestial:  return "Tarot Celestial"
         case .botanical:  return "Tarot Botánico"
+        case .cyberpunk:  return "Neo-Cyberpunk"
+        case .egyptian:   return "Egipto Antiguo"
         }
     }
 
@@ -186,6 +190,8 @@ public enum DeckType: String, CaseIterable, Codable {
         case .darkSide:   return "Estética oscura y subversiva. Para quienes trabajan con la sombra y el inconsciente."
         case .celestial:  return "Inspirado en constelaciones y cosmología. Cartas que reflejan el cosmos interior."
         case .botanical:  return "Ilustraciones botánicas de plantas sagradas y la sabiduría de la naturaleza."
+        case .cyberpunk:  return "Simbología tecnológica y distópica. Para navegar el ruido del siglo XXI."
+        case .egyptian:   return "Arcanos basados en la cosmogonía egipcia y el Libro de los Muertos."
         }
     }
 
@@ -200,6 +206,8 @@ public enum DeckType: String, CaseIterable, Codable {
         case .darkSide:   return .grunge
         case .celestial:  return .starfield
         case .botanical:  return .leafVeins
+        case .cyberpunk:  return .digitalGrid
+        case .egyptian:   return .papyrus
         }
     }
 
@@ -207,7 +215,7 @@ public enum DeckType: String, CaseIterable, Codable {
     public var hasDedicatedArtwork: Bool {
         switch self {
         case .riderWaite, .helloKitty: return true
-        case .thoth, .marseille, .osho, .darkSide, .celestial, .botanical: return false
+        case .thoth, .marseille, .osho, .darkSide, .celestial, .botanical, .cyberpunk, .egyptian: return false
         }
     }
 
@@ -230,6 +238,8 @@ public enum DeckType: String, CaseIterable, Codable {
         case .darkSide:   return (0.12, 0.05, 0.08, 0.16) // grunge oscuro
         case .celestial:  return (0.10, 0.18, 0.45, 0.12) // noche estrellada
         case .botanical:  return (0.18, 0.38, 0.22, 0.09) // verde botánico
+        case .cyberpunk:  return (0.0, 0.8, 1.0, 0.12) // neon cyan
+        case .egyptian:   return (0.8, 0.6, 0.2, 0.12) // golden sand
         }
     }
 }
@@ -244,6 +254,8 @@ public enum DeckTextureStyle {
     case grunge
     case starfield
     case leafVeins
+    case digitalGrid
+    case papyrus
 }
 
 // MARK: - AppTab
@@ -262,7 +274,8 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable, Hashable {
     case chat = "chat"
     case biorhythm = "biorhythm"
     case natal = "natal"
-    
+    case soulLink = "soulLink"
+
     public var id: String { rawValue }
     
     public var label: String {
@@ -279,6 +292,7 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable, Hashable {
         case .chat: return "Arcana IA"
         case .biorhythm: return "Biorritmo"
         case .natal: return "Hoja Natal"
+        case .soulLink: return "Almas"
         }
     }
     
@@ -296,6 +310,7 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable, Hashable {
         case .chat: return "wand.and.stars"
         case .biorhythm: return "waveform"
         case .natal: return "star.circle"
+        case .soulLink: return "person.2"
         }
     }
 }

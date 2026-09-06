@@ -15,4 +15,9 @@ public struct AmbientTrack: Identifiable, Hashable {
         AmbientTrack(id: "bowl",   name: "Tazón Tibetano", icon: "circle.hexagongrid", audioFileName: "tarot_bowl",   description: "Meditación profunda · D 147 Hz"),
         AmbientTrack(id: "om",     name: "Om Binaural",  icon: "moon.stars",         audioFileName: "tarot_om",     description: "Om cósmico 136 Hz · ondas theta"),
     ]
+
+    public static var defaultTrack: AmbientTrack {
+        availableTracks.first ?? AmbientTrack(id: "default", name: "Default", icon: "waveform", audioFileName: "tarot_432hz", description: "Default track")
+    }
+
 }

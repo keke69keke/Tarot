@@ -1,0 +1,4 @@
+module TarotDI {
+header "TarotDI-Swift.h"
+export *
+}

@@ -10,7 +10,7 @@ import XCTest
 final class CardCatalogSmokeTests: XCTestCase {
 
     func testCardCatalogContainsAll78CardsWithValidFields() throws {
-        let repo = try BundleCardRepository(bundle: .tarotContent)
+        let repo = try BundleCardRepository(bundle: .tarotContent, settings: UserDefaultsSettingsRepository())
         let cards = repo.allCards()
 
         XCTAssertEqual(cards.count, 78, "El catálogo completo debe contener exactamente 78 cartas del Tarot Rider-Waite")
@@ -36,7 +36,7 @@ final class CardCatalogSmokeTests: XCTestCase {
     }
 
     func testCardImageResourcesExistInBundle() throws {
-        let repo = try BundleCardRepository(bundle: .tarotContent)
+        let repo = try BundleCardRepository(bundle: .tarotContent, settings: UserDefaultsSettingsRepository())
         let cards = repo.allCards()
         for card in cards {
             let cleanName = card.imageName.replacingOccurrences(of: ".png", with: "")
@@ -54,7 +54,7 @@ final class CardCatalogSmokeTests: XCTestCase {
     }
 
     func testHelloKittyDeckImageResourcesExistInBundle() throws {
-        let repo = try BundleCardRepository(bundle: .tarotContent)
+        let repo = try BundleCardRepository(bundle: .tarotContent, settings: UserDefaultsSettingsRepository())
         let cards = repo.allCards()
         for card in cards {
             let helloName = "helloKitty_\(card.imageName)"

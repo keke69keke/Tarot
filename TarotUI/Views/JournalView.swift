@@ -2,109 +2,44 @@ import SwiftUI
 import TarotCore
 import TarotData
 import TarotDI
+import TarotUI
 
-struct JournalView: View {
+enum JournalViewMode {
+    case list, map
+}
+
+struct JournalView: View { 
     @ObservedObject var model: TarotViewModel
+    @State private var viewMode: JournalViewMode = .list
+
     var body: some View {
         NavigationStack {
-            Group {
-                if model.entries.isEmpty {
-                    VStack(spacing: 18) {
-                        ZStack {
-                            Circle()
-                                .fill(Color.tarotGold.opacity(0.07))
-                                .frame(width: 110, height: 110)
-                                .blur(radius: 18)
-                            Circle()
-                                .stroke(Color.tarotGold.opacity(0.14), lineWidth: 0.85)
-                                .frame(width: 110, height: 110)
-                            Image(systemName: "text.book.closed")
-                                .font(.system(size: 34, weight: .thin))
-                                .foregroundStyle(Color.tarotGold.opacity(0.85))
-                        }
-                        .shadow(color: Color.black.opacity(0.18), radius: 16, x: 0, y: 8)
-
-                        VStack(spacing: 8) {
-                            Text(TarotStrings.emptyJournalTitle.localized)
-                                .font(.system(size: 18, weight: .semibold, design: .serif))
-                                .tracking(-0.2)
-                                .foregroundStyle(Color.tarotIvory)
-                                .multilineTextAlignment(.center)
-                            Text(TarotStrings.emptyJournalMessage.localized)
-                                .font(.system(size: 13, weight: .regular, design: .serif))
-                                .foregroundStyle(Color.tarotIvory.opacity(0.56))
-                                .multilineTextAlignment(.center)
-                                .lineSpacing(4)
-                                .padding(.horizontal, 28)
-                        }
+            VStack(spacing: 0) {
+                // Luxury Mode Selector
+                HStack {
+                    Spacer()
+                    HStack(spacing: 0) {
+                        modeButton(title: "Diario", mode: .list)
+                        modeButton(title: "Mapa", mode: .map)
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding()
-                } else {
-                    List {
-                        ForEach(model.entries) { entry in
-                            NavigationLink {
-                                JournalDetail(entry: entry, repository: model.container.cards, activeDeck: model.settings.activeDeck, cardBackDesign: model.settings.cardBackDesign)
-                            } label: {
-                                VStack(alignment: .leading, spacing: 7) {
-                                    HStack(spacing: 8) {
-                                        EyebrowLabel(text: entry.spread.type?.label.uppercased() ?? "TIRADA")
-                                        Spacer()
-                                        Text(entry.savedAt.formatted(date: .abbreviated, time: .shortened))
-                                            .font(.system(size: 11, weight: .regular, design: .serif))
-                                            .foregroundStyle(Color.tarotIvory.opacity(0.42))
-                                    }
-                                    GoldDivider(opacity: 0.10)
-                                    // Miniaturas de las cartas de la tirada
-                                    HStack(spacing: -8) {
-                                        ForEach(entry.spread.drawnCards.prefix(5)) { drawn in
-                                            CardFace(
-                                                name: drawn.card.name,
-                                                imageName: drawn.card.imageName,
-                                                textureName: drawn.card.textureImageName,
-                                                reversed: drawn.orientation == .reversed,
-                                                back: false,
-                                                useTexture: true,
-                                                size: CGSize(width: 30, height: 45),
-                                                activeDeck: model.settings.activeDeck,
-                                                backDesign: model.settings.cardBackDesign
-                                            )
-                                            .shadow(color: Color.black.opacity(0.35), radius: 4, x: 0, y: 2)
-                                        }
-                                        if entry.spread.drawnCards.count > 5 {
-                                            Text("+\(entry.spread.drawnCards.count - 5)")
-                                                .font(.system(size: 10, weight: .semibold, design: .serif))
-                                                .foregroundStyle(Color.tarotIvory.opacity(0.45))
-                                                .padding(.leading, 12)
-                                        }
-                                    }
-                                    Text(entry.spread.drawnCards.map { $0.card.name }.joined(separator: "  ·  "))
-                                        .lineLimit(1)
-                                        .font(.system(size: 12, weight: .regular, design: .serif))
-                                        .foregroundStyle(Color.tarotIvory.opacity(0.72))
-                                        .tracking(0.1)
-                                        .truncationMode(.tail)
-                                }
-                                .padding(.vertical, 4)
-                            }
-                        }
-                        .onDelete { offsets in
-                            TarotAudioService.shared.triggerHaptic(.medium)
-                            offsets.map { model.entries[$0] }.forEach(model.delete)
-                        }
-                        .listRowBackground(
-                            RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous)
-                                .fill(Color.white.opacity(0.045))
-                                .background(RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous).fill(.ultraThinMaterial).opacity(0.38))
-                                .overlay(RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous).stroke(Color.white.opacity(0.07), lineWidth: 0.7))
-                        )
-                        .listRowSeparator(.hidden)
-                        .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-                    }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
-                    .background(Color.clear)
+                    .padding(4)
+                    .background(Capsule().fill(Color.white.opacity(0.05)))
+                    .overlay(Capsule().stroke(Color.white.opacity(0.08), lineWidth: 0.5))
+                    Spacer()
                 }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 16)
+
+                ZStack {
+                    if viewMode == .list {
+                        listContent
+                            .transition(.asymmetric(insertion: .move(edge: .leading).combined(with: .opacity), removal: .opacity))
+                    } else {
+                        mapContent
+                            .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .opacity))
+                    }
+                }
+                .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewMode)
             }
             .navigationTitle(TarotStrings.journalTitle.localized)
             #if os(iOS)
@@ -112,5 +47,153 @@ struct JournalView: View {
             .toolbarBackground(Color.tarotBackground, for: .navigationBar)
             #endif
         }
+    }
+
+
+    private var listContent: some View {
+        Group {
+            if model.entries.isEmpty {
+                emptyListView
+            } else {
+                ScrollView(.vertical, showsIndicators: false) {
+                    LazyVStack(spacing: 20) {
+                        ForEach(model.entries) { entry in
+                            NavigationLink {
+                                JournalDetail(
+                                    entry: entry,
+                                    repository: model.container.cards,
+                                    activeDeck: model.settings.activeDeck,
+                                    cardBackDesign: model.settings.cardBackDesign,
+                                    reflectionService: model.container.reflection,
+                                    onSaveResponse: { response in
+                                        var updatedEntry = entry
+                                        updatedEntry.reflectionResponse = response
+                                        try? model.container.journal.save(entry: updatedEntry)
+                                        model.reloadEntries()
+                                    }
+                                )
+                            } label: {
+                                editorialEntryCard(entry: entry)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                }
+            }
+        }
+    }
+
+    private func editorialEntryCard(entry: JournalEntry) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                EyebrowLabel(text: entry.spread.type?.label.uppercased() ?? "TIRADA")
+                Spacer()
+                Text(entry.savedAt.formatted(date: .abbreviated, time: .shortened))
+                    .font(.system(size: 10, weight: .regular, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.35))
+            }
+
+            GoldDivider(opacity: 0.15)
+
+            HStack(spacing: -8) {
+                ForEach(entry.spread.drawnCards.prefix(5)) { drawn in
+                    CardFace(
+                        name: drawn.card.name,
+                        imageName: drawn.card.imageName,
+                        textureName: drawn.card.textureImageName,
+                        reversed: drawn.orientation == .reversed,
+                        back: false,
+                        useTexture: true,
+                        size: CGSize(width: 32, height: 48),
+                        activeDeck: model.settings.activeDeck,
+                        backDesign: model.settings.cardBackDesign
+                    )
+                    .shadow(color: Color.black.opacity(0.3), radius: 3, x: 0, y: 2)
+                }
+                if entry.spread.drawnCards.count > 5 {
+                    Text("+\(entry.spread.drawnCards.count - 5)")
+                        .font(.system(size: 11, weight: .semibold, design: .serif))
+                        .foregroundStyle(Color.tarotGold.opacity(0.6))
+                        .padding(.leading, 12)
+                }
+            }
+
+            Text(entry.spread.drawnCards.map { $0.card.name }.joined(separator: "  ·  "))
+                .font(.system(size: 13, weight: .regular, design: .serif))
+                .foregroundStyle(Color.tarotIvory.opacity(0.75))
+                .lineLimit(1)
+                .tracking(0.1)
+                .truncationMode(.tail)
+        }
+        .padding(16)
+        .background(
+            RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous)
+                .fill(Color.white.opacity(0.03))
+                .background(RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous).fill(.ultraThinMaterial).opacity(0.3))
+                .overlay(RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous).stroke(Color.white.opacity(0.06), lineWidth: 0.8))
+        )
+        .shadow(color: Color.black.opacity(0.1), radius: 12, x: 0, y: 6)
+    }
+
+    private var mapContent: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 20) {
+                DestinyGraphView()
+                GrowthPathView()
+            }
+            .padding()
+        }
+    }
+
+    private func modeButton(title: String, mode: JournalViewMode) -> some View {
+        Button {
+            withAnimation(LuxuryAnimation.softSpring) { viewMode = mode }
+        } label: {
+            Text(title)
+                .font(.system(size: 12, weight: .medium, design: .serif))
+                .tracking(0.5)
+                .foregroundStyle(viewMode == mode ? Color.tarotGold : Color.tarotIvory.opacity(0.4))
+                .padding(.horizontal, 16)
+                .padding(.vertical, 8)
+                .background(viewMode == mode ? Capsule().fill(Color.tarotGold.opacity(0.15)) as! Color as! Color : Color.clear)
+                .cornerRadius(10)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var emptyListView: some View {
+        VStack(spacing: 18) {
+            ZStack {
+                Circle()
+                    .fill(Color.tarotGold.opacity(0.07))
+                    .frame(width: 110, height: 110)
+                    .blur(radius: 18)
+                Circle()
+                    .stroke(Color.tarotGold.opacity(0.14), lineWidth: 0.85)
+                    .frame(width: 110, height: 110)
+                Image(systemName: "text.book.closed")
+                    .font(.system(size: 34, weight: .thin))
+                    .foregroundStyle(Color.tarotGold.opacity(0.85))
+            }
+            .shadow(color: Color.black.opacity(0.18), radius: 16, x: 0, y: 8)
+
+            VStack(spacing: 8) {
+                Text(TarotStrings.emptyJournalTitle.localized)
+                    .font(.system(size: 18, weight: .semibold, design: .serif))
+                    .tracking(-0.2)
+                    .foregroundStyle(Color.tarotIvory)
+                    .multilineTextAlignment(.center)
+                Text(TarotStrings.emptyJournalMessage.localized)
+                    .font(.system(size: 13, weight: .regular, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.56))
+                    .multilineTextAlignment(.center)
+                    .lineSpacing(4)
+                    .padding(.horizontal, 28)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
     }
 }

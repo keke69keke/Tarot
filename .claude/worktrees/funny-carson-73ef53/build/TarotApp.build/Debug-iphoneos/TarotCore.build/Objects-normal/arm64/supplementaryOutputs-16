@@ -1,0 +1,23 @@
+{
+  "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/TarotCore/Protocols/NotificationService.swift" : {
+    "const-values" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/NotificationService.swiftconstvalues",
+    "dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/NotificationService.d",
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/NotificationService.dia",
+    "object" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/NotificationService.o",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/NotificationService.swiftdeps"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/TarotCore/Protocols/RandomizationEngine.swift" : {
+    "const-values" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/RandomizationEngine.swiftconstvalues",
+    "dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/RandomizationEngine.d",
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/RandomizationEngine.dia",
+    "object" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/RandomizationEngine.o",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/RandomizationEngine.swiftdeps"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/TarotCore/Protocols/SettingsRepository.swift" : {
+    "const-values" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/SettingsRepository.swiftconstvalues",
+    "dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/SettingsRepository.d",
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/SettingsRepository.dia",
+    "object" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/SettingsRepository.o",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotCore.build/Objects-normal/arm64/SettingsRepository.swiftdeps"
+  }
+}

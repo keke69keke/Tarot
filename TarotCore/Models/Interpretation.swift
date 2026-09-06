@@ -69,47 +69,46 @@ public struct Interpretation: Codable {
 
         var summary = ""
 
-        // Opening based on spread size
+        // Opening based on spread size and nature
         switch count {
         case 1:
-            summary = "Una sola carta ha hablado: \(cardNames.first ?? "desconocida"). Su mensaje es directo y poderoso, resonando en el núcleo de tu pregunta. "
+            summary = "Una sola carta ha hablado: \(cardNames.first ?? "desconocida"). Su mensaje es directo y poderoso, resonando en el núcleo de tu pregunta con una claridad absoluta. "
         case 2...3:
-            summary = "Esta tirada concise de \(count) cartas que dialogan entre sí. "
+            summary = "Esta tirada concisa de \(count) cartas revela un diálogo esencial entre energías. "
             if !majorArcana.isEmpty {
-                summary += "La presencia de los Arcanos Mayores eleva la lectura a un plano profundamente significativo. "
+                summary += "La presencia de los Arcanos Mayores eleva la lectura a un plano trascendental, señalando influencias del destino. "
             }
         case 4...6:
-            summary = "El despliegue de \(count) cartas teje una narrativa matizada. Cada posición ilumina un aspecto distinto de tu situación, creando un tapiz de significados entrelazados. "
+            summary = "El despliegue de \(count) cartas teje una narrativa matizada y profunda. Cada posición ilumina un ángulo distinto de tu situación, creando un tapiz de significados entrelazados. "
         default:
-            summary = "\(count) cartas se han alineado para revelar una historia compleja. Esta lectura extensa examina múltiples capas de tu realidad, desde las causas ocultas hasta los desenlaces probables. "
+            summary = "\(count) cartas se han alineado para revelar una historia compleja y exhaustiva. Esta lectura examina múltiples capas de tu realidad, desde las causas ocultas hasta los desenlaces más probables. "
         }
 
-        // Highlight major arcana if present
-        if !majorArcana.isEmpty {
-            let majorNames = majorArcana.map { $0.card.name }
-            if majorNames.count == 1 {
-                summary += "\(majorNames.first ?? "Un Arcano Mayor") emerge como fuerza dominante, señalando una lección kármica o momento de profunda transformación. "
-            } else {
-                summary += "Los Arcanos Mayores \(majorNames.joined(separator: " y ")) convergen, indicando que estás atravesando un ciclo de crecimiento espiritual de gran magnitud. "
-            }
+        // Synthesis of the "Energy" of the draw
+        if majorArcana.count >= 3 {
+            summary += "La densidad de Arcanos Mayores sugiere que te encuentras en un punto de inflexión vital, donde fuerzas kármicas están guiando tu camino. "
+        } else if reversedCards.count > count / 2 {
+            summary += "Predominan las energías invertidas, lo que indica un momento de introspección forzada o bloqueos internos que requieren atención consciente. "
+        } else if reversedCards.isEmpty && !majorArcana.isEmpty {
+            summary += "La armonía de las cartas en posición derecha, junto a la fuerza de los Arcanos, señala un flujo natural y alineado con tu propósito superior. "
         }
 
-        // Mention reversed cards
-        if !reversedCards.isEmpty {
-            let reversedNames = reversedCards.map { $0.card.name }
-            summary += "Las cartas invertidas (\(reversedNames.joined(separator: ", "))) sugieren energías bloqueadas o internas que requieren tu atención consciente. "
+        // Highlight specific dominant forces
+        if majorArcana.count == 1 {
+            let majorName = majorArcana.first?.card.name ?? "Un Arcano Mayor"
+            summary += "\(majorName) emerge como la fuerza dominante, actuando como el eje central de esta interpretación. "
         }
 
-        // Position-based insights
+        // Position-based insights (refined)
         if cards.count >= 3 {
             let positions = cards.prefix(3).map { $0.position.displayName }
-            summary += "En las posiciones clave observamos: "
-            summary += positions.enumerated().map { "\($0.element) revela \(cardNames[$0.offset])" }.joined(separator: ", ")
+            summary += "Al analizar el flujo inicial, observamos que "
+            summary += positions.enumerated().map { "\($0.element) se manifiesta a través de \(cardNames[$0.offset])" }.joined(separator: ", ")
             summary += ". "
         }
 
         // Closing guidance
-        summary += "La interacción entre estas cartas sugiere un momento de transición y revelation. Profundiza en cada posición y aspecto para descubrir cómo estas energías se entrelazan en tu situación particular."
+        summary += "La interacción entre estas energías sugiere un momento de transición y revelación. Te invitamos a profundizar en cada posición y aspecto para descubrir cómo estos mensajes se entrelazan en tu realidad actual."
 
         return summary
     }

@@ -1,6 +1,7 @@
 import SwiftUI
 import TarotCore
 import TarotContent
+import TarotDI
 
 // MARK: - Zodiac Signs
 
@@ -405,6 +406,7 @@ public struct AskTarotView: View {
 // MARK: - Horoscopes View (Horóscopo Diario por Signo)
 
 public struct HoroscopeView: View {
+    @EnvironmentObject var container: AppContainer
     @State private var selectedSign: ZodiacSign = .aries
     @State private var today: Date = Date()
     let repository: any CardRepository

@@ -14,35 +14,33 @@ struct DailyCardView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            VStack(spacing: LuxurySpacing.lg) {
-                // Header editorial — pequeño, no grita
-                VStack(alignment: .leading, spacing: 8) {
+            VStack(spacing: 32) {
+                // Header editorial
+                VStack(alignment: .leading, spacing: 12) {
                     EyebrowLabel(text: "RITUAL  ·  HOY")
                     Text("Carta del día")
-                        .font(.system(size: 28, weight: .bold, design: .serif))
-                        .tracking(-0.5)
+                        .font(.system(size: 32, weight: .bold, design: .serif))
+                        .tracking(-0.8)
                         .foregroundStyle(Color.tarotIvory)
                     Text("Una sola carta. Luz suficiente para el día.")
-                        .font(.system(size: 13, weight: .regular, design: .serif))
+                        .font(.system(size: 14, weight: .regular, design: .serif))
                         .foregroundStyle(Color.tarotIvory.opacity(0.56))
-                        .lineSpacing(4)
+                        .lineSpacing(5)
                         .fixedSize(horizontal: false, vertical: true)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 4)
-                .padding(.top, 6)
+                .padding(.top, 12)
 
-                // Escenario joya — foco cenital, halo mínimo
+                // Escenario joya
                 ZStack {
-                    // velo de luz
                     Ellipse()
-                        .fill(Color.tarotGold.opacity(model.dailyRevealed ? 0.09 : 0.05))
-                        .frame(width: 360, height: 360)
-                        .blur(radius: 36)
+                        .fill(Color.tarotGold.opacity(model.dailyRevealed ? 0.12 : 0.06))
+                        .frame(width: 380, height: 380)
+                        .blur(radius: 40)
                         .scaleEffect(halo)
                         .offset(y: 10)
 
-                    // Card con marco joya
                     CardFace(
                         name: model.dailyCard.name,
                         imageName: model.dailyCard.imageName,
@@ -55,93 +53,81 @@ struct DailyCardView: View {
                         backDesign: model.settings.cardBackDesign
                     )
                     .rotation3DEffect(.degrees(model.dailyRevealed ? 0 : 180), axis: (x: 0, y: 1, z: 0))
-                    .shadow(color: Color.black.opacity(0.45), radius: 24, x: 0, y: 14)
-                    .shadow(color: Color.tarotGold.opacity(model.dailyRevealed ? 0.18 : 0.07), radius: 22, x: 0, y: 0)
+                    .shadow(color: Color.black.opacity(0.5), radius: 30, x: 0, y: 16)
+                    .shadow(color: Color.tarotGold.opacity(model.dailyRevealed ? 0.22 : 0.08), radius: 24, x: 0, y: 0)
                     .overlay(
                         RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .stroke(Color.tarotGold.opacity(model.dailyRevealed ? 0.22 : 0.14), lineWidth: 0.9)
+                            .stroke(Color.tarotGold.opacity(model.dailyRevealed ? 0.25 : 0.15), lineWidth: 1)
                     )
-                    .scaleEffect(model.dailyRevealed ? 1.0 : 0.985)
+                    .scaleEffect(model.dailyRevealed ? 1.0 : 0.98)
 
-                    // Tap organico — no botón plástico
                     if !model.dailyRevealed {
                         Button {
                             withAnimation(LuxuryAnimation.softSpring) { model.revealDaily() }
                             TarotAudioService.shared.triggerHaptic(.medium)
                         } label: {
-                            VStack(spacing: 8) {
+                            VStack(spacing: 10) {
                                 Image(systemName: "eye")
-                                    .font(.system(size: 16, weight: .thin))
-                                    .foregroundStyle(Color.tarotIvory.opacity(0.92))
+                                    .font(.system(size: 18, weight: .thin))
+                                    .foregroundStyle(Color.tarotIvory.opacity(0.95))
                                 Text("REVELAR")
-                                    .font(.system(size: 10, weight: .semibold, design: .serif))
-                                    .tracking(1.6)
-                                    .foregroundStyle(Color.tarotIvory.opacity(0.72))
+                                    .font(.system(size: 11, weight: .semibold, design: .serif))
+                                    .tracking(1.8)
+                                    .foregroundStyle(Color.tarotIvory.opacity(0.75))
                             }
-                            .padding(.horizontal, 18)
-                            .padding(.vertical, 14)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 16)
                             .background(
                                 Capsule()
-                                    .fill(Color.black.opacity(0.38))
-                                    .background(Capsule().fill(.ultraThinMaterial).opacity(0.45))
+                                    .fill(Color.black.opacity(0.4))
+                                    .background(Capsule().fill(.ultraThinMaterial).opacity(0.5))
                             )
-                            .overlay(Capsule().stroke(Color.white.opacity(0.14), lineWidth: 0.75))
-                            .shadow(color: Color.black.opacity(0.35), radius: 12, x: 0, y: 8)
+                            .overlay(Capsule().stroke(Color.white.opacity(0.15), lineWidth: 0.8))
+                            .shadow(color: Color.black.opacity(0.4), radius: 15, x: 0, y: 10)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel(TarotStrings.tapToReveal.localized)
-                        .accessibilityHint("Revela la carta del día")
-                        .accessibilityAddTraits(.isButton)
-                    } else {
-                        EmptyView()
-                            .accessibilityHidden(true)
                     }
                 }
-                .frame(height: 386)
-                .padding(.vertical, 4)
+                .frame(height: 400)
                 .onAppear { withAnimation(LuxuryAnimation.breathe) { halo = 1.06 } }
 
-                Text(model.dailyRevealed ? "Carta revelada" : "Toca para revelar")
-                    .font(.system(size: 11, weight: .medium, design: .serif))
-                    .tracking(0.6)
-                    .foregroundStyle(Color.tarotIvory.opacity(0.44))
-                    .frame(maxWidth: .infinity)
+                VStack(spacing: 16) {
+                    Text(model.dailyRevealed ? "Sincronía del día" : "Toca para revelar")
+                        .font(.system(size: 12, weight: .medium, design: .serif))
+                        .tracking(0.8)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.44))
+                        .frame(maxWidth: .infinity)
 
-                if model.dailyRevealed {
-                    ShareLink(item: dailyShareText) {
-                        HStack(spacing: 6) {
-                            Image(systemName: "square.and.arrow.up")
-                                .font(.system(size: 11, weight: .light))
-                                .foregroundStyle(Color.tarotIvory.opacity(0.8))
-                            Text("Compartir")
-                                .font(.system(size: 10, weight: .medium, design: .serif))
-                                .tracking(0.8)
-                                .foregroundStyle(Color.tarotIvory.opacity(0.8))
+                    if model.dailyRevealed {
+                        VStack(alignment: .leading, spacing: 16) {
+                            GoldDivider(opacity: 0.2)
+                            CardDetailText(card: model.dailyCard, orientation: .upright, repository: model.container.cards)
                         }
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(Capsule().fill(Color.white.opacity(0.05)))
-                        .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.7))
-                    }
-                    .buttonStyle(.plain)
-                    .frame(maxWidth: .infinity)
-                    .padding(.top, 2)
-                }
+                        .padding(20)
+                        .luxuryGlass()
+                        .transition(.asymmetric(insertion: .opacity.combined(with: .move(edge: .bottom)), removal: .opacity))
 
-                if model.dailyRevealed {
-                    VStack(alignment: .leading, spacing: 12) {
-                        GoldDivider(opacity: 0.14)
-                        CardDetailText(card: model.dailyCard, orientation: .upright, repository: model.container.cards)
+                        ShareLink(item: dailyShareText) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "square.and.arrow.up")
+                                    .font(.system(size: 12, weight: .light))
+                                Text("Compartir")
+                                    .font(.system(size: 11, weight: .medium, design: .serif))
+                                    .tracking(0.8)
+                            }
+                            .foregroundStyle(Color.tarotIvory.opacity(0.8))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(Capsule().fill(Color.white.opacity(0.05)))
+                            .overlay(Capsule().stroke(Color.white.opacity(0.12), lineWidth: 0.7))
+                        }
+                        .buttonStyle(.plain)
+                        .frame(maxWidth: .infinity)
                     }
-                    .padding(18)
-                    .luxuryGlass()
-                    .transition(.opacity.combined(with: .move(edge: .bottom)))
                 }
-
-                Spacer(minLength: 12)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 20)
         }
         .navigationTitle(TarotStrings.dailyCardTitle.localized)
         #if os(iOS)

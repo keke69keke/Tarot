@@ -84,7 +84,7 @@ final class CardRepositoryTests: XCTestCase {
     /// **Validates: Requirement 2.3**
     func testProperty5_cardSearchFindsExactNameNumberAndSuit() throws {
         // Feature: tarot-iphone-app, Property 5: Corrección de búsqueda de cartas
-        let repository = try BundleCardRepository(bundle: .tarotContent)
+        let repository = try BundleCardRepository(bundle: .tarotContent, settings: UserDefaultsSettingsRepository())
         let cards = repository.allCards()
  
         property("search returns every card for its supported exact queries") <-
@@ -112,7 +112,7 @@ final class CardRepositoryTests: XCTestCase {
     }
 
     func testProperty6_cardContextualAndAspectsResolveCorrectly() throws {
-        let repository = try BundleCardRepository(bundle: .tarotContent)
+        let repository = try BundleCardRepository(bundle: .tarotContent, settings: UserDefaultsSettingsRepository())
         let cards = repository.allCards()
         guard let fool = cards.first(where: { $0.id == 0 }) else {
             XCTFail("No se encontró la carta El Loco")

@@ -12,6 +12,7 @@ public struct ContentView: View {
     /// Sheet de ajustes — siempre accesible desde el toolbar aunque Settings no esté en activeTabs
     @State private var showSettings = false
 
+    // Swift 5.7+ requires explicit `any` when using a protocol as a concrete type.
     public init(container: any AppContainerProtocol) { _model = StateObject(wrappedValue: TarotViewModel(container: container)) }
 
     public var body: some View {
@@ -108,6 +109,7 @@ public struct ContentView: View {
                 .zIndex(10)
             }
         }
+        .environmentObject(model.container.cosmicBackground)
         .preferredColorScheme(.dark)
         .alert(TarotStrings.errorTitle.localized, isPresented: Binding(get: { model.errorMessage != nil }, set: { if !$0 { model.errorMessage = nil } })) {
             Button(TarotStrings.ok.localized, role: .cancel) {}
@@ -128,6 +130,7 @@ public struct ContentView: View {
         case .chat:             TarotChatView(apiKey: model.settings.openAIKey, repository: model.container.cards)
         case .biorhythm:        BiorhythmView(model: model)
         case .natal:            NatalChartView(model: model)
+        case .soulLink:         SharedDestinyView(soulLinks: model.container.soulLinks)
         }
     }
 }

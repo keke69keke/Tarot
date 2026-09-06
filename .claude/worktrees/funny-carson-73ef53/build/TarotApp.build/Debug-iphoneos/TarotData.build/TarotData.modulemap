@@ -1,0 +1,4 @@
+module TarotData {
+header "TarotData-Swift.h"
+export *
+}

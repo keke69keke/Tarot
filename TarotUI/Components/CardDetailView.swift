@@ -107,7 +107,7 @@ struct CardDetailView: View {
 
                 // Link to Reference view for deeper study
                 NavigationLink {
-                    ReferenceCardView(card: card, orientation: orientation, repository: repository)
+                    ReferenceCardView(card: card, orientation: orientation, repository: repository, activeDeck: activeDeck, cardBackDesign: cardBackDesign)
                 } label: {
                     HStack(spacing: 12) {
                         ZStack {

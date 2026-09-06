@@ -8,4 +8,10 @@ public protocol SettingsRepository {
 
     /// Persists the given settings immediately.
     func save(_ settings: UserSettings)
+
+    /// Generic utility to save a specific value for a key.
+    func saveValue(_ value: Any?, forKey key: String)
+
+    /// Generic utility to load a specific value for a key.
+    func loadValue(forKey key: String) -> Any?
 }

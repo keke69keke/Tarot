@@ -5,14 +5,17 @@ import TarotCore
 
 /// Loads the card catalog from cards.json in the bundle and implements CardRepository.
 public final class BundleCardRepository: CardRepository {
-    
+
     private let cards: [Card]
-    
+    private let settings: SettingsRepository
+
     /// Initializes the repository by loading and decoding cards.json from the given bundle.
     ///
-    /// - Parameter bundle: The bundle containing cards.json (defaults to .main).
+    /// - Parameters:
+    ///   - bundle: The bundle containing cards.json (defaults to .main).
+    ///   - settings: The repository used to retrieve user preferences.
     /// - Throws: `TarotError.contentLoadFailed` if the file cannot be loaded or decoded.
-    public init(bundle: Bundle = .main) throws {
+    public init(bundle: Bundle = .main, settings: SettingsRepository) throws {
         guard let url = bundle.url(forResource: "cards", withExtension: "json") else {
             throw TarotError.contentLoadFailed(
                 underlying: NSError(
@@ -39,6 +42,7 @@ public final class BundleCardRepository: CardRepository {
         
         // Convert DTOs to domain models and sort by id
         self.cards = catalogDTO.cards.map { $0.toDomain() }.sorted { $0.id < $1.id }
+        self.settings = settings
     }
     
     // MARK: - CardRepository Protocol
@@ -134,6 +138,10 @@ public final class BundleCardRepository: CardRepository {
     }
 
     public func drawCards(for spread: Spread) async throws -> [DrawnCard] {
+        guard !cards.isEmpty else {
+            throw TarotError.catalogEmpty
+        }
+
         let positions = spread.standardPositions
         let count = positions.isEmpty ? 1 : positions.count
         let drawCount = max(1, min(count, cards.count))
@@ -146,12 +154,8 @@ public final class BundleCardRepository: CardRepository {
 
         let selected = shuffled.prefix(drawCount)
         // Respetar UserSettings.allowReversedCards y probabilidad 30% (spec)
-        let allowReversed: Bool = {
-            // Lee desde UserDefaultsSettingsRepository para respetar migración y defaults
-            // Evita crear ciclo: lee directo UserDefaults con fallback true
-            if UserDefaults.standard.object(forKey: "allowReversedCards") == nil { return true }
-            return UserDefaults.standard.bool(forKey: "allowReversedCards")
-        }()
+        let allowReversed = settings.load().allowReversedCards
+
         return selected.enumerated().map { index, card in
             let isReversed = allowReversed && (Double.random(in: 0..<1) < 0.30)
             let orientation: CardOrientation = isReversed ? .reversed : .upright

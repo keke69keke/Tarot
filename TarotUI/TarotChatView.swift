@@ -1,6 +1,7 @@
 import SwiftUI
 import TarotCore
 import TarotContent
+import TarotDI
 
 // MARK: - Chat Models
 
@@ -86,7 +87,9 @@ final class TarotAIChatService: ObservableObject {
             return try await localTarotResponse(for: userMessage)
         }
 
-        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
+        guard let url = URL(string: "https://api.openai.com/v1/chat/completions") else {
+            throw ChatError.serverError(0)
+        }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
@@ -155,7 +158,9 @@ final class TarotAIChatService: ObservableObject {
         }
 
         // Draw a random card for general questions
-        let randomCard = allCards.randomElement()!
+        guard let randomCard = allCards.randomElement() else {
+            throw ChatError.parseError // Or a more appropriate error
+        }
         let interp = repository.interpretation(for: randomCard, position: nil, orientation: .upright)
 
         let responses = [
@@ -182,7 +187,10 @@ final class TarotAIChatService: ObservableObject {
             """
         ]
 
-        return responses.randomElement()!
+        guard let response = responses.randomElement() else {
+            throw ChatError.parseError
+        }
+        return response
     }
 }
 
@@ -294,7 +302,6 @@ public struct TarotChatView: View {
         ZStack {
             Color.tarotBackground.ignoresSafeArea()
             Color.tarotBackgroundGradient.ignoresSafeArea()
-            AmbientBackgroundView().opacity(0.45)
         }
     }
 

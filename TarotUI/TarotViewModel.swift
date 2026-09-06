@@ -2,6 +2,7 @@ import SwiftUI
 import TarotCore
 import TarotData
 import TarotDI
+import Combine
 
 @MainActor final class TarotViewModel: ObservableObject {
     @Published var selectedSpread: SpreadType = .threeCard {
@@ -14,6 +15,8 @@ import TarotDI
     }
     @Published var spread: Spread?
     @Published var isShuffling = false
+    @Published var currentSynthesis: String?
+    @Published var isSynthesizing = false
     @Published var entries: [JournalEntry] = []
     @Published var searchQuery = ""
     @Published var settings: UserSettings
@@ -23,6 +26,8 @@ import TarotDI
     @Published var readingIntention: String = ""
     @Published var useSignificator: Bool = false
     @Published var significatorCard: Card?
+    @Published var isDreamReading: Bool = false
+    @Published var dreamThemes: String = ""
     /// Number of cards used by the "Tirada Libre" spread.
     @Published var freeCardCount: Int = 5 {
         didSet {
@@ -37,6 +42,8 @@ import TarotDI
         }
     }
     private var freeCardDebounce: Task<Void, Never>?
+    private var cancellables = Set<AnyCancellable>()
+    private var calmStartedAt: Date?
     /// Cards the user chooses to be the first ones that come out of the deck
     /// (slot 0 and slot 1 of the spread).
     @Published var firstCardChoice: Card? = nil
@@ -52,6 +59,7 @@ import TarotDI
         dailyRevealed = container.daily.isRevealed(for: .now)
         drawUseCase = DrawCardsUseCase(cardRepository: container.cards, synthesizer: container.spreadSynthesizer)
         reloadEntries()
+        setupBiometricSync()
     }
 
     var visibleCards: [Card] { searchQuery.isEmpty ? container.cards.allCards() : container.cards.search(query: searchQuery) }
@@ -131,19 +139,61 @@ import TarotDI
         secondCardChoice = nil
     }
 
-    func saveSpread(notes: String = "") {
+    func saveSpread(notes: String = "") async {
         guard let spread else { return }
         var fullNotes = notes
         if !readingIntention.isEmpty {
             fullNotes = "◈ Intención: \(readingIntention)" + (notes.isEmpty ? "" : "\n\n\(notes)")
         }
-        do { try container.journal.save(entry: JournalEntry(spread: spread, notes: fullNotes)); reloadEntries() }
-        catch { errorMessage = error.localizedDescription }
+
+        do {
+            // Generate a reflection prompt for the new entry
+            let moonPhase = container.lunar.currentPhase()
+            let prompts = try await container.reflection.generatePrompts(for: spread, moonPhase: moonPhase)
+            let prompt = prompts.first ?? ""
+
+            let entry = JournalEntry(
+                spread: spread,
+                savedAt: .now,
+                moonPhase: moonPhase,
+                reflectionPrompt: prompt,
+                reflectionResponse: nil,
+                isDreamReading: isDreamReading,
+                dreamThemes: dreamThemes.isEmpty ? nil : dreamThemes,
+                notes: fullNotes,
+                isSyncedToCloud: false
+            )
+
+            try container.journal.save(entry: entry)
+            reloadEntries()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func revealSynthesis() async {
+        guard let spread = spread else { return }
+        isSynthesizing = true
+        do {
+            let moonPhase = container.lunar.currentPhase()
+            currentSynthesis = try await container.omniIntelligence.synthesizeSummary(for: spread, moonPhase: moonPhase)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+        isSynthesizing = false
     }
 
     func reloadEntries() { entries = container.journal.fetchAll() }
     func delete(_ entry: JournalEntry) { do { try container.journal.delete(id: entry.id); reloadEntries() } catch { errorMessage = error.localizedDescription } }
     func revealDaily() { container.daily.markRevealed(for: .now); withAnimation { dailyRevealed = true } }
+
+    func checkProactiveInsights() async {
+        await container.proactiveGuidance.analyzeForShadowLoops()
+        if let suggestion = container.environmentOracle.getEnvironmentalSuggestion() {
+            // This could be displayed as a banner in the UI
+            print("Proactive Insight: \(suggestion)")
+        }
+    }
 
     func replaceCard(at index: Int, with card: Card) {
         guard var spread = spread, spread.drawnCards.indices.contains(index) else { return }
@@ -155,6 +205,7 @@ import TarotDI
     func reshuffleCurrentSpread() {
         guard let currentSpread = spread else { return }
         isShuffling = true
+        currentSynthesis = nil
         Task { @MainActor in
             do {
                 let positions = currentSpread.standardPositions.isEmpty
@@ -189,4 +240,40 @@ import TarotDI
     }
 
     func persistSettings() { container.settings.save(settings) }
+
+    private func setupBiometricSync() {
+        container.biometrics.$currentHeartRate
+            .combineLatest(container.biometrics.$soulState)
+            .sink { [weak self] heartRate, state in
+                guard let self = self else { return }
+
+                // Visual and AI updates
+                self.container.cosmicBackground.updateForBiometrics(heartRate: heartRate, state: state)
+                if let omni = self.container.omniIntelligence as? OmniIntelligenceService {
+                    omni.currentSoulState = state
+                }
+
+                // Sonic Depth: Update generative ambience
+                let dominantPlanet = self.container.planetary.currentDominantPlanet().planet
+                TarotAudioService.shared.updateAmbience(dominantPlanet: dominantPlanet, heartRate: heartRate)
+
+                // Zen Mode Automation: Trigger when calm for > 30 seconds
+                if state == .calm {
+                    if self.calmStartedAt == nil {
+                        self.calmStartedAt = Date()
+                    } else if let start = self.calmStartedAt, Date().timeIntervalSince(start) > 30 {
+                        if !self.container.cosmicBackground.isZenMode {
+                            self.container.cosmicBackground.setZenMode(true)
+                            TarotAudioService.shared.playZenChime()
+                        }
+                    }
+                } else {
+                    if self.container.cosmicBackground.isZenMode {
+                        self.container.cosmicBackground.setZenMode(false)
+                    }
+                    self.calmStartedAt = nil
+                }
+            }
+            .store(in: &cancellables)
+    }
 }

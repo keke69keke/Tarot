@@ -7,11 +7,16 @@ struct JournalDetail: View {
     let repository: any CardRepository
     let activeDeck: DeckType
     let cardBackDesign: CardBackDesign
+    let reflectionService: ReflectionServiceProtocol
+    var onSaveResponse: ((String) -> Void)?
+
+    @State private var reflectionResponse = ""
+    @State private var mirrorResponse: String? = nil
+    @State private var isReflecting = false
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 20) {
-
                 // Header info
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 8) {
@@ -95,6 +100,83 @@ struct JournalDetail: View {
                     }
                 }
 
+                // Soul Dialogue (Reflection)
+                if let prompt = entry.reflectionPrompt {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundStyle(Color.tarotGold)
+                            Text("Diálogo del Alma")
+                                .font(.system(size: 14, weight: .bold, design: .serif))
+                                .foregroundStyle(Color.tarotGold)
+                        }
+
+                        Text(prompt)
+                            .font(.system(size: 15, design: .serif))
+                            .foregroundStyle(Color.tarotIvory)
+                            .lineSpacing(4)
+                            .italic()
+
+                        TextField("Escribe tu reflexión...", text: $reflectionResponse)
+                            .font(.system(size: 14, design: .serif))
+                            .foregroundStyle(Color.tarotIvory)
+                            .padding(12)
+                            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.white.opacity(0.05)))
+                            .overlay(RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color.tarotGold.opacity(0.2), lineWidth: 0.75))
+                            .onSubmit {
+                                Task {
+                                    onSaveResponse?(reflectionResponse)
+                                    await reflect()
+                                }
+                            }
+
+                        if let mirror = mirrorResponse {
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Image(systemName: "mirror")
+                                        .font(.system(size: 14, weight: .bold))
+                                        .foregroundStyle(Color.tarotGold)
+                                    Text("Reflejo del Alma")
+                                        .font(.system(size: 14, weight: .bold, design: .serif))
+                                        .foregroundStyle(Color.tarotGold)
+                                }
+                                Text(mirror)
+                                    .font(.system(size: 15, design: .serif))
+                                    .foregroundStyle(Color.tarotIvory)
+                                    .lineSpacing(6)
+                                    .italic()
+                            }
+                            .padding(20)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(
+                                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                    .fill(Color.tarotPanel.opacity(0.6))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                                    .stroke(Color.tarotGold.opacity(0.15), lineWidth: 1)
+                            )
+                            .transition(.asymmetric(insertion: .move(edge: .bottom).combined(with: .opacity), removal: .opacity))
+                        } else if isReflecting {
+                            ProgressView()
+                                .tint(Color.tarotGold)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
+                    .padding(20)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .fill(Color.tarotPanel.opacity(0.88))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 22, style: .continuous)
+                            .stroke(Color.tarotGold.opacity(0.2), lineWidth: 1)
+                    )
+                }
+
                 // Notes (if any)
                 if !entry.notes.isEmpty {
                     VStack(alignment: .leading, spacing: 10) {
@@ -128,6 +210,17 @@ struct JournalDetail: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+    }
+
+    private func reflect() async {
+        guard !reflectionResponse.isEmpty else { return }
+        isReflecting = true
+        do {
+            mirrorResponse = try await reflectionService.reflect(on: reflectionResponse, context: entry)
+        } catch {
+            mirrorResponse = "El espejo está nublado en este momento. Intenta reflexionar nuevamente."
+        }
+        isReflecting = false
     }
 }
 /// Summative card that synthesizes the full spread into a coherent narrative.

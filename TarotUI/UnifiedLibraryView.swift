@@ -33,7 +33,7 @@ struct UnifiedLibraryView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollViewReader { _ in
+            ScrollView(showsIndicators: false) {
                 VStack(spacing: 0) {
                     header
                     modePicker

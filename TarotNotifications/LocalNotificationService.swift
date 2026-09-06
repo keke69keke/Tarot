@@ -17,5 +17,30 @@ public final class LocalNotificationService: NotificationService {
         let trigger = UNCalendarNotificationTrigger(dateMatching: DateComponents(hour: hour), repeats: true)
         try await center.add(UNNotificationRequest(identifier: identifier, content: content, trigger: trigger))
     }
+
+    public func scheduleNotification(title: String, body: String, trigger: NotificationTrigger) async throws {
+        let enabled = await requestPermission()
+        guard enabled else { throw TarotError.notificationPermissionDenied }
+
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = body
+        content.sound = .default
+
+        let unTrigger: UNNotificationTrigger
+        switch trigger {
+        case .daily(let hour):
+            unTrigger = UNCalendarNotificationTrigger(dateMatching: DateComponents(hour: hour), repeats: true)
+        case .timeInterval(let seconds):
+            unTrigger = UNTimeIntervalNotificationTrigger(timeInterval: seconds, repeats: false)
+        case .date(let date):
+            let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
+            unTrigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+        }
+
+        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: unTrigger)
+        try await center.add(request)
+    }
+
     public func cancelDailyNotification() async { center.removePendingNotificationRequests(withIdentifiers: [identifier]) }
 }

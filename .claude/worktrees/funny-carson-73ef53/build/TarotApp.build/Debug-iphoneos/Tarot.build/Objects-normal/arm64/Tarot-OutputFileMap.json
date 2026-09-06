@@ -1,0 +1,29 @@
+{
+  "" : {
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/Tarot-primary.dia",
+    "emit-module-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/Tarot-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/Tarot-primary-emit-module.dia",
+    "pch" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/Tarot-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/Tarot-primary.swiftdeps"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/TarotApp/TarotIPhoneApp.swift" : {
+    "const-values" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/TarotIPhoneApp.swiftconstvalues",
+    "dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/TarotIPhoneApp.d",
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/TarotIPhoneApp.dia",
+    "index-unit-output-path" : "/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/TarotIPhoneApp.o",
+    "llvm-bc" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/TarotIPhoneApp.bc",
+    "object" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/TarotIPhoneApp.o",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/TarotIPhoneApp.swiftdeps",
+    "swiftmodule" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/TarotIPhoneApp~partial.swiftmodule"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/Tarot.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  }
+}

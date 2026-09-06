@@ -13,7 +13,7 @@ final class InterpretationResolverTests: XCTestCase {
     /// **Validates: Requirements 1.4, 7.5**
     func testProperty3_interpretationIsAlwaysAvailable() throws {
         // Feature: tarot-iphone-app, Property 3: Interpretación siempre disponible (fallback)
-        let repository = try BundleCardRepository(bundle: .tarotContent)
+        let repository = try BundleCardRepository(bundle: .tarotContent, settings: UserDefaultsSettingsRepository())
         let cards = repository.allCards()
         let positions = SpreadType.allCases.flatMap(\.positions)
 

@@ -155,6 +155,7 @@ private struct JournalEntryDTO: Codable {
     let typeRaw: String?
     let createdAt: Date?
     let savedAt: Date
+    let moonPhase: String?
     let notes: String
     let synced: Bool
     let cards: [DrawnDTO]
@@ -169,6 +170,7 @@ private struct JournalEntryDTO: Codable {
         typeRaw = value.spread.type?.rawValue
         createdAt = value.spread.createdAt
         savedAt = value.savedAt
+        moonPhase = value.moonPhase
         notes = value.notes
         synced = value.isSyncedToCloud
         cards = value.spread.drawnCards.map(DrawnDTO.init)
@@ -179,13 +181,14 @@ private struct JournalEntryDTO: Codable {
             id: id,
             spread: TarotCore.Spread(type: type ?? .threeCard, drawnCards: cards.map(\.domain), createdAt: createdAt ?? savedAt),
             savedAt: savedAt,
+            moonPhase: moonPhase ?? "Unknown",
             notes: notes,
             isSyncedToCloud: synced
         )
     }
 
     enum CodingKeys: String, CodingKey {
-        case id, createdAt, savedAt, notes, synced, cards
+        case id, createdAt, savedAt, moonPhase, notes, synced, cards
         case typeRaw
         case type
     }
@@ -202,6 +205,7 @@ private struct JournalEntryDTO: Codable {
         }
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
         savedAt = try container.decode(Date.self, forKey: .savedAt)
+        moonPhase = try container.decodeIfPresent(String.self, forKey: .moonPhase)
         notes = try container.decode(String.self, forKey: .notes)
         synced = try container.decode(Bool.self, forKey: .synced)
         cards = try container.decode([DrawnDTO].self, forKey: .cards)
@@ -213,6 +217,7 @@ private struct JournalEntryDTO: Codable {
         try container.encodeIfPresent(typeRaw, forKey: .typeRaw)
         try container.encodeIfPresent(createdAt, forKey: .createdAt)
         try container.encode(savedAt, forKey: .savedAt)
+        try container.encodeIfPresent(moonPhase, forKey: .moonPhase)
         try container.encode(notes, forKey: .notes)
         try container.encode(synced, forKey: .synced)
         try container.encode(cards, forKey: .cards)

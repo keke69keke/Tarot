@@ -2,7 +2,7 @@ import SwiftUI
 import TarotCore
 
 // MARK: - Book Cover Colors (deterministic from title hash)
-private func bookCoverGradient(for title: String) -> [Color] {
+func bookCoverGradient(for title: String) -> [Color] {
     let palettes: [[Color]] = [
         [Color.tarotGoldDeep, Color.tarotGoldDeep.opacity(0.4)],
         [Color.tarotGold, Color.tarotGoldDeep],
@@ -18,14 +18,14 @@ private func bookCoverGradient(for title: String) -> [Color] {
     return palettes[idx]
 }
 
-private func bookCoverIcon(for title: String) -> String {
+func bookCoverIcon(for title: String) -> String {
     let icons = ["books.vertical", "scroll.fill", "moon.stars.fill", "sparkles",
                  "flame.fill", "leaf.fill", "star.fill", "eye.fill", "atom", "wand.and.stars", "sun.max.fill", "moon.fill"]
     return icons[abs(title.hashValue) % icons.count]
 }
 
 // MARK: - Premium Book Cover Card
-private struct EsotericBookCover: View {
+struct EsotericBookCover: View {
     let title: String
     let subtitle: String
     let size: CGSize
@@ -126,6 +126,9 @@ public struct LearningCenterView: View {
                         case .books: booksSection
                         case .spreads: spreadsInfoSection
                         case .tools: toolsSection
+                        case .atlas: SymbolAtlasView()
+                        case .dreams: DreamJournalView()
+                        case .paths: SpiritualPathView()
                         }
                     }
                     .padding(.bottom, 40)
@@ -153,7 +156,7 @@ public struct LearningCenterView: View {
                         #if os(iOS)
                         .navigationBarTitleDisplayMode(.inline)
                         #endif
-.toolbar {
+                        .toolbar {
                             #if os(iOS)
                             ToolbarItem(placement: .navigationBarTrailing) {
                                 Button("Cerrar") { showingBrowser = false }
@@ -179,10 +182,10 @@ public struct LearningCenterView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                         Text("Biblioteca Arcana")
-                            .font(.system(size: 34, weight: .bold, design: .serif))
-                            .tracking(-0.6)
-                            .foregroundStyle(Color.tarotIvory)
+                     Text("Biblioteca Arcana")
+                        .font(.system(size: 34, weight: .bold, design: .serif))
+                        .tracking(-0.6)
+                        .foregroundStyle(Color.tarotIvory)
                         Text("Sabiduría Esotérica · \(libraryManager.importedBooks.count) libros")
                             .font(.system(size: 14, weight: .medium, design: .serif))
                             .foregroundStyle(Color.tarotIvory.opacity(0.68))
@@ -257,7 +260,7 @@ public struct LearningCenterView: View {
             }
 
             sectionLabel("📖 Guía Integrada").padding(.horizontal)
-            NavigationLink(destination: PDFBookView(book: builtInGuideBook, libraryManager: libraryManager)) {
+            NavigationLink(destination: PDFReaderView(book: builtInGuideBook, libraryManager: libraryManager)) {
                 builtInBookRow
             }
             .padding(.horizontal)
@@ -413,7 +416,7 @@ public struct LearningCenterView: View {
     private var bookGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)], spacing: 16) {
             ForEach(libraryManager.importedBooks) { book in
-                NavigationLink(destination: PDFBookView(book: book, libraryManager: libraryManager)) {
+                NavigationLink(destination: PDFReaderView(book: book, libraryManager: libraryManager)) {
                     EsotericBookCover(title: book.title, subtitle: book.fileName, size: CGSize(width: 160, height: 220))
                 }
                 .buttonStyle(.plain)
@@ -444,7 +447,7 @@ public struct LearningCenterView: View {
         }
     }
 
- private var schoolCourses: [SchoolCourse] {
+    private var schoolCourses: [SchoolCourse] {
         [
             SchoolCourse(
                 title: "Interpretación de Arcanos",
@@ -464,7 +467,7 @@ public struct LearningCenterView: View {
                 color: Color.tarotGold,
                 summary: "De 1 a 12 cartas: cuándo usar cada tirada y cómo interpretar posiciones con precisión.",
                 lessons: [
-                    SchoolLesson(title: "Tirada de 3 Cartas — Pasado/Presente/Futuro", subtitle: "La más versátil", icon: "3.circle.fill", content: "Tres cartas, infinitas historias. Posiciones: 1 Pasado (raíz, influencia que te trae aquí), 2 Presente (corazón de la cuestión, energía dominante), 3 Futuro (probabilidad si mantienes el rumbo). No es destino fatal, es tendencia.\n\nVariantes: Mente-Cuerpo-Espíritu; Situación-Acción-Resultado; Tú-Otro-Vínculo. Cada variante reencuadra la misma tríada.\n\nLectura profunda: Mira el elemento dominante. ¿Tres Espadas = mente saturada? ¿Tres Copas = emociones desbordadas? Usa los vacíos: si no hay Oros, falta tierra/acción concreta."),
+                    SchoolLesson(title: "Tirada de 3 Cartas — Pasado/Presente/Futuro", subtitle: "La más versátil", icon: "3.circle.fill", content: "Tres cartas, infinitas historias. Posiciones: 1 Pasado (raíz, influencia que te trae aquí), 2 Presente (corazón de la cuestión, energía dominante), 3 Futuro (probabilidad si mantienes el rumbo). No es destino fatal, es tendencia.\n\nVariantes: Mente-Cuerpo-Espíritu; Situación-Acción-Resultado; Tú-Otro-Vínculo. Cada variante reencuadra la misma tríada.\n\nLectura profunda: Mira el elemento dominante. ¿Tres Espadas = mente saturada? ¿Tres Copas = emociones desbordadas? ¿Tres Oros = falta de tierra/acción concreta?"),
                     SchoolLesson(title: "Cruz Celta — 10 Cartas", subtitle: "La tirada reina", icon: "xmark.circle.fill", content: "10 posiciones que mapean psique y destino: 1 Presente, 2 Desafío (lo que cruza), 3 Pasado reciente, 4 Futuro próximo, 5 Encima (consciencia/meta), 6 Debajo (inconsciente/base), 7 Consejo (actitud recomendada), 8 Entorno (otros, influencias externas), 9 Esperanzas/Temores, 10 Resultado.\n\nCómo leerla sin abrumarte: Lee primero el eje central (1-2), luego la línea temporal (3-4-10), luego el eje vertical (5-6), finalmente el entorno (7-8-9). La síntesis es la historia que conecta estos cuatro ejes.\n\nPista morada: Las posiciones 1-6 son el diagrama en cruz, 7-10 el bastón lateral — visualiza la cruz, no solo la lista."),
                     SchoolLesson(title: "Herradura, Relaciones y 12 Meses", subtitle: "Panorámicas", icon: "7.circle.fill", content: "Herradura (7): Pasado lejano, Presente, Oculto, Consejo, Futuro cercano, Futuro lejano, Resultado — ideal para visión completa sin la densidad de la Cruz.\n\nRelaciones (7): Tú, Pareja, Fortalezas, Desafíos, Camino mutuo, Consejo, Resultado — lee Tú vs Pareja como polaridad (¿Fuego vs Agua?). Si Fortalezas es 3 de Copas y Desafíos es 5 de Espadas, la amistad sostiene pero la comunicación hiere.\n\n12 Meses: Una carta por mes, de Enero a Diciembre. Úsala en Ano Nuevo o cumpleaños. Busca el arco anual: ¿dónde cae La Muerte? Ese mes pide transformación."),
                     SchoolLesson(title: "Tiradas Libres y Esotéricas", subtitle: "Árbol, Estrella, Luna, Pirámide", icon: "sparkles", content: "Esotéricas: Templanza (6, equilibrio de opuestos), Árbol de la Vida (10 sefirot, de Kether a Malkuth), Estrella de David (7, integración de 6 elementos + centro), Espejo del Alma (9, sombra junguiana), Alquimia (4 fases Nigredo→Rubedo), Ciclo Lunar (4 fases), Pirámide (6, base→vértice).\n\nClave: Cada tirada esotérica tiene una narrativa mítica. No memorices posiciones, entiende el mito: En Alquimia, Nigredo es putrefacción (qué debe morir), Albedo purificación, Citrinitas iluminación, Rubedo perfección. La tirada te inicia, no solo te informa."),
@@ -477,7 +480,7 @@ public struct LearningCenterView: View {
                 summary: "Las 22 letras, 10 sefirot y 32 senderos: el mapa hermético que une Tarot y creación.",
                 lessons: [
                     SchoolLesson(title: "Las 10 Sefirot", subtitle: "De Kether a Malkuth", icon: "tree", content: "Kether (Corona, unidad), Chokmah (Sabiduría, fuerza paterna), Binah (Comprensión, matriz), Chesed (Misericordia, expansión), Geburah (Rigor, disciplina), Tiphareth (Belleza, corazón/Sol), Netzach (Victoria, emociones/Venus), Hod (Esplendor, intelecto/Mercurio), Yesod (Fundamento, Luna/inconsciente), Malkuth (Reino, materia). El Árbol es el cuerpo de Dios y tu psique.\n\nPráctica: Coloca 10 cartas (una por sefirá) y lee tu Árbol personal: ¿dónde hay cartas difíciles? Esa sefirá pide atención."),
-                    SchoolLesson(title: "22 Senderos y Letras Hebreas", subtitle: "Cada Mayor es una letra", icon: "arrow.right.circle.fill", content: "Aleph (El Loco, aire), Beth (El Mago, Mercurio), Gimel (La Papisa, Luna), Daleth (La Emperatriz, Venus), Heh (El Emperador, Aries), Vav (El Papa, Tauro), Zayin (Los Enamorados, Géminis), Cheth (El Carro, Cáncer), Teth (La Fuerza, Leo), Yod (El Ermitaño, Virgo), Kaph (La Rueda, Júpiter), Lamed (La Justicia, Libra), Mem (El Colgado, Agua), Nun (La Muerte, Escorpio), Samekh (La Templanza, Sagitario), Ayin (El Diablo, Capricornio), Peh (La Torre, Marte), Tzaddi (La Estrella, Acuario), Qoph (La Luna, Piscis), Resh (El Sol, Sol), Shin (El Juicio, Fuego), Tav (El Mundo, Saturno/Tierra).\n\nMeditación: Recorre el alfabeto hebreo con los Mayores como flashcards místicas."),
+                    SchoolLesson(title: "22 Senderos y Letras Hebreas", subtitle: "Cada Mayor es una letra", icon: "arrow.right.circle.fill", content: "Aleph (El Loco, aire), Beth (El Mago, Mercurio), Gimel (La Papisa, Luna), Daleth (La Emperatriz, Venus), Heh (El Emperador, Aries), Vav (El Papa, Tauro), Zayin (Los Enamorados, Géminis), Cheth (El Carro, Cáncer), Teth (La Fuerza, Leo), Yod (El Ermitaño, Virgo), Kaph (La Rueda, Júpiter), Lamed (La Justicia, Libra), Mem (El Colgado, Agua), Nun (La Muerte, Escorpio), Samekh (La Templanza, Sagitario), Ayin (El Diablo, Capricornio), Peh (La Torre, Marte), Tzaddi (La Estrella, Acuario), Qoph (La Luna, Piscis), Resh (El Sol, Sol), Shin (El Juicio, Fuego), Tav (El Mundo, Saturno/Tierra). la meditación la conecta con el alfabeto hebreo."),
                     SchoolLesson(title: "Meditación Cabalística", subtitle: "Ascenso por el Árbol", icon: "sparkles", content: "Meditación guiada: Visualiza Malkuth (tus pies en tierra) con 10 de Oros, sube a Yesod (Luna, sueños) con La Luna, a Tiphareth (corazón solar) con El Sol, a Kether (corona) con El Mundo. En cada sefirá, respira 4 tiempos y pregunta: ¿qué me enseña esta esfera hoy? Anota sincronicidades.\n\nTip lujo: Usa la textura 'sacredGeometry' del mazo Thoth para este ascenso; la geometría sagrada resuena con la Cábala."),
                     SchoolLesson(title: "Cábala Práctica — Cuatro Mundos", subtitle: "Atziluth, Briah, Yetzirah, Assiah", icon: "atom", content: "Cuatro mundos: Atziluth (Fuego, arquetipos, Bastos), Briah (Agua, creación, Copas), Yetzirah (Aire, formación, Espadas), Assiah (Tierra, manifestación, Oros). Los Mayores cruzan todos los mundos; los Menores viven en uno.\n\nLectura: Si en una tirada hay muchos Bastos, estás en Atziluth (idea); muchos Oros, en Assiah (materia). El equilibrio de mundos revela dónde está tu energía y dónde falta."),
                 ]
@@ -503,7 +506,7 @@ public struct LearningCenterView: View {
                     SchoolLesson(title: "La Sombra en el Tarot — Arcanos Incómodos", subtitle: "Torre, Diablo, Luna, Muerte", icon: "moon.haze.fill", content: "La Sombra no es maldad, es lo no mirado. La Torre (Marte) derrumba estructuras falsas (ego, relación, trabajo) para liberar verdad. El Diablo (Capricornio) muestra ataduras: adicciones, dinero, poder, miedo. La Luna (Piscis) revela inconsciente, sueños, confusión fértil. La Muerte (Escorpio) no es muerte física, es poda necesaria.\n\nReencuadre: Pregunta no '¿qué me pasa?' sino '¿qué me libera esta carta incómoda?' La incomodidad es la brújula."),
                     SchoolLesson(title: "Espejo del Alma — 9 Posiciones Junguianas", subtitle: "Tirada sanadora", icon: "camera.macro", content: "Máscara (cómo te muestras), Sombra (lo negado), Anima/Animus (polaridad interna), Herida de Infancia, Don Oculto (perla en la herida), Patrón Kármico (bucle), Llamado del Alma (vocación), Obstáculo, Sí-Mismo (integración).\n\nLectura profunda: Si Sombra es 9 de Espadas (ansiedad) y Don Oculto es 9 de Copas (deseo cumplido), tu ansiedad esconde un deseo de plenitud. Si Patrón es 5 de Oros (carencia) y Llamado es 6 de Oros (dar/recibir), sanas al aprender a pedir y dar."),
                     SchoolLesson(title: "Integración — Diario y Ritual", subtitle: "De herida a don", icon: "heart.fill", content: "Ritual: 1) Saca una carta sombra al día (pregunta: ¿qué parte de mí necesita luz hoy?), 2) Escribe 5 líneas sin censura, 3) Responde con una carta consejo (¿cómo la integro?). En 21 días verás tu patrón.\n\nIntegración no es eliminar la sombra, es darle asiento a tu mesa interna. Cuando La Torre cae, no reconstruyas igual; cuando El Diablo aprieta, pregunta qué poder cedes."),
-                    SchoolLesson(title: "Linaje y Propósito — Tirada del Linaje", subtitle: "7 posiciones ancestrales", icon: "person.3.fill", content: "Posiciones: Linaje, Abuelos, Padres, Infancia, Patrón Kármico, Propósito, Liberación. El Tarot puede leer herencias emocionales: Si Abuelos es 10 de Espadas (derrota) y Liberación es As de Bastos (nuevo fuego), honras al linaje no repitiendo, sino iniciando tu propio fuego.\n\nTip: Usa el Diario para anotar patrones familiares que se repiten en tiradas distintas; el tarot es espejo genealógico."),
+                    SchoolLesson(title: "Linaje y Propósito — Tirada del Linaje", subtitle: "7 posiciones ancestrales", icon: "person.3.fill", content: "Posiciones: Linaje, Abuelos, Padres, Infancia, Patrón Kármico, Propósito, Liberación. El Tarot puede leer herencias emocionales: Si Abuelos es 10 de Espadas (derrota) y Liberación es As de Bastos (nuevo fuego), honras al linaje no repitiendo, sino iniciando tu propio fuego."),
                 ]
             ),
             SchoolCourse(
@@ -513,7 +516,7 @@ public struct LearningCenterView: View {
                 summary: "De los Visconti al Rider-Waite: cómo el juego se volvió oráculo y por qué importa hoy.",
                 lessons: [
                     SchoolLesson(title: "Orígenes — Visconti, Marsella, Etteilla", subtitle: "Del juego al espejo", icon: "scroll.fill", content: "1441: Filippo Visconti encarga a Bonifacio Bembo los Tarocchi dorados para la corte de Milán (oro, amor cortés). Siglo XVI: el Tarot de Marsella fija el canon iconográfico que Waite heredará. 1781: Court de Gébelin inventa origen egipcio; Etteilla crea el primer mazo adivinatorio y la tirada. 1888: Golden Dawn sistematiza correspondencias cabalísticas/astrológicas. 1909: Waite-Smith publican el Rider-Waite (Pamela Colman Smith ilustra 78 cartas narrativas, no solo pips). Comprender esta historia te libera de dogma: el tarot es un lenguaje vivo, no una reliquia."),
-                    SchoolLesson(title: "Iconografía — Leer como Renacimiento", subtitle: "Cada detalle cuenta", icon: "eye.fill", content: "Smith pintó teatros simbólicos: en 3 de Espadas, corazón atravesado bajo nubes de tormenta; en 6 de Copas, niños intercambian flores (nostalgia). Waite añadió detalles dorados de la Golden Dawn: el velo de la Papisa (Boaz/Jachin), el infinito del Mago (lemniscata), los girasoles de la Reina de Bastos (vitalidad). Leer es iconología: ¿qué mira el personaje? ¿qué oculta? ¿qué elemento domina el paisaje?"),
+                    SchoolLesson(title: "Iconografía — Leer como Renacimiento", subtitle: "Cada detalle cuenta", icon: "eye.fill", content: "Smith pintó teatros simbólicos: en 3 de Espadas, corazón atravesado bajo nubes de tormenta; en 6 de Copas, niños intercambian flores (nostalgia), en 10 de Espadas, la derrota absoluta. Waite añadió detalles dorados de la Golden Dawn: el velo de la Papisa (Boaz/Jachin), el infinito del Mago (lemniscata), los girasoles de la Reina de Bastos (vitalidad). Leer es iconología: ¿qué mira el personaje? ¿qué oculta? ¿qué elemento domina el paisaje?"),
                     SchoolLesson(title: "Ética del Tarotista", subtitle: "Poder y responsabilidad", icon: "hand.raised.fill", content: "El tarot no predice fatalidad; revela probabilidades y agencia. Principios: 1) No leer sin permiso, 2) No diagnosticar salud/legal/financiero como profesional, 3) Lenguaje empoderador ('¿qué puedes hacer?' vs 'qué te pasará'), 4) Confidencialidad, 5) Derivación cuando hay riesgo. La carta no es veredicto, es espejo para elegir mejor."),
                 ]
             ),
@@ -719,7 +722,6 @@ public struct LearningCenterView: View {
         .padding(.horizontal)
     }
 
-    // MARK: - Tools Section
     private var toolsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             sectionLabel("🛠 Herramientas Arcanas").padding(.horizontal)
@@ -788,7 +790,7 @@ public struct LearningCenterView: View {
 }
 
 // MARK: - School Models
-private struct SchoolCourse: Identifiable {
+struct SchoolCourse: Identifiable {
     let id = UUID()
     let title: String
     let icon: String
@@ -797,7 +799,7 @@ private struct SchoolCourse: Identifiable {
     let lessons: [SchoolLesson]
 }
 
-private struct SchoolLesson: Identifiable {
+struct SchoolLesson: Identifiable {
     let id = UUID()
     let title: String
     let subtitle: String
@@ -806,14 +808,17 @@ private struct SchoolLesson: Identifiable {
 }
 
 // MARK: - Section Enum
-private enum LibrarySection: CaseIterable, Hashable {
-    case books, spreads, tools
+enum LibrarySection: CaseIterable, Hashable {
+    case books, spreads, tools, atlas, dreams, paths
 
     var label: String {
         switch self {
         case .books: return "Libros"
         case .spreads: return "Tiradas"
         case .tools: return "Herramientas"
+        case .atlas: return "Atlas"
+        case .dreams: return "Sueños"
+        case .paths: return "Senda"
         }
     }
 
@@ -822,6 +827,9 @@ private enum LibrarySection: CaseIterable, Hashable {
         case .books: return "books.vertical"
         case .spreads: return "sparkles"
         case .tools: return "wrench.and.screwdriver"
+        case .atlas: return "leaf.fill"
+        case .dreams: return "moon.stars.fill"
+        case .paths: return "figure.walk"
         }
     }
 }

@@ -1,0 +1,61 @@
+{
+  "": {
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/master.swiftdeps"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotData/CardRepository/BundleCardRepository.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/BundleCardRepository.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/BundleCardRepository.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/BundleCardRepository~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/BundleCardRepository.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/BundleCardRepository.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotData/DailyCardService/DeterministicDailyCardService.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/DeterministicDailyCardService.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/DeterministicDailyCardService.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/DeterministicDailyCardService~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/DeterministicDailyCardService.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/DeterministicDailyCardService.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotData/JournalRepository/CoreDataDreamRepository.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/CoreDataDreamRepository.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/CoreDataDreamRepository.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/CoreDataDreamRepository~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/CoreDataDreamRepository.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/CoreDataDreamRepository.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotData/JournalRepository/CoreDataJournalRepository.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/CoreDataJournalRepository.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/CoreDataJournalRepository.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/CoreDataJournalRepository~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/CoreDataJournalRepository.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/CoreDataJournalRepository.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotData/RandomizationEngine/SystemRandomizationEngine.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/SystemRandomizationEngine.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/SystemRandomizationEngine.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/SystemRandomizationEngine~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/SystemRandomizationEngine.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/SystemRandomizationEngine.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotData/Services/KeychainService.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/KeychainService.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/KeychainService.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/KeychainService~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/KeychainService.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/KeychainService.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotData/Services/SoulLinksService.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/SoulLinksService.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/SoulLinksService.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/SoulLinksService~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/SoulLinksService.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/SoulLinksService.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotData/SettingsRepository/UserDefaultsSettingsRepository.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/UserDefaultsSettingsRepository.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/UserDefaultsSettingsRepository.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/UserDefaultsSettingsRepository~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/UserDefaultsSettingsRepository.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotData.build/UserDefaultsSettingsRepository.dia"
+  }
+}

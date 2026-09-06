@@ -1,0 +1,4 @@
+module TarotNotifications {
+header "TarotNotifications-Swift.h"
+export *
+}

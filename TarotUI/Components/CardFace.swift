@@ -46,9 +46,36 @@ struct CardFace: View {
                     .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .stroke(Color.black.opacity(0.60), lineWidth: max(1.5, cardSize.width * 0.015))
+                        ZStack {
+                            // Digital scan effect for Rider-Waite – subtle noise + slight blur
+                            if activeDeck == .riderWaite {
+                                Rectangle()
+                                    .fill(Color.black.opacity(0.02))
+                                    .blendMode(.overlay)
+                                    .blur(radius: 0.5)
+                            }
+                            // Digital Polish: Internal Glow
+                            RadialGradient(
+                                colors: [.clear, .white.opacity(0.1), .clear],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: cardSize.width * 0.7
+                            )
+                            .blendMode(.screen)
+
+                            // Sharp Bevel Border
+                            RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                                .stroke(
+                                    LinearGradient(
+                                        colors: [.black.opacity(0.6), .clear, .black.opacity(0.6)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ),
+                                    lineWidth: max(1.5, cardSize.width * 0.015)
+                                )
+                        }
                     )
+                    .colorMultiply(activeDeck.tintColor.map { Color(red: $0.r, green: $0.g, blue: $0.b) } ?? .white)
             } else {
                 // Fallback card illustration when image is not present
                 CardFallbackIllustration(name: name, size: cardSize, textureStyle: activeDeck.textureStyle)

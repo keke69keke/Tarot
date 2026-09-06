@@ -60,8 +60,8 @@ extension Color {
     static var tarotGoldDeep: Color {
         Color(red: 0.36, green: 0.28, blue: 0.78) // sombra violeta profunda
     }
-    static var tarotIvory: Color {
-        Color(red: 0.96, green: 0.94, blue: 0.89)
+    static var swiftUIColor: Color {
+        Color.white // Or whatever the default should be
     }
 
     // Vino/bugundi editorial — solo acento, nunca fondo pleno

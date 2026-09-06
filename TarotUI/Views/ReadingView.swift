@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 import TarotCore
 import TarotData
 import TarotDI
@@ -7,34 +8,49 @@ struct ReadingView: View {
     @ObservedObject var model: TarotViewModel
     @State private var notes = ""
     @State private var revealedIndices: Set<Int> = []
+    @State private var isRitualActive = false
     @State private var selectedDrawnCard: DrawnCard? = nil
     @State private var replacementIndex: Int? = nil
     @State private var cardPickerQuery = ""
     @State private var isShowingReplacementPicker = false
     @State private var replacementPickerQuery = ""
     @State private var chosenFirstCardSlot: Int? = nil
+    @State private var ritualPhase: RitualPhase = .preparation
     @FocusState private var notesFocused: Bool
     @FocusState private var cardPickerFocused: Bool
     @FocusState private var replacementPickerFocused: Bool
+    @EnvironmentObject var container: AppContainer
+    @State private var cancellables = Set<AnyCancellable>()
+
+    enum RitualPhase {
+        case preparation, revelation
+    }
 
     var body: some View {
         NavigationStack {
             ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 16) {
-                    spreadSelector
-                    spreadInfo
-                    if model.selectedSpread == .free {
-                        freeCardSection
+                VStack(alignment: .leading, spacing: 24) {
+                    if ritualPhase == .preparation {
+                        preparationSection
+                            .transition(.asymmetric(insertion: .opacity.combined(with: .move(edge: .leading)), removal: .opacity))
+                    } else {
+                        revelationSection
+                            .transition(.asymmetric(insertion: .opacity.combined(with: .move(edge: .trailing)), removal: .opacity))
                     }
-                    firstCardsSection
-                    intentionBanner
-                    significatorSection
-                    readingResultsSection()
                 }
                 .padding(.vertical)
+                .padding(.horizontal)
             }
         }
         .navigationTitle(model.spread?.type?.label ?? "Tirada")
+        .fullScreenCover(isPresented: $isRitualActive) {
+            RitualModeView(isActive: $isRitualActive) {
+                isRitualActive = false
+                withAnimation(LuxuryAnimation.softSpring) {
+                    model.draw()
+                }
+            }
+        }
         .sheet(isPresented: $isShowingReplacementPicker) {
             replacementPickerSheet
         }
@@ -52,9 +68,33 @@ struct ReadingView: View {
                 }
             }
         }
+        .onAppear {
+            container.somatic.startAccelerometerUpdates()
+            container.somatic.$isShaking
+                .sink { isShaking in
+                    if isShaking {
+                        HapticManager.shared.triggerMedium()
+                        withAnimation(LuxuryAnimation.softSpring) {
+                            model.draw()
+                        }
+                    }
+                }
+                .store(in: &cancellables)
+        }
     }
 
-    // MARK: - Subviews (extraídos para evitar type-check timeout)
+    private var preparationSection: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            spreadSelector
+            spreadInfo
+            freeCardSection
+            firstCardsSection
+            intentionBanner
+            oneiricBridgeSection
+            significatorSection
+        }
+        .padding(.vertical, 8)
+    }
 
     private var spreadSelector: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -75,9 +115,7 @@ struct ReadingView: View {
     private func spreadButton(for type: SpreadType) -> some View {
         let isSelected = model.selectedSpread == type
         return Button {
-            #if os(iOS)
-            UISelectionFeedbackGenerator().selectionChanged()
-            #endif
+            HapticManager.shared.triggerSelection()
             withAnimation(LuxuryAnimation.softSpring) {
                 model.selectedSpread = type
                 revealedIndices.removeAll()
@@ -209,6 +247,41 @@ struct ReadingView: View {
     }
 
     @ViewBuilder
+    private var oneiricBridgeSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Toggle(isOn: $model.isDreamReading.animation(LuxuryAnimation.softSpring)) {
+                HStack(spacing: 7) {
+                    Image(systemName: "moon.stars.fill").font(.system(size: 12, weight: .light)).foregroundStyle(Color.tarotGold.opacity(0.85))
+                    Text("Puente Onírico")
+                        .font(.system(size: 13, weight: .medium, design: .serif))
+                        .tracking(0.1)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.88))
+                }
+            }
+            .tint(Color.tarotGold)
+            .padding(.horizontal, 4)
+
+            if model.isDreamReading {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Símbolos y temas del sueño")
+                        .font(.system(size: 11, weight: .semibold, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.6))
+                        .padding(.horizontal, 4)
+
+                    TextField("Ej: bosques oscuros, agua cristalina, vuelo...", text: $model.dreamThemes)
+                        .font(.system(size: 13, weight: .regular, design: .serif))
+                        .foregroundStyle(Color.tarotIvory)
+                        .padding(12)
+                        .luxuryGlass(cornerRadius: LuxuryRadius.sm)
+                        .padding(.horizontal, 4)
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .padding(.vertical, 4)
+    }
+
+    @ViewBuilder
     private var significatorSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Toggle(isOn: $model.useSignificator.animation(LuxuryAnimation.softSpring)) {
@@ -263,6 +336,30 @@ struct ReadingView: View {
 
     // MARK: - Reading results
 
+    private var shuffleButton: some View {
+        Button {
+            isRitualActive = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "sparkles").font(.system(size: 14, weight: .light))
+                Text(TarotStrings.shuffleAndReveal.localized.uppercased())
+                    .font(.system(size: 14, weight: .semibold, design: .serif))
+                    .tracking(1.2)
+            }
+            .foregroundStyle(Color(red: 0.09, green: 0.06, blue: 0.02))
+            .padding(.horizontal, 32)
+            .padding(.vertical, 18)
+            .background(Capsule().fill(Color.tarotGoldGradient))
+            .overlay(Capsule().stroke(Color.white.opacity(0.34), lineWidth: 0.75).blendMode(.softLight))
+            .shadow(color: Color.black.opacity(0.34), radius: 18, x: 0, y: 10)
+            .shadow(color: Color.tarotGold.opacity(0.18), radius: 20, x: 0, y: 0)
+        }
+        .buttonStyle(.plain)
+        .disabled(model.isShuffling)
+        .opacity(model.isShuffling ? 0.72 : 1)
+        .frame(maxWidth: .infinity)
+    }
+
     @ViewBuilder
     private func readingResultsSection() -> some View {
         if let spread = model.spread, !spread.drawnCards.isEmpty {
@@ -272,8 +369,21 @@ struct ReadingView: View {
         }
     }
 
+    private var revelationSection: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            ZStack {
+                SoulAuraView(state: container.biometrics.soulState)
+                    .opacity(0.6)
+                    .blur(radius: 40)
+
+                revealedSpreadContent(spread: model.spread ?? Spread(standardPositions: []))
+            }
+            .padding(.vertical, 20)
+        }
+    }
+
     private func revealedSpreadContent(spread: Spread) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 24) {
             SpreadDiagramView(
                 spread: spread,
                 repository: model.container.cards,
@@ -291,7 +401,12 @@ struct ReadingView: View {
             )
             .padding(.horizontal, 4)
 
-            revealedHorizontalCards(spread: spread)
+            if model.currentSynthesis == nil {
+                synthesisTriggerButton
+            } else {
+                synthesisPanel
+            }
+
             notesSection
             HStack(spacing: 12) {
                 Spacer()
@@ -307,15 +422,61 @@ struct ReadingView: View {
         }
     }
 
-    private func revealedHorizontalCards(spread: Spread) -> some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
-                ForEach(Array(spread.drawnCards.enumerated()), id: \.offset) { index, drawn in
-                    revealedCardCell(index: index, drawn: drawn)
-                }
+    private var synthesisTriggerButton: some View {
+        Button {
+            HapticManager.shared.triggerMedium()
+            Task { await model.revealSynthesis() }
+        } label: {
+            VStack(spacing: 12) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 24, weight: .light))
+                    .foregroundStyle(Color.tarotGold)
+                Text("Revelar Significado Sagrado")
+                    .font(.system(size: 16, weight: .semibold, design: .serif))
+                    .tracking(1.0)
+                    .foregroundStyle(Color.tarotIvory)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 24)
+            .background(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .fill(Color.tarotGold.opacity(0.08))
+                    .overlay(RoundedRectangle(cornerRadius: 24, style: .continuous).stroke(Color.tarotGold.opacity(0.3), lineWidth: 1))
+            )
+            .shadow(color: Color.tarotGold.opacity(0.1), radius: 20)
+        }
+        .buttonStyle(.plain)
+        .disabled(model.isSynthesizing)
+        .opacity(model.isSynthesizing ? 0.6 : 1)
+    }
+
+    private var synthesisPanel: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Image(systemName: "moon.stars.fill")
+                    .font(.system(size: 14))
+                    .foregroundStyle(Color.tarotGold)
+                Text("Sintetizando el Destino")
+                    .font(.system(size: 14, weight: .bold, design: .serif))
+                    .foregroundStyle(Color.tarotGold)
             }
             .padding(.horizontal, 4)
+
+            Text(model.currentSynthesis ?? "")
+                .font(.system(size: 15, weight: .regular, design: .serif))
+                .foregroundStyle(Color.tarotIvory.opacity(0.9))
+                .lineSpacing(6)
+                .multilineTextAlignment(.leading)
+                .padding(20)
+                .luxuryGlass(cornerRadius: LuxuryRadius.md)
+                .padding(.horizontal, 4)
         }
+        .transition(.asymmetric(insertion: .opacity.combined(with: .move(edge: .bottom)), removal: .opacity))
+    }
+
+    private func revealedHorizontalCards(spread: Spread) -> some View {
+        // Removed: redundant with SpreadDiagramView and synthesis panel
+        EmptyView()
     }
 
     private func revealedCardCell(index: Int, drawn: DrawnCard) -> some View {
@@ -344,6 +505,7 @@ struct ReadingView: View {
         }
         .onTapGesture {
             if !isRevealed {
+                HapticManager.shared.triggerLight()
                 _ = withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
                     revealedIndices.insert(index)
                 }
@@ -374,8 +536,13 @@ struct ReadingView: View {
     private var saveButton: some View {
         Button {
             if notesFocused { notesFocused = false }
-            withAnimation(LuxuryAnimation.softSpring) { model.saveSpread(notes: notes); notes = "" }
-            TarotAudioService.shared.triggerHaptic(.success)
+            Task {
+                await model.saveSpread(notes: notes)
+                withAnimation(LuxuryAnimation.softSpring) {
+                    notes = ""
+                }
+            }
+            HapticManager.shared.triggerSuccess()
         } label: {
             Text(TarotStrings.saveReading.localized.uppercased())
                 .font(.system(size: 12.5, weight: .semibold, design: .serif))
@@ -412,7 +579,9 @@ struct ReadingView: View {
 
     private var emptySpreadContent: some View {
         VStack(spacing: 18) {
-            Button { withAnimation(LuxuryAnimation.softSpring) { model.draw() } } label: {
+            Button {
+                isRitualActive = true
+            } label: {
                 HStack(spacing: 10) {
                     Image(systemName: "sparkles").font(.system(size: 12, weight: .light))
                     Text(TarotStrings.shuffleAndReveal.localized.uppercased())
@@ -446,7 +615,7 @@ struct ReadingView: View {
 
     private func revealAll() {
         guard let spread = model.spread else { return }
-        TarotAudioService.shared.triggerHaptic(.medium)
+        HapticManager.shared.triggerMedium()
         withAnimation(.easeInOut(duration: 0.6)) {
             revealedIndices = Set(0..<spread.drawnCards.count)
         }
@@ -595,9 +764,7 @@ private struct FirstCardSlot: View {
 
     var body: some View {
         Button {
-            #if os(iOS)
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            #endif
+            HapticManager.shared.triggerLight()
             onTap()
         } label: {
             VStack(spacing: 7) {

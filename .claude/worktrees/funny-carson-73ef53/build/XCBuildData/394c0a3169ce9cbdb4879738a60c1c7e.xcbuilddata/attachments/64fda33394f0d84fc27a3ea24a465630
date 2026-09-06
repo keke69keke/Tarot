@@ -1,0 +1,19 @@
+{
+  "" : {
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/TarotNotifications-primary.dia",
+    "emit-module-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/TarotNotifications-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/TarotNotifications-primary-emit-module.dia",
+    "pch" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/TarotNotifications-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/TarotNotifications-primary.swiftdeps"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/TarotNotifications/LocalNotificationService.swift" : {
+    "const-values" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/LocalNotificationService.swiftconstvalues",
+    "dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/LocalNotificationService.d",
+    "diagnostics" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/LocalNotificationService.dia",
+    "index-unit-output-path" : "/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/LocalNotificationService.o",
+    "llvm-bc" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/LocalNotificationService.bc",
+    "object" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/LocalNotificationService.o",
+    "swift-dependencies" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/LocalNotificationService.swiftdeps",
+    "swiftmodule" : "/Users/gvstii/Documents/Proyectos/Tarot/.claude/worktrees/funny-carson-73ef53/build/TarotApp.build/Debug-iphoneos/TarotNotifications.build/Objects-normal/arm64/LocalNotificationService~partial.swiftmodule"
+  }
+}

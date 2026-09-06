@@ -6,7 +6,7 @@ struct CardTextureOverlayView: View {
     let cardSize: CGSize
     let textureStyle: DeckTextureStyle
 
-var body: some View {
+    var body: some View {
         ZStack {
             switch textureStyle {
             case .agedParchment:   agedParchmentLayer
@@ -17,6 +17,8 @@ var body: some View {
             case .grunge:          grungeLayer
             case .starfield:       starfieldLayer
             case .leafVeins:       leafVeinsLayer
+            case .digitalGrid:     digitalGridLayer
+            case .papyrus:         papyrusLayer
             }
             // Universal edge vignette (use overlay to remain visible over card art)
             RadialGradient(
@@ -66,7 +68,7 @@ var body: some View {
             Canvas { context, size in
                 let cx = size.width / 2, cy = size.height / 2
                 let radii: [CGFloat] = [size.width * 0.18, size.width * 0.35, size.width * 0.50]
-for r in radii {
+                for r in radii {
                     let circ = Path(ellipseIn: CGRect(x: cx - r, y: cy - r, width: r*2, height: r*2))
                     context.stroke(circ, with: .color(Color(red: 0.60, green: 0.45, blue: 0.92).opacity(0.24)), lineWidth: 0.75)
                 }
@@ -91,7 +93,7 @@ for r in radii {
         }
     }
 
-// MARK: - Hello Kitty: Soft Pastel
+    // MARK: - Hello Kitty: Soft Pastel
     private var softPastelLayer: some View {
         ZStack {
             LinearGradient(
@@ -129,7 +131,7 @@ for r in radii {
                     grid.move(to: CGPoint(x: 0, y: y))
                     grid.addLine(to: CGPoint(x: size.width, y: y))
                 }
-context.stroke(grid, with: .color(Color(red: 0.65, green: 0.15, blue: 0.15).opacity(0.14)), lineWidth: 0.5)
+                context.stroke(grid, with: .color(Color(red: 0.65, green: 0.15, blue: 0.15).opacity(0.14)), lineWidth: 0.5)
                 // Diagonal overlay
                 var diag = Path()
                 for x in stride(from: -size.height, to: size.width + size.height, by: step * 2) {
@@ -148,7 +150,7 @@ context.stroke(grid, with: .color(Color(red: 0.65, green: 0.15, blue: 0.15).opac
     }
 
     // MARK: - Osho: Watercolor
-private var watercolorLayer: some View {
+    private var watercolorLayer: some View {
         ZStack {
             LinearGradient(
                 colors: [Color(red: 1.0, green: 0.5, blue: 0.2).opacity(0.16),
@@ -174,7 +176,7 @@ private var watercolorLayer: some View {
     }
 
     // MARK: - Dark Side: Grunge
-private var grungeLayer: some View {
+    private var grungeLayer: some View {
         ZStack {
             LinearGradient(
                 colors: [Color.black.opacity(0.30), Color(red: 0.1, green: 0.0, blue: 0.05).opacity(0.40)],
@@ -255,6 +257,30 @@ private var grungeLayer: some View {
             }
         }
     }
-}
 
-/// Ornate Card Back View
+    // MARK: - Additional Layers
+    private var digitalGridLayer: some View {
+        Canvas { context, size in
+            let step: CGFloat = 20
+            var grid = Path()
+            for x in stride(from: 0, to: size.width, by: step) {
+                grid.move(to: CGPoint(x: x, y: 0))
+                grid.addLine(to: CGPoint(x: x, y: size.height))
+            }
+            for y in stride(from: 0, to: size.height, by: step) {
+                grid.move(to: CGPoint(x: 0, y: y))
+                grid.addLine(to: CGPoint(x: size.width, y: y))
+            }
+            context.stroke(grid, with: .color(Color.tarotGold.opacity(0.10)), lineWidth: 0.5)
+        }
+    }
+
+    private var papyrusLayer: some View {
+        LinearGradient(
+            colors: [Color.white.opacity(0.10), Color.black.opacity(0.10)],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+        .blendMode(.softLight)
+    }
+}

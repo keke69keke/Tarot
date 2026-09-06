@@ -94,7 +94,7 @@ let package = Package(
         // MARK: - TarotDI
         .target(
             name: "TarotDI",
-            dependencies: ["TarotCore", "TarotData", "TarotNotifications"],
+            dependencies: ["TarotCore", "TarotData", "TarotNotifications", "TarotContent"],
             path: "TarotDI/Sources/TarotDI"
         ),
 

@@ -16,7 +16,7 @@ public final class MysticAudioService: NSObject, ObservableObject {
     @Published public var isPlaying: Bool = false
 
     private override init() {
-        currentTrack = AmbientTrack.availableTracks.first!
+        currentTrack = AmbientTrack.availableTracks.first ?? .defaultTrack
         super.init()
     }
 

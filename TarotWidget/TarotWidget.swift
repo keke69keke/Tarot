@@ -36,7 +36,7 @@ struct DailyCardProvider: TimelineProvider {
     // MARK: - Helpers
 
     private func loadCards() -> [Card] {
-        let repo = try? BundleCardRepository(bundle: .tarotContent)
+        let repo = try? BundleCardRepository(bundle: .tarotContent, settings: UserDefaultsSettingsRepository())
         return repo?.allCards() ?? []
     }
 

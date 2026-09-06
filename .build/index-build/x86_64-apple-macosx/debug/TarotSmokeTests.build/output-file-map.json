@@ -1,0 +1,19 @@
+{
+  "": {
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/master.swiftdeps"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotTests/Smoke/CardCatalogSmokeTests.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/CardCatalogSmokeTests.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/CardCatalogSmokeTests.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/CardCatalogSmokeTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/CardCatalogSmokeTests.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/CardCatalogSmokeTests.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotTests/Smoke/EsotericSpreadsSmokeTests.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/EsotericSpreadsSmokeTests.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/EsotericSpreadsSmokeTests.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/EsotericSpreadsSmokeTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/EsotericSpreadsSmokeTests.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotSmokeTests.build/EsotericSpreadsSmokeTests.dia"
+  }
+}

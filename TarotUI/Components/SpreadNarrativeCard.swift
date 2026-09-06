@@ -4,23 +4,32 @@ import TarotData
 
 struct SpreadNarrativeCard: View {
     let spread: Spread
-    let repository: any CardRepository
+    let synthesizer: any SpreadSynthesizerProtocol
     let intention: String
     @State private var expanded = false
+    @State private var narrative: String?
+    @State private var isLoading = false
+    @State private var errorMessage: String?
 
-    init(spread: Spread, repository: any CardRepository, intention: String = "") {
+    init(spread: Spread, synthesizer: any SpreadSynthesizerProtocol, intention: String = "") {
         self.spread = spread
-        self.repository = repository
+        self.synthesizer = synthesizer
         self.intention = intention
     }
 
-    private var narrative: String {
-        let synthesizer = SpreadSynthesizer(cardRepository: repository)
-        var base = synthesizer.synthesize(for: spread, drawnCards: spread.drawnCards)
-        if !intention.isEmpty {
-            base = "◈ **Intención**: \(intention)\n\n\(base)"
+    private func loadNarrative() async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            var base = try await synthesizer.synthesize(for: spread, drawnCards: spread.drawnCards)
+            if !intention.isEmpty {
+                base = "◈ **Intención**: \(intention)\n\n\(base)"
+            }
+            narrative = base
+        } catch {
+            errorMessage = error.localizedDescription
         }
-        return base
+        isLoading = false
     }
 
     var body: some View {
@@ -36,29 +45,47 @@ struct SpreadNarrativeCard: View {
                     .foregroundStyle(Color.tarotAccent.opacity(0.6))
             }
 
-            Text(narrative)
-                .font(.system(size: 14, design: .serif))
-                .lineSpacing(6)
-                .foregroundStyle(Color.tarotIvory.opacity(0.58))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .lineLimit(expanded ? nil : 6)
-                .fixedSize(horizontal: false, vertical: true)
-
-            if narrative.count > 200 {
-                Button {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                        expanded.toggle()
-                    }
-                } label: {
-                    HStack(spacing: 5) {
-                        Text(expanded ? "Mostrar menos" : "Leer lectura completa")
-                            .font(.caption.weight(.semibold))
-                        Image(systemName: expanded ? "chevron.up" : "chevron.down")
-                            .font(.caption2)
-                    }
-                    .foregroundStyle(Color.tarotAccent)
+            if isLoading {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .tint(Color.tarotGold)
+                    Spacer()
                 }
-                .buttonStyle(.plain)
+                .padding(.vertical, 20)
+            } else if let error = errorMessage {
+                Text("No se pudo sintetizar la lectura: \(error)")
+                    .font(.system(size: 14, design: .serif))
+                    .foregroundStyle(Color.red.opacity(0.8))
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.vertical, 20)
+            } else if let text = narrative {
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(text)
+                        .font(.system(size: 14, design: .serif))
+                        .lineSpacing(6)
+                        .foregroundStyle(Color.tarotIvory.opacity(0.58))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .lineLimit(expanded ? nil : 6)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if text.count > 200 {
+                        Button {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                expanded.toggle()
+                            }
+                        } label: {
+                            HStack(spacing: 5) {
+                                Text(expanded ? "Mostrar menos" : "Leer lectura completa")
+                                    .font(.caption.weight(.semibold))
+                                Image(systemName: expanded ? "chevron.up" : "chevron.down")
+                                    .font(.caption2)
+                            }
+                            .foregroundStyle(Color.tarotAccent)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
             }
         }
         .padding(18)
@@ -76,6 +103,9 @@ struct SpreadNarrativeCard: View {
                 .stroke(Color.tarotAccent.opacity(0.30), lineWidth: 1)
         )
         .shadow(color: Color.tarotShadow.opacity(0.2), radius: 10, x: 0, y: 6)
+        .task {
+            await loadNarrative()
+        }
     }
 }
 

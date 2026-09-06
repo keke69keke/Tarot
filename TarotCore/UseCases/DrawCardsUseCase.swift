@@ -5,8 +5,8 @@ public protocol DrawCardsUseCaseProtocol {
 }
 
 public protocol SpreadSynthesizerProtocol {
-    func synthesize(for spread: Spread, drawnCards: [DrawnCard]) -> String
-    func synthesizeNarrative(for spread: Spread, drawnCards: [DrawnCard]) -> String
+    func synthesize(for spread: Spread, drawnCards: [DrawnCard]) async throws -> String
+    func synthesizeNarrative(for spread: Spread, drawnCards: [DrawnCard]) async throws -> String
 }
 
 // MARK: - Types
@@ -53,8 +53,8 @@ public final class DrawCardsUseCase: DrawCardsUseCaseProtocol {
             enrichedCards.append(card)
         }
 
-        let synthesisSummary = synthesizer.synthesize(for: spread, drawnCards: enrichedCards)
-        let narrativeSummary = synthesizer.synthesizeNarrative(for: spread, drawnCards: enrichedCards)
+        let synthesisSummary = try await synthesizer.synthesize(for: spread, drawnCards: enrichedCards)
+        let narrativeSummary = try await synthesizer.synthesizeNarrative(for: spread, drawnCards: enrichedCards)
 
         return ReadingResult(
             drawnCards: enrichedCards,

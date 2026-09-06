@@ -254,11 +254,11 @@ struct SettingsView: View {
                     .tracking(1.2)
                     .foregroundStyle(Color.tarotGold.opacity(0.85))
                     .textCase(.uppercase)
-                Text("· \(DeckType.allCases.filter(\.hasDedicatedArtwork).count) disponibles")
+                Text("· \(DeckType.allCases.count) disponibles")
                     .font(.system(size: 10, weight: .regular, design: .serif))
                     .foregroundStyle(Color.tarotIvory.opacity(0.35))
             }
-            ForEach(DeckType.allCases.filter { $0.hasDedicatedArtwork }, id: \.rawValue) { deck in
+            ForEach(DeckType.allCases, id: \.rawValue) { deck in
                 DeckRow(deck: deck, isSelected: model.settings.activeDeck == deck) {
                     model.settings.activeDeck = deck
                     model.persistSettings()
@@ -266,10 +266,8 @@ struct SettingsView: View {
             }
         }
         .onAppear {
-            if !model.settings.activeDeck.hasDedicatedArtwork {
-                model.settings.activeDeck = .riderWaite
-                model.persistSettings()
-            }
+            // We no longer force Rider-Waite if current deck lacks dedicated artwork,
+            // as we now support tinted generic decks.
         }
     }
 

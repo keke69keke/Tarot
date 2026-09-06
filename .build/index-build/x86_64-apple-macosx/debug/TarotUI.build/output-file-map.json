@@ -1,0 +1,369 @@
+{
+  "": {
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/master.swiftdeps"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/AmbientTrack.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AmbientTrack.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AmbientTrack.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AmbientTrack~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AmbientTrack.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AmbientTrack.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/AstrologyAskTarotView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AstrologyAskTarotView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AstrologyAskTarotView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AstrologyAskTarotView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AstrologyAskTarotView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AstrologyAskTarotView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/CardRow.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardRow.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardRow.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardRow~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardRow.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardRow.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/AmbientBackgroundView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AmbientBackgroundView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AmbientBackgroundView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AmbientBackgroundView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AmbientBackgroundView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/AmbientBackgroundView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/BookContentBlock.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/BookContentBlock.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/BookContentBlock.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/BookContentBlock~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/BookContentBlock.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/BookContentBlock.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/CardAspectSummaryView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardAspectSummaryView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardAspectSummaryView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardAspectSummaryView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardAspectSummaryView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardAspectSummaryView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/CardBackView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardBackView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardBackView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardBackView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardBackView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardBackView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/CardDetailText.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardDetailText.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardDetailText.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardDetailText~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardDetailText.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardDetailText.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/CardDetailView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardDetailView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardDetailView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardDetailView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardDetailView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardDetailView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/CardFace.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardFace.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardFace.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardFace~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardFace.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardFace.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/CardFallbackIllustration.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardFallbackIllustration.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardFallbackIllustration.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardFallbackIllustration~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardFallbackIllustration.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardFallbackIllustration.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/CardInterpretationSection.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardInterpretationSection.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardInterpretationSection.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardInterpretationSection~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardInterpretationSection.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardInterpretationSection.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/CardTextureOverlayView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardTextureOverlayView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardTextureOverlayView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardTextureOverlayView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardTextureOverlayView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardTextureOverlayView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/CardWisdomView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardWisdomView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardWisdomView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardWisdomView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardWisdomView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CardWisdomView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/JournalDetail.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/JournalDetail.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/JournalDetail.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/JournalDetail~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/JournalDetail.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/JournalDetail.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/PDFReaderView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/PDFReaderView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/PDFReaderView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/PDFReaderView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/PDFReaderView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/PDFReaderView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/PositionChooserView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/PositionChooserView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/PositionChooserView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/PositionChooserView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/PositionChooserView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/PositionChooserView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/ReferenceCardView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ReferenceCardView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ReferenceCardView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ReferenceCardView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ReferenceCardView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ReferenceCardView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/SoulAuraView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SoulAuraView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SoulAuraView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SoulAuraView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SoulAuraView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SoulAuraView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Components/SpreadNarrativeCard.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpreadNarrativeCard.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpreadNarrativeCard.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpreadNarrativeCard~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpreadNarrativeCard.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpreadNarrativeCard.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/DesignSystem.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DesignSystem.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DesignSystem.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DesignSystem~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DesignSystem.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DesignSystem.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/LearningCenterView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/LearningCenterView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/LearningCenterView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/LearningCenterView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/LearningCenterView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/LearningCenterView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Localization/TarotStrings.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotStrings.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotStrings.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotStrings~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotStrings.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotStrings.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/MysticAudioService.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/MysticAudioService.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/MysticAudioService.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/MysticAudioService~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/MysticAudioService.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/MysticAudioService.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/MysticMusicPlayerBar.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/MysticMusicPlayerBar.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/MysticMusicPlayerBar.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/MysticMusicPlayerBar~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/MysticMusicPlayerBar.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/MysticMusicPlayerBar.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Platform.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/Platform.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/Platform.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/Platform~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/Platform.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/Platform.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/SecretVaultView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SecretVaultView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SecretVaultView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SecretVaultView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SecretVaultView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SecretVaultView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Services/CosmicBackgroundEngine.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CosmicBackgroundEngine.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CosmicBackgroundEngine.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CosmicBackgroundEngine~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CosmicBackgroundEngine.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/CosmicBackgroundEngine.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Services/ExternalAudioService.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ExternalAudioService.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ExternalAudioService.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ExternalAudioService~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ExternalAudioService.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ExternalAudioService.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Services/TarotAudioService.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotAudioService.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotAudioService.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotAudioService~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotAudioService.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotAudioService.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/SpreadDiagramView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpreadDiagramView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpreadDiagramView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpreadDiagramView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpreadDiagramView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpreadDiagramView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/TarotChatView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotChatView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotChatView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotChatView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotChatView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotChatView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/TarotViewModel.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotViewModel.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotViewModel.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotViewModel.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotViewModel.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/TarotWebBrowserView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotWebBrowserView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotWebBrowserView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotWebBrowserView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotWebBrowserView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/TarotWebBrowserView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/UnifiedLibraryView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/UnifiedLibraryView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/UnifiedLibraryView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/UnifiedLibraryView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/UnifiedLibraryView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/UnifiedLibraryView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Utils/HapticManager.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/HapticManager.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/HapticManager.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/HapticManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/HapticManager.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/HapticManager.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/BiorhythmView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/BiorhythmView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/BiorhythmView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/BiorhythmView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/BiorhythmView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/BiorhythmView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/ContentView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ContentView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ContentView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ContentView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ContentView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ContentView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/DailyCardView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DailyCardView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DailyCardView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DailyCardView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DailyCardView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DailyCardView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/DestinyGraphView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DestinyGraphView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DestinyGraphView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DestinyGraphView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DestinyGraphView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DestinyGraphView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/DreamJournalView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DreamJournalView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DreamJournalView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DreamJournalView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DreamJournalView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/DreamJournalView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/GrowthPathView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/GrowthPathView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/GrowthPathView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/GrowthPathView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/GrowthPathView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/GrowthPathView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/JournalView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/JournalView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/JournalView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/JournalView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/JournalView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/JournalView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/NatalChartView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/NatalChartView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/NatalChartView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/NatalChartView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/NatalChartView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/NatalChartView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/OnboardingView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/OnboardingView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/OnboardingView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/OnboardingView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/OnboardingView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/OnboardingView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/ReadingView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ReadingView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ReadingView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ReadingView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ReadingView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/ReadingView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/RitualModeView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/RitualModeView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/RitualModeView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/RitualModeView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/RitualModeView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/RitualModeView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/SettingsView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SettingsView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SettingsView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SettingsView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SettingsView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SettingsView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/SharedDestinyView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SharedDestinyView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SharedDestinyView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SharedDestinyView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SharedDestinyView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SharedDestinyView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/SpiritualPathView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpiritualPathView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpiritualPathView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpiritualPathView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpiritualPathView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SpiritualPathView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/SymbolAtlasView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SymbolAtlasView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SymbolAtlasView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SymbolAtlasView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SymbolAtlasView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/SymbolAtlasView.dia"
+  },
+  "/Users/gvstii/Documents/Proyectos/Tarot/TarotUI/Views/WelcomeView.swift": {
+    "dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/WelcomeView.d",
+    "object": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/WelcomeView.swift.o",
+    "swiftmodule": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/WelcomeView~partial.swiftmodule",
+    "swift-dependencies": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/WelcomeView.swiftdeps",
+    "diagnostics": "/Users/gvstii/Documents/Proyectos/Tarot/.build/index-build/x86_64-apple-macosx/debug/TarotUI.build/WelcomeView.dia"
+  }
+}

@@ -124,7 +124,7 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         userDefaults.set(settings.natalPlace, forKey: Keys.natalPlace)
 
         // Ensure mandatory tabs are always in activeTabs and never in inactiveTabs when saving
-        let defaultActiveTabs = UserSettings().activeTabs
+        _ = UserSettings().activeTabs
         var activeTabsToSave = settings.activeTabs
         let mandatory: [AppTab] = [.learn, .horoscope, .chat]
         for tab in mandatory where !activeTabsToSave.contains(tab) {
@@ -136,6 +136,14 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         userDefaults.set(activeTabsToSave.map { $0.rawValue }, forKey: Keys.activeTabs)
         userDefaults.set(inactiveTabsToSave.map { $0.rawValue }, forKey: Keys.inactiveTabs)
         _ = keychain.write(settings.openAIKey, for: Keys.openAIKey)
+    }
+
+    public func saveValue(_ value: Any?, forKey key: String) {
+        userDefaults.set(value, forKey: key)
+    }
+
+    public func loadValue(forKey key: String) -> Any? {
+        userDefaults.object(forKey: key)
     }
 
     // MARK: - Tab Limit

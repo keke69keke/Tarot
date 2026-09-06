@@ -8,6 +8,9 @@ public enum TarotError: Error {
     /// The card content bundle (JSON / assets) could not be loaded.
     case contentLoadFailed(underlying: Error)
 
+    /// The card catalog is empty; no cards are available to draw.
+    case catalogEmpty
+
     /// A CoreData / CloudKit persistence operation failed.
     case persistenceFailed(operation: String, underlying: Error)
 
@@ -25,6 +28,8 @@ extension TarotError: LocalizedError {
         switch self {
         case .contentLoadFailed(let underlying):
             return "No se pudo cargar el contenido de la app. \(underlying.localizedDescription)"
+        case .catalogEmpty:
+            return "El catálogo de cartas está vacío. Por favor, reinstala la aplicación o contacta al soporte."
         case .persistenceFailed(let operation, let underlying):
             return "Error al \(operation): \(underlying.localizedDescription)"
         case .validationFailed(let field, let reason):

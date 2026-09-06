@@ -1,58 +1,61 @@
 import SwiftUI
+import TarotCore
+import TarotDI
 
-/// Fondo editorial para una app joya: negro terciopelo, una sola luz cálida cenital y polvo de oro casi invisible.
-/// Nada de orbes morados infantiles. Silencio.
-/// Las animaciones (estrellas y polvo) se pausan cuando la app pasa a background para ahorrar batería (R13).
+/// Fondo editorial dinámico que reacciona al estado cósmico y la energía de la lectura.
 struct AmbientBackgroundView: View {
+    @EnvironmentObject var engine: CosmicBackgroundEngine
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         ZStack {
-            // Luz cenital muy suave — como foco de vitrina
-            RadialGradient(colors: [Color.tarotGold.opacity(0.06), .clear], center: .top, startRadius: 0, endRadius: 680)
+            // Luz cenital dinámica basada en el color del motor cósmico
+            RadialGradient(colors: [engine.accentColor, .clear], center: .top, startRadius: 0, endRadius: 680)
                 .ignoresSafeArea()
                 .blendMode(.softLight)
-            // Segundo respiro inferior aún más tenue
+            // Segundo respiro inferior
             RadialGradient(colors: [Color.white.opacity(0.03), .clear], center: .bottom, startRadius: 0, endRadius: 560)
                 .ignoresSafeArea()
                 .blendMode(.softLight)
-            // Viñeta editorial para profundidad
+            // Viñeta editorial
             RadialGradient(colors: [.clear, Color.black.opacity(0.28)], center: .center, startRadius: 420, endRadius: 900)
                 .ignoresSafeArea()
+
             if scenePhase == .active {
-                twinklingStars
-                driftingDust
+                twinklingStars(speed: engine.particleSpeed)
+                driftingDust(speed: engine.particleSpeed)
             } else {
-                // Frame estático — las TimelineView no animan con la app en background
-                starField(time: 0)
+                starField(time: 0, speed: 1.0)
             }
         }
+        .background(engine.primaryColor.ignoresSafeArea())
+        .animation(.easeInOut(duration: 2.0), value: engine.primaryColor)
+        .animation(.easeInOut(duration: 2.0), value: engine.accentColor)
+        .animation(.easeInOut(duration: 2.0), value: engine.particleSpeed)
         .allowsHitTesting(false)
         .ignoresSafeArea()
         .accessibilityHidden(true)
     }
 
-    // Campo estrellado editorial — escaso, diminuto, lento
-    private var twinklingStars: some View {
+    private func twinklingStars(speed: Double) -> some View {
         TimelineView(.animation(minimumInterval: 1.0 / 24.0)) { t in
-            starField(time: t.date.timeIntervalSinceReferenceDate)
+            starField(time: t.date.timeIntervalSinceReferenceDate, speed: speed)
         }
         .blendMode(.screen)
         .opacity(0.9)
     }
 
-    // Polvo de oro — 6 partículas lentas, casi imperceptibles
-    private var driftingDust: some View {
+    private func driftingDust(speed: Double) -> some View {
         TimelineView(.animation(minimumInterval: 1.0 / 20.0)) { t in
-            dustField(time: t.date.timeIntervalSinceReferenceDate)
+            dustField(time: t.date.timeIntervalSinceReferenceDate, speed: speed)
         }
         .blendMode(.screen)
     }
 
-    private func starField(time: TimeInterval) -> some View {
+    private func starField(time: TimeInterval, speed: Double) -> some View {
         Canvas { ctx, size in
             for s in LuxuryStars.all {
-                let tw = 0.42 + 0.58 * sin(time * 0.55 + s.phase)
+                let tw = 0.42 + 0.58 * sin(time * 0.55 * speed + s.phase)
                 let x = s.x * size.width
                 let y = s.y * size.height
                 let r = s.r * (0.85 + 0.22 * tw)
@@ -62,14 +65,13 @@ struct AmbientBackgroundView: View {
         }
     }
 
-    private func dustField(time: TimeInterval) -> some View {
+    private func dustField(time: TimeInterval, speed: Double) -> some View {
         Canvas { ctx, size in
             for p in LuxuryDust.all {
-                let travel = (time * p.speed + p.phase).truncatingRemainder(dividingBy: 1.0)
+                let travel = (time * p.speed * speed + p.phase).truncatingRemainder(dividingBy: 1.0)
                 let y = size.height * (p.startY - travel * 0.42)
-                let x = size.width * p.x + sin(time * 0.22 + p.phase * 3.1) * size.width * 0.008
+                let x = size.width * p.x + sin(time * 0.22 * speed + p.phase * 3.1) * size.width * 0.008
                 let a: Double = travel < 0.22 ? travel/0.22 : max(0, 1 - (travel-0.22)/0.78)
-                // single pixel gold
                 ctx.fill(Path(ellipseIn: CGRect(x: x - 0.65, y: y - 0.65, width: 1.3, height: 1.3)), with: .color(Color.tarotGold.opacity(0.14 * a)))
             }
         }

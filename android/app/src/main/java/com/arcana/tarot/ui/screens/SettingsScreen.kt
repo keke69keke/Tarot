@@ -59,7 +59,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
                 )
                 OutlinedTextField(
                     value = viewModel.userName,
-                    onValueChange = { viewModel.setUserName(it) },
+                    onValueChange = { viewModel.updateUserName(it) },
                     label = { Text("¿Cómo te llamas?") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
@@ -92,7 +92,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
                     }
                     Switch(
                         checked = viewModel.allowReversed,
-                        onCheckedChange = { viewModel.setAllowReversed(it) },
+                        onCheckedChange = { viewModel.updateAllowReversed(it) },
                         colors = SwitchDefaults.colors(
                             checkedThumbColor = TarotColors.Gold,
                             checkedTrackColor = TarotColors.GoldDeep
@@ -106,7 +106,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
                 )
                 Slider(
                     value = viewModel.freeCardCount.toFloat(),
-                    onValueChange = { viewModel.setFreeCardCount(it.roundToInt()) },
+                    onValueChange = { viewModel.updateFreeCardCount(it.roundToInt()) },
                     valueRange = 1f..12f,
                     steps = 10,
                     colors = androidx.compose.material3.SliderDefaults.colors(

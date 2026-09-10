@@ -156,7 +156,7 @@ private fun WelcomeOverlay(viewModel: AppViewModel) {
             )
             Button(
                 onClick = {
-                    viewModel.setUserName(name.trim())
+                    viewModel.updateUserName(name.trim())
                     viewModel.completeWelcome()
                 },
                 colors = ButtonDefaults.buttonColors(

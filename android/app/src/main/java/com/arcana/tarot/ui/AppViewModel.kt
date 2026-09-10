@@ -36,17 +36,17 @@ class AppViewModel(context: Context) {
     var hasSeenWelcome by mutableStateOf(settings.hasSeenWelcome)
         private set
 
-    fun setUserName(value: String) {
+    fun updateUserName(value: String) {
         userName = value
         settings.userName = value
     }
 
-    fun setAllowReversed(value: Boolean) {
+    fun updateAllowReversed(value: Boolean) {
         allowReversed = value
         settings.allowReversed = value
     }
 
-    fun setFreeCardCount(value: Int) {
+    fun updateFreeCardCount(value: Int) {
         freeCardCount = value.coerceIn(1, 12)
         settings.freeCardCount = freeCardCount
     }

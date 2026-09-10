@@ -37,6 +37,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.arcana.tarot.core.models.Card
 import com.arcana.tarot.data.CardRepository
+import com.arcana.tarot.ui.AppViewModel
 import com.arcana.tarot.ui.components.MysticPanel
 import com.arcana.tarot.ui.components.TarotCardImage
 import com.arcana.tarot.ui.theme.TarotColors

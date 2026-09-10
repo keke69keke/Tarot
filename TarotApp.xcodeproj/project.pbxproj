@@ -21,6 +21,12 @@
 		WIDGET00000000000000000B /* TarotContent in Frameworks */ = {isa = PBXBuildFile; productRef = WIDGET00000000000000000C /* TarotContent */; };
 		WIDGET000000000000000019 /* TarotData in Frameworks */ = {isa = PBXBuildFile; productRef = WIDGET00000000000000001A /* TarotData */; };
 		WIDGET000000000000000021 /* TarotWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = WIDGET00000000000000000E /* TarotWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		MACOSX000000000000000005 /* TarotIPhoneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* TarotIPhoneApp.swift */; };
+		MACOSX000000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1ICON000000000000000000 /* Assets.xcassets */; };
+		MACOSX00000000000000000C /* TarotUI in Frameworks */ = {isa = PBXBuildFile; productRef = A10000000000000000000004 /* TarotUI */; };
+		MACOSX00000000000000000D /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = BBCDDA3A301B465A00EC8A82 /* Algorithms */; };
+		MACOSX00000000000000000E /* SystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = BB35DF14301CDBA100111978 /* SystemPackage */; };
+		MACOSX00000000000000000F /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = BB35DF17301CDC2300111978 /* Atomics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +84,7 @@
 		WIDGET00000000000000000E /* TarotWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TarotWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		WIDGET000000000000000017 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		WIDGET000000000000000018 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		MACOSX000000000000000007 /* TarotMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TarotMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +105,15 @@
 				WIDGET000000000000000009 /* TarotCore in Frameworks */,
 				WIDGET00000000000000000B /* TarotContent in Frameworks */,
 				WIDGET000000000000000019 /* TarotData in Frameworks */,
+			);
+		};
+		MACOSX000000000000000003 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				MACOSX00000000000000000C /* TarotUI in Frameworks */,
+				MACOSX00000000000000000D /* Algorithms in Frameworks */,
+				MACOSX00000000000000000E /* SystemPackage in Frameworks */,
+				MACOSX00000000000000000F /* Atomics in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -149,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				A10000000000000000000006 /* Tarot.app */,
+				MACOSX000000000000000007 /* TarotMac.app */,
 				WIDGET00000000000000000E /* TarotWidget.appex */,
 			);
 			name = Products;
@@ -221,6 +238,29 @@
 			productReference = WIDGET00000000000000000E /* TarotWidget.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
+		MACOSX000000000000000001 /* TarotMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = MACOSX000000000000000008 /* Build configuration list for PBXNativeTarget "TarotMac" */;
+			buildPhases = (
+				MACOSX000000000000000002 /* Sources */,
+				MACOSX000000000000000003 /* Frameworks */,
+				MACOSX000000000000000004 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TarotMac;
+			packageProductDependencies = (
+				A10000000000000000000004 /* TarotUI */,
+				BBCDDA3A301B465A00EC8A82 /* Algorithms */,
+				BB35DF14301CDBA100111978 /* SystemPackage */,
+				BB35DF17301CDC2300111978 /* Atomics */,
+			);
+			productName = TarotMac;
+			productReference = MACOSX000000000000000007 /* TarotMac.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -235,6 +275,9 @@
 						CreatedOnToolsVersion = 26.3;
 					};
 					WIDGET000000000000000010 = {
+						CreatedOnToolsVersion = 26.3;
+					};
+					MACOSX000000000000000001 = {
 						CreatedOnToolsVersion = 26.3;
 					};
 				};
@@ -259,6 +302,7 @@
 			projectRoot = "";
 			targets = (
 				A1000000000000000000000B /* Tarot */,
+				MACOSX000000000000000001 /* TarotMac */,
 				WIDGET000000000000000010 /* TarotWidget */,
 			);
 		};
@@ -276,6 +320,12 @@
 			files = (
 			);
 		};
+		MACOSX000000000000000004 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+				MACOSX000000000000000006 /* Assets.xcassets in Resources */,
+			);
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -290,6 +340,12 @@
 			files = (
 				WIDGET000000000000000001 /* TarotWidget.swift in Sources */,
 				WIDGET000000000000000003 /* TarotWidgetBundle.swift in Sources */,
+			);
+		};
+		MACOSX000000000000000002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				MACOSX000000000000000005 /* TarotIPhoneApp.swift in Sources */,
 			);
 		};
 /* End PBXSourcesBuildPhase section */
@@ -504,6 +560,56 @@
 			};
 			name = Release;
 		};
+		MACOSX000000000000000009 /* Debug configuration for PBXNativeTarget "TarotMac" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = TarotApp/TarotMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CGS6FL7L59;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TarotApp/Info-macOS.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicole.tarot.mac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		MACOSX00000000000000000A /* Release configuration for PBXNativeTarget "TarotMac" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
+				CODE_SIGN_ENTITLEMENTS = TarotApp/TarotMac.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = CGS6FL7L59;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = TarotApp/Info-macOS.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nicole.tarot.mac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -528,6 +634,14 @@
 			buildConfigurations = (
 				WIDGET000000000000000015 /* Debug configuration for PBXNativeTarget "TarotWidget" */,
 				WIDGET000000000000000016 /* Release configuration for PBXNativeTarget "TarotWidget" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		MACOSX000000000000000008 /* Build configuration list for PBXNativeTarget "TarotMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				MACOSX000000000000000009 /* Debug configuration for PBXNativeTarget "TarotMac" */,
+				MACOSX00000000000000000A /* Release configuration for PBXNativeTarget "TarotMac" */,
 			);
 			defaultConfigurationName = Release;
 		};

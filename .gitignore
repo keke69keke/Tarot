@@ -2,6 +2,7 @@
 .build/
 .build-benchmark/DerivedData/
 .build-benchmark/*.log
+.build-macos/
 
 # SwiftPM workspace state
 .swiftpm/

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Estrella mística de cuatro puntas -->
+    <path
+        android:fillColor="#9986FF"
+        android:pathData="M54,28 L59,47 L78,52 L59,57 L54,76 L49,57 L30,52 L49,47 Z" />
+    <path
+        android:fillColor="#C7B4FF"
+        android:pathData="M71,30 L73,37 L80,39 L73,41 L71,48 L69,41 L62,39 L69,37 Z" />
+    <path
+        android:fillColor="#5C47C6"
+        android:pathData="M38,64 L39.5,69.5 L45,71 L39.5,72.5 L38,78 L36.5,72.5 L31,71 L36.5,69.5 Z" />
+</vector>

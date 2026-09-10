@@ -1,0 +1,1100 @@
+{
+  "schema_version": "1.2.0",
+  "created_at": "2026-09-10T16:54:10.111330+00:00",
+  "build": {
+    "entrypoint": "project",
+    "path": "TarotApp.xcodeproj",
+    "scheme": "Tarot",
+    "configuration": "Debug",
+    "destination": "platform=iOS Simulator,name=iPhone Air",
+    "derived_data_path": ".build-benchmark/DerivedData",
+    "command": "xcodebuild -project TarotApp.xcodeproj -scheme Tarot -configuration Debug -destination \"platform=iOS Simulator,name=iPhone Air\" -derivedDataPath .build-benchmark/DerivedData"
+  },
+  "environment": {
+    "host": "Macbook-Pro-de-Nicole.local",
+    "macos_version": "macOS-27.0-arm64-arm-64bit-Mach-O",
+    "xcode_version": "Xcode 27.0\nBuild version 27A5228h",
+    "cwd": "/Users/nicole/Downloads/Proyectos/Tarot"
+  },
+  "runs": {
+    "clean": [
+      {
+        "id": "clean-1",
+        "build_type": "clean",
+        "duration_seconds": 6.085,
+        "success": true,
+        "exit_code": 0,
+        "command": "xcodebuild -project TarotApp.xcodeproj -scheme Tarot -configuration Debug -destination \"platform=iOS Simulator,name=iPhone Air\" -derivedDataPath .build-benchmark/DerivedData build -showBuildTimingSummary",
+        "raw_log_path": ".build-benchmark/20260910T165202Z-tarot-clean-1.log",
+        "timing_summary_categories": [
+          {
+            "name": "SwiftDriver",
+            "seconds": 4.426,
+            "task_count": 13
+          },
+          {
+            "name": "Copy",
+            "seconds": 1.144,
+            "task_count": 66
+          },
+          {
+            "name": "SwiftCompile",
+            "seconds": 1.04,
+            "task_count": 88
+          },
+          {
+            "name": "CpResource",
+            "seconds": 1.006,
+            "task_count": 319
+          },
+          {
+            "name": "Ld",
+            "seconds": 0.953,
+            "task_count": 16
+          },
+          {
+            "name": "ExtractAppIntentsMetadata",
+            "seconds": 0.851,
+            "task_count": 13
+          },
+          {
+            "name": "CodeSign",
+            "seconds": 0.69,
+            "task_count": 3
+          },
+          {
+            "name": "CompileAssetCatalogVariant",
+            "seconds": 0.66,
+            "task_count": 1
+          },
+          {
+            "name": "ValidateEmbeddedBinary",
+            "seconds": 0.509,
+            "task_count": 1
+          },
+          {
+            "name": "SwiftEmitModule",
+            "seconds": 0.14,
+            "task_count": 13
+          },
+          {
+            "name": "CopySwiftLibs",
+            "seconds": 0.09,
+            "task_count": 1
+          },
+          {
+            "name": "CompileC",
+            "seconds": 0.048,
+            "task_count": 3
+          },
+          {
+            "name": "WriteAuxiliaryFile",
+            "seconds": 0.047,
+            "task_count": 132
+          },
+          {
+            "name": "AppIntentsSSUTraining",
+            "seconds": 0.046,
+            "task_count": 2
+          },
+          {
+            "name": "ProcessInfoPlistFile",
+            "seconds": 0.04,
+            "task_count": 3
+          },
+          {
+            "name": "ScanDependencies",
+            "seconds": 0.035,
+            "task_count": 3
+          },
+          {
+            "name": "GenerateAssetSymbols",
+            "seconds": 0.034,
+            "task_count": 1
+          },
+          {
+            "name": "SwiftDriver Compilation Requirements",
+            "seconds": 0.024,
+            "task_count": 13
+          },
+          {
+            "name": "RegisterExecutionPolicyException",
+            "seconds": 0.018,
+            "task_count": 3
+          },
+          {
+            "name": "Touch",
+            "seconds": 0.008,
+            "task_count": 3
+          },
+          {
+            "name": "SwiftDriver Compilation",
+            "seconds": 0.007,
+            "task_count": 13
+          },
+          {
+            "name": "ProcessProductPackagingDER",
+            "seconds": 0.006,
+            "task_count": 2
+          },
+          {
+            "name": "SwiftMergeGeneratedHeaders",
+            "seconds": 0.005,
+            "task_count": 13
+          },
+          {
+            "name": "LinkAssetCatalog",
+            "seconds": 0.002,
+            "task_count": 1
+          },
+          {
+            "name": "ProcessProductPackaging",
+            "seconds": 0.001,
+            "task_count": 2
+          },
+          {
+            "name": "Validate",
+            "seconds": 0.0,
+            "task_count": 1
+          }
+        ]
+      },
+      {
+        "id": "clean-2",
+        "build_type": "clean",
+        "duration_seconds": 6.055,
+        "success": true,
+        "exit_code": 0,
+        "command": "xcodebuild -project TarotApp.xcodeproj -scheme Tarot -configuration Debug -destination \"platform=iOS Simulator,name=iPhone Air\" -derivedDataPath .build-benchmark/DerivedData build -showBuildTimingSummary",
+        "raw_log_path": ".build-benchmark/20260910T165202Z-tarot-clean-2.log",
+        "timing_summary_categories": [
+          {
+            "name": "SwiftDriver",
+            "seconds": 4.362,
+            "task_count": 13
+          },
+          {
+            "name": "Copy",
+            "seconds": 1.178,
+            "task_count": 66
+          },
+          {
+            "name": "SwiftCompile",
+            "seconds": 1.148,
+            "task_count": 88
+          },
+          {
+            "name": "Ld",
+            "seconds": 0.956,
+            "task_count": 16
+          },
+          {
+            "name": "ExtractAppIntentsMetadata",
+            "seconds": 0.901,
+            "task_count": 13
+          },
+          {
+            "name": "CodeSign",
+            "seconds": 0.693,
+            "task_count": 3
+          },
+          {
+            "name": "CompileAssetCatalogVariant",
+            "seconds": 0.614,
+            "task_count": 1
+          },
+          {
+            "name": "CpResource",
+            "seconds": 0.521,
+            "task_count": 319
+          },
+          {
+            "name": "ValidateEmbeddedBinary",
+            "seconds": 0.476,
+            "task_count": 1
+          },
+          {
+            "name": "SwiftEmitModule",
+            "seconds": 0.134,
+            "task_count": 13
+          },
+          {
+            "name": "CopySwiftLibs",
+            "seconds": 0.077,
+            "task_count": 1
+          },
+          {
+            "name": "AppIntentsSSUTraining",
+            "seconds": 0.05,
+            "task_count": 2
+          },
+          {
+            "name": "CompileC",
+            "seconds": 0.049,
+            "task_count": 3
+          },
+          {
+            "name": "ProcessInfoPlistFile",
+            "seconds": 0.039,
+            "task_count": 3
+          },
+          {
+            "name": "ScanDependencies",
+            "seconds": 0.038,
+            "task_count": 3
+          },
+          {
+            "name": "WriteAuxiliaryFile",
+            "seconds": 0.036,
+            "task_count": 132
+          },
+          {
+            "name": "GenerateAssetSymbols",
+            "seconds": 0.025,
+            "task_count": 1
+          },
+          {
+            "name": "RegisterExecutionPolicyException",
+            "seconds": 0.016,
+            "task_count": 3
+          },
+          {
+            "name": "SwiftDriver Compilation",
+            "seconds": 0.009,
+            "task_count": 13
+          },
+          {
+            "name": "ProcessProductPackagingDER",
+            "seconds": 0.007,
+            "task_count": 2
+          },
+          {
+            "name": "Touch",
+            "seconds": 0.007,
+            "task_count": 3
+          },
+          {
+            "name": "SwiftDriver Compilation Requirements",
+            "seconds": 0.005,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftMergeGeneratedHeaders",
+            "seconds": 0.004,
+            "task_count": 13
+          },
+          {
+            "name": "LinkAssetCatalog",
+            "seconds": 0.002,
+            "task_count": 1
+          },
+          {
+            "name": "ProcessProductPackaging",
+            "seconds": 0.001,
+            "task_count": 2
+          },
+          {
+            "name": "Validate",
+            "seconds": 0.0,
+            "task_count": 1
+          }
+        ]
+      },
+      {
+        "id": "clean-3",
+        "build_type": "clean",
+        "duration_seconds": 5.944,
+        "success": true,
+        "exit_code": 0,
+        "command": "xcodebuild -project TarotApp.xcodeproj -scheme Tarot -configuration Debug -destination \"platform=iOS Simulator,name=iPhone Air\" -derivedDataPath .build-benchmark/DerivedData build -showBuildTimingSummary",
+        "raw_log_path": ".build-benchmark/20260910T165202Z-tarot-clean-3.log",
+        "timing_summary_categories": [
+          {
+            "name": "SwiftDriver",
+            "seconds": 3.979,
+            "task_count": 13
+          },
+          {
+            "name": "Copy",
+            "seconds": 1.2,
+            "task_count": 66
+          },
+          {
+            "name": "Ld",
+            "seconds": 1.065,
+            "task_count": 16
+          },
+          {
+            "name": "SwiftCompile",
+            "seconds": 0.936,
+            "task_count": 88
+          },
+          {
+            "name": "ExtractAppIntentsMetadata",
+            "seconds": 0.765,
+            "task_count": 13
+          },
+          {
+            "name": "CodeSign",
+            "seconds": 0.662,
+            "task_count": 3
+          },
+          {
+            "name": "CompileAssetCatalogVariant",
+            "seconds": 0.648,
+            "task_count": 1
+          },
+          {
+            "name": "CpResource",
+            "seconds": 0.538,
+            "task_count": 319
+          },
+          {
+            "name": "ValidateEmbeddedBinary",
+            "seconds": 0.478,
+            "task_count": 1
+          },
+          {
+            "name": "SwiftEmitModule",
+            "seconds": 0.167,
+            "task_count": 13
+          },
+          {
+            "name": "CopySwiftLibs",
+            "seconds": 0.074,
+            "task_count": 1
+          },
+          {
+            "name": "CompileC",
+            "seconds": 0.046,
+            "task_count": 3
+          },
+          {
+            "name": "AppIntentsSSUTraining",
+            "seconds": 0.043,
+            "task_count": 2
+          },
+          {
+            "name": "ProcessInfoPlistFile",
+            "seconds": 0.04,
+            "task_count": 3
+          },
+          {
+            "name": "WriteAuxiliaryFile",
+            "seconds": 0.038,
+            "task_count": 132
+          },
+          {
+            "name": "ScanDependencies",
+            "seconds": 0.036,
+            "task_count": 3
+          },
+          {
+            "name": "SwiftMergeGeneratedHeaders",
+            "seconds": 0.021,
+            "task_count": 13
+          },
+          {
+            "name": "RegisterExecutionPolicyException",
+            "seconds": 0.02,
+            "task_count": 3
+          },
+          {
+            "name": "SwiftDriver Compilation",
+            "seconds": 0.019,
+            "task_count": 13
+          },
+          {
+            "name": "GenerateAssetSymbols",
+            "seconds": 0.015,
+            "task_count": 1
+          },
+          {
+            "name": "SwiftDriver Compilation Requirements",
+            "seconds": 0.01,
+            "task_count": 13
+          },
+          {
+            "name": "ProcessProductPackagingDER",
+            "seconds": 0.007,
+            "task_count": 2
+          },
+          {
+            "name": "Touch",
+            "seconds": 0.005,
+            "task_count": 3
+          },
+          {
+            "name": "LinkAssetCatalog",
+            "seconds": 0.002,
+            "task_count": 1
+          },
+          {
+            "name": "ProcessProductPackaging",
+            "seconds": 0.001,
+            "task_count": 2
+          },
+          {
+            "name": "Validate",
+            "seconds": 0.001,
+            "task_count": 1
+          }
+        ]
+      }
+    ],
+    "incremental": [
+      {
+        "id": "zero-change-1",
+        "build_type": "zero-change",
+        "duration_seconds": 23.261,
+        "success": true,
+        "exit_code": 0,
+        "command": "xcodebuild -project TarotApp.xcodeproj -scheme Tarot -configuration Debug -destination \"platform=iOS Simulator,name=iPhone Air\" -derivedDataPath .build-benchmark/DerivedData build -showBuildTimingSummary",
+        "raw_log_path": ".build-benchmark/20260910T165202Z-tarot-zero-change-1.log",
+        "timing_summary_categories": [
+          {
+            "name": "SwiftCompile",
+            "seconds": 79.932,
+            "task_count": 88
+          },
+          {
+            "name": "SwiftEmitModule",
+            "seconds": 10.125,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftDriver",
+            "seconds": 8.579,
+            "task_count": 13
+          },
+          {
+            "name": "Copy",
+            "seconds": 1.34,
+            "task_count": 66
+          },
+          {
+            "name": "CodeSign",
+            "seconds": 1.248,
+            "task_count": 3
+          },
+          {
+            "name": "CompileAssetCatalogVariant",
+            "seconds": 1.224,
+            "task_count": 1
+          },
+          {
+            "name": "Ld",
+            "seconds": 1.218,
+            "task_count": 16
+          },
+          {
+            "name": "ExtractAppIntentsMetadata",
+            "seconds": 0.916,
+            "task_count": 13
+          },
+          {
+            "name": "CpResource",
+            "seconds": 0.589,
+            "task_count": 319
+          },
+          {
+            "name": "ValidateEmbeddedBinary",
+            "seconds": 0.476,
+            "task_count": 1
+          },
+          {
+            "name": "CompileC",
+            "seconds": 0.145,
+            "task_count": 3
+          },
+          {
+            "name": "ScanDependencies",
+            "seconds": 0.116,
+            "task_count": 3
+          },
+          {
+            "name": "CopySwiftLibs",
+            "seconds": 0.086,
+            "task_count": 1
+          },
+          {
+            "name": "WriteAuxiliaryFile",
+            "seconds": 0.056,
+            "task_count": 132
+          },
+          {
+            "name": "AppIntentsSSUTraining",
+            "seconds": 0.054,
+            "task_count": 2
+          },
+          {
+            "name": "ProcessInfoPlistFile",
+            "seconds": 0.043,
+            "task_count": 3
+          },
+          {
+            "name": "ProcessProductPackagingDER",
+            "seconds": 0.028,
+            "task_count": 2
+          },
+          {
+            "name": "SwiftDriver Compilation",
+            "seconds": 0.027,
+            "task_count": 13
+          },
+          {
+            "name": "RegisterExecutionPolicyException",
+            "seconds": 0.024,
+            "task_count": 3
+          },
+          {
+            "name": "GenerateAssetSymbols",
+            "seconds": 0.02,
+            "task_count": 1
+          },
+          {
+            "name": "SwiftMergeGeneratedHeaders",
+            "seconds": 0.01,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftDriver Compilation Requirements",
+            "seconds": 0.009,
+            "task_count": 13
+          },
+          {
+            "name": "Touch",
+            "seconds": 0.008,
+            "task_count": 3
+          },
+          {
+            "name": "ProcessProductPackaging",
+            "seconds": 0.003,
+            "task_count": 2
+          },
+          {
+            "name": "LinkAssetCatalog",
+            "seconds": 0.003,
+            "task_count": 1
+          },
+          {
+            "name": "Validate",
+            "seconds": 0.001,
+            "task_count": 1
+          }
+        ]
+      },
+      {
+        "id": "zero-change-2",
+        "build_type": "zero-change",
+        "duration_seconds": 3.891,
+        "success": true,
+        "exit_code": 0,
+        "command": "xcodebuild -project TarotApp.xcodeproj -scheme Tarot -configuration Debug -destination \"platform=iOS Simulator,name=iPhone Air\" -derivedDataPath .build-benchmark/DerivedData build -showBuildTimingSummary",
+        "raw_log_path": ".build-benchmark/20260910T165202Z-tarot-zero-change-2.log",
+        "timing_summary_categories": [
+          {
+            "name": "Copy",
+            "seconds": 0.984,
+            "task_count": 3
+          },
+          {
+            "name": "ValidateEmbeddedBinary",
+            "seconds": 0.505,
+            "task_count": 1
+          },
+          {
+            "name": "CodeSign",
+            "seconds": 0.271,
+            "task_count": 1
+          },
+          {
+            "name": "CopySwiftLibs",
+            "seconds": 0.074,
+            "task_count": 1
+          },
+          {
+            "name": "ProcessInfoPlistFile",
+            "seconds": 0.023,
+            "task_count": 3
+          },
+          {
+            "name": "Validate",
+            "seconds": 0.001,
+            "task_count": 1
+          }
+        ]
+      },
+      {
+        "id": "zero-change-3",
+        "build_type": "zero-change",
+        "duration_seconds": 2.276,
+        "success": true,
+        "exit_code": 0,
+        "command": "xcodebuild -project TarotApp.xcodeproj -scheme Tarot -configuration Debug -destination \"platform=iOS Simulator,name=iPhone Air\" -derivedDataPath .build-benchmark/DerivedData build -showBuildTimingSummary",
+        "raw_log_path": ".build-benchmark/20260910T165202Z-tarot-zero-change-3.log",
+        "timing_summary_categories": [
+          {
+            "name": "CopySwiftLibs",
+            "seconds": 0.068,
+            "task_count": 1
+          },
+          {
+            "name": "ProcessInfoPlistFile",
+            "seconds": 0.017,
+            "task_count": 3
+          }
+        ]
+      }
+    ],
+    "cached_clean": [
+      {
+        "id": "cached-clean-1",
+        "build_type": "cached-clean",
+        "duration_seconds": 22.897,
+        "success": true,
+        "exit_code": 0,
+        "command": "xcodebuild -project TarotApp.xcodeproj -scheme Tarot -configuration Debug -destination \"platform=iOS Simulator,name=iPhone Air\" -derivedDataPath .build-benchmark/DerivedData build -showBuildTimingSummary",
+        "raw_log_path": ".build-benchmark/20260910T165202Z-tarot-cached-clean-1.log",
+        "timing_summary_categories": [
+          {
+            "name": "SwiftCompile",
+            "seconds": 71.747,
+            "task_count": 88
+          },
+          {
+            "name": "SwiftEmitModule",
+            "seconds": 9.109,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftDriver",
+            "seconds": 7.851,
+            "task_count": 13
+          },
+          {
+            "name": "Ld",
+            "seconds": 1.307,
+            "task_count": 16
+          },
+          {
+            "name": "Copy",
+            "seconds": 1.233,
+            "task_count": 66
+          },
+          {
+            "name": "CompileAssetCatalogVariant",
+            "seconds": 1.194,
+            "task_count": 1
+          },
+          {
+            "name": "ExtractAppIntentsMetadata",
+            "seconds": 0.851,
+            "task_count": 13
+          },
+          {
+            "name": "CodeSign",
+            "seconds": 0.65,
+            "task_count": 3
+          },
+          {
+            "name": "CpResource",
+            "seconds": 0.498,
+            "task_count": 319
+          },
+          {
+            "name": "ValidateEmbeddedBinary",
+            "seconds": 0.488,
+            "task_count": 1
+          },
+          {
+            "name": "ScanDependencies",
+            "seconds": 0.118,
+            "task_count": 3
+          },
+          {
+            "name": "CopySwiftLibs",
+            "seconds": 0.082,
+            "task_count": 1
+          },
+          {
+            "name": "CompileC",
+            "seconds": 0.081,
+            "task_count": 3
+          },
+          {
+            "name": "AppIntentsSSUTraining",
+            "seconds": 0.061,
+            "task_count": 2
+          },
+          {
+            "name": "ProcessInfoPlistFile",
+            "seconds": 0.039,
+            "task_count": 3
+          },
+          {
+            "name": "WriteAuxiliaryFile",
+            "seconds": 0.037,
+            "task_count": 132
+          },
+          {
+            "name": "GenerateAssetSymbols",
+            "seconds": 0.02,
+            "task_count": 1
+          },
+          {
+            "name": "RegisterExecutionPolicyException",
+            "seconds": 0.019,
+            "task_count": 3
+          },
+          {
+            "name": "ProcessProductPackagingDER",
+            "seconds": 0.013,
+            "task_count": 2
+          },
+          {
+            "name": "SwiftDriver Compilation",
+            "seconds": 0.009,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftMergeGeneratedHeaders",
+            "seconds": 0.008,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftDriver Compilation Requirements",
+            "seconds": 0.008,
+            "task_count": 13
+          },
+          {
+            "name": "Touch",
+            "seconds": 0.007,
+            "task_count": 3
+          },
+          {
+            "name": "LinkAssetCatalog",
+            "seconds": 0.003,
+            "task_count": 1
+          },
+          {
+            "name": "ProcessProductPackaging",
+            "seconds": 0.001,
+            "task_count": 2
+          },
+          {
+            "name": "Validate",
+            "seconds": 0.0,
+            "task_count": 1
+          }
+        ]
+      },
+      {
+        "id": "cached-clean-2",
+        "build_type": "cached-clean",
+        "duration_seconds": 21.965,
+        "success": true,
+        "exit_code": 0,
+        "command": "xcodebuild -project TarotApp.xcodeproj -scheme Tarot -configuration Debug -destination \"platform=iOS Simulator,name=iPhone Air\" -derivedDataPath .build-benchmark/DerivedData build -showBuildTimingSummary",
+        "raw_log_path": ".build-benchmark/20260910T165202Z-tarot-cached-clean-2.log",
+        "timing_summary_categories": [
+          {
+            "name": "SwiftCompile",
+            "seconds": 75.361,
+            "task_count": 88
+          },
+          {
+            "name": "SwiftEmitModule",
+            "seconds": 11.551,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftDriver",
+            "seconds": 8.998,
+            "task_count": 13
+          },
+          {
+            "name": "Copy",
+            "seconds": 1.234,
+            "task_count": 66
+          },
+          {
+            "name": "CompileAssetCatalogVariant",
+            "seconds": 1.166,
+            "task_count": 1
+          },
+          {
+            "name": "Ld",
+            "seconds": 1.158,
+            "task_count": 16
+          },
+          {
+            "name": "ExtractAppIntentsMetadata",
+            "seconds": 0.995,
+            "task_count": 13
+          },
+          {
+            "name": "CodeSign",
+            "seconds": 0.934,
+            "task_count": 3
+          },
+          {
+            "name": "CpResource",
+            "seconds": 0.499,
+            "task_count": 319
+          },
+          {
+            "name": "ValidateEmbeddedBinary",
+            "seconds": 0.48,
+            "task_count": 1
+          },
+          {
+            "name": "ScanDependencies",
+            "seconds": 0.114,
+            "task_count": 3
+          },
+          {
+            "name": "CopySwiftLibs",
+            "seconds": 0.08,
+            "task_count": 1
+          },
+          {
+            "name": "AppIntentsSSUTraining",
+            "seconds": 0.064,
+            "task_count": 2
+          },
+          {
+            "name": "CompileC",
+            "seconds": 0.06,
+            "task_count": 3
+          },
+          {
+            "name": "ProcessInfoPlistFile",
+            "seconds": 0.039,
+            "task_count": 3
+          },
+          {
+            "name": "WriteAuxiliaryFile",
+            "seconds": 0.038,
+            "task_count": 132
+          },
+          {
+            "name": "RegisterExecutionPolicyException",
+            "seconds": 0.023,
+            "task_count": 3
+          },
+          {
+            "name": "GenerateAssetSymbols",
+            "seconds": 0.018,
+            "task_count": 1
+          },
+          {
+            "name": "Touch",
+            "seconds": 0.014,
+            "task_count": 3
+          },
+          {
+            "name": "ProcessProductPackagingDER",
+            "seconds": 0.012,
+            "task_count": 2
+          },
+          {
+            "name": "SwiftMergeGeneratedHeaders",
+            "seconds": 0.008,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftDriver Compilation Requirements",
+            "seconds": 0.007,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftDriver Compilation",
+            "seconds": 0.006,
+            "task_count": 13
+          },
+          {
+            "name": "LinkAssetCatalog",
+            "seconds": 0.003,
+            "task_count": 1
+          },
+          {
+            "name": "ProcessProductPackaging",
+            "seconds": 0.001,
+            "task_count": 2
+          },
+          {
+            "name": "Validate",
+            "seconds": 0.001,
+            "task_count": 1
+          }
+        ]
+      },
+      {
+        "id": "cached-clean-3",
+        "build_type": "cached-clean",
+        "duration_seconds": 22.276,
+        "success": true,
+        "exit_code": 0,
+        "command": "xcodebuild -project TarotApp.xcodeproj -scheme Tarot -configuration Debug -destination \"platform=iOS Simulator,name=iPhone Air\" -derivedDataPath .build-benchmark/DerivedData build -showBuildTimingSummary",
+        "raw_log_path": ".build-benchmark/20260910T165202Z-tarot-cached-clean-3.log",
+        "timing_summary_categories": [
+          {
+            "name": "SwiftCompile",
+            "seconds": 75.796,
+            "task_count": 88
+          },
+          {
+            "name": "SwiftEmitModule",
+            "seconds": 9.237,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftDriver",
+            "seconds": 8.654,
+            "task_count": 13
+          },
+          {
+            "name": "Ld",
+            "seconds": 1.389,
+            "task_count": 16
+          },
+          {
+            "name": "Copy",
+            "seconds": 1.167,
+            "task_count": 66
+          },
+          {
+            "name": "CompileAssetCatalogVariant",
+            "seconds": 1.133,
+            "task_count": 1
+          },
+          {
+            "name": "ExtractAppIntentsMetadata",
+            "seconds": 1.024,
+            "task_count": 13
+          },
+          {
+            "name": "CodeSign",
+            "seconds": 0.925,
+            "task_count": 3
+          },
+          {
+            "name": "CpResource",
+            "seconds": 0.563,
+            "task_count": 319
+          },
+          {
+            "name": "ValidateEmbeddedBinary",
+            "seconds": 0.476,
+            "task_count": 1
+          },
+          {
+            "name": "ScanDependencies",
+            "seconds": 0.183,
+            "task_count": 3
+          },
+          {
+            "name": "CompileC",
+            "seconds": 0.123,
+            "task_count": 3
+          },
+          {
+            "name": "CopySwiftLibs",
+            "seconds": 0.079,
+            "task_count": 1
+          },
+          {
+            "name": "AppIntentsSSUTraining",
+            "seconds": 0.05,
+            "task_count": 2
+          },
+          {
+            "name": "WriteAuxiliaryFile",
+            "seconds": 0.044,
+            "task_count": 132
+          },
+          {
+            "name": "ProcessInfoPlistFile",
+            "seconds": 0.035,
+            "task_count": 3
+          },
+          {
+            "name": "GenerateAssetSymbols",
+            "seconds": 0.022,
+            "task_count": 1
+          },
+          {
+            "name": "RegisterExecutionPolicyException",
+            "seconds": 0.02,
+            "task_count": 3
+          },
+          {
+            "name": "Touch",
+            "seconds": 0.015,
+            "task_count": 3
+          },
+          {
+            "name": "ProcessProductPackagingDER",
+            "seconds": 0.009,
+            "task_count": 2
+          },
+          {
+            "name": "SwiftDriver Compilation Requirements",
+            "seconds": 0.008,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftMergeGeneratedHeaders",
+            "seconds": 0.008,
+            "task_count": 13
+          },
+          {
+            "name": "SwiftDriver Compilation",
+            "seconds": 0.008,
+            "task_count": 13
+          },
+          {
+            "name": "LinkAssetCatalog",
+            "seconds": 0.005,
+            "task_count": 1
+          },
+          {
+            "name": "ProcessProductPackaging",
+            "seconds": 0.001,
+            "task_count": 2
+          },
+          {
+            "name": "Validate",
+            "seconds": 0.001,
+            "task_count": 1
+          }
+        ]
+      }
+    ]
+  },
+  "summary": {
+    "clean": {
+      "count": 3,
+      "min_seconds": 5.944,
+      "max_seconds": 6.085,
+      "median_seconds": 6.055,
+      "average_seconds": 6.028
+    },
+    "incremental": {
+      "count": 3,
+      "min_seconds": 2.276,
+      "max_seconds": 23.261,
+      "median_seconds": 3.891,
+      "average_seconds": 9.809
+    },
+    "cached_clean": {
+      "count": 3,
+      "min_seconds": 21.965,
+      "max_seconds": 22.897,
+      "median_seconds": 22.276,
+      "average_seconds": 22.379
+    }
+  },
+  "notes": []
+}

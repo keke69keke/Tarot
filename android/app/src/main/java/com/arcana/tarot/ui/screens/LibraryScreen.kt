@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.FilterChip
@@ -142,6 +143,7 @@ fun LibraryScreen(viewModel: AppViewModel) {
 
 @Composable
 private fun CardDetail(card: Card, repository: CardRepository, onBack: () -> Unit) {
+    BackHandler(onBack = onBack)
     var showUpright by remember { mutableStateOf(true) }
     var showBook by remember { mutableStateOf(false) }
 
@@ -249,7 +251,7 @@ private fun CardDetail(card: Card, repository: CardRepository, onBack: () -> Uni
             MysticPanel(modifier = Modifier.fillMaxWidth().padding(top = 10.dp)) {
                 Column {
                     Text(
-                        text = position.replaceFirstChar { it.uppercase() },
+                        text = contextualLabel(position),
                         style = MaterialTheme.typography.titleSmall,
                         color = TarotColors.GoldHighlight
                     )
@@ -336,6 +338,21 @@ private fun CardDetail(card: Card, repository: CardRepository, onBack: () -> Uni
 
         Spacer(Modifier.height(24.dp))
     }
+}
+
+/** Traduce las claves contextuales del JSON (past, present…) al español. */
+private fun contextualLabel(key: String): String = when (key.lowercase()) {
+    "daily" -> "Diario"
+    "past" -> "Pasado"
+    "present" -> "Presente"
+    "future" -> "Futuro"
+    "advice" -> "Consejo"
+    "outcome" -> "Resultado"
+    "challenge" -> "Desafío"
+    "strength" -> "Fortaleza"
+    "shadow" -> "Sombra"
+    "environment" -> "Entorno"
+    else -> key.replaceFirstChar { it.uppercase() }
 }
 
 @Composable

@@ -1,0 +1,5 @@
+export module TarotCore {
+    export CosmicBackgroundEngineProtocol
+    export LunarServiceProtocol
+    export PlanetaryServiceProtocol
+}

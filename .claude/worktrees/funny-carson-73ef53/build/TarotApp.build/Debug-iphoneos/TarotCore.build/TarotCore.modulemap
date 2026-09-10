@@ -1,4 +1,0 @@
-module TarotCore {
-header "TarotCore-Swift.h"
-export *
-}

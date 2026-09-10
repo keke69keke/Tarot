@@ -1,4 +1,0 @@
-module TarotUI {
-header "TarotUI-Swift.h"
-export *
-}

@@ -1,4 +1,0 @@
-module TarotContent {
-header "TarotContent-Swift.h"
-export *
-}

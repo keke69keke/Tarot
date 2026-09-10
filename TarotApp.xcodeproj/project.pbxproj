@@ -22,11 +22,11 @@
 		WIDGET000000000000000019 /* TarotData in Frameworks */ = {isa = PBXBuildFile; productRef = WIDGET00000000000000001A /* TarotData */; };
 		WIDGET000000000000000021 /* TarotWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = WIDGET00000000000000000E /* TarotWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		MACOSX000000000000000005 /* TarotIPhoneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000002 /* TarotIPhoneApp.swift */; };
-		MACOSX000000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1ICON000000000000000000 /* Assets.xcassets */; };
 		MACOSX00000000000000000C /* TarotUI in Frameworks */ = {isa = PBXBuildFile; productRef = A10000000000000000000004 /* TarotUI */; };
 		MACOSX00000000000000000D /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = BBCDDA3A301B465A00EC8A82 /* Algorithms */; };
 		MACOSX00000000000000000E /* SystemPackage in Frameworks */ = {isa = PBXBuildFile; productRef = BB35DF14301CDBA100111978 /* SystemPackage */; };
 		MACOSX00000000000000000F /* Atomics in Frameworks */ = {isa = PBXBuildFile; productRef = BB35DF17301CDC2300111978 /* Atomics */; };
+		MACOSX000000000000000011 /* TarotMac.icns in Resources */ = {isa = PBXBuildFile; fileRef = MACOSX000000000000000010 /* TarotMac.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +85,7 @@
 		WIDGET000000000000000017 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		WIDGET000000000000000018 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		MACOSX000000000000000007 /* TarotMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TarotMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		MACOSX000000000000000010 /* TarotMac.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = TarotMac.icns; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +158,7 @@
 				A10000000000000000000002 /* TarotIPhoneApp.swift */,
 				A10000000000000000000005 /* Info.plist */,
 				A1ICON000000000000000000 /* Assets.xcassets */,
+				MACOSX000000000000000010 /* TarotMac.icns */,
 			);
 			path = TarotApp;
 			sourceTree = "<group>";
@@ -323,7 +325,7 @@
 		MACOSX000000000000000004 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
-				MACOSX000000000000000006 /* Assets.xcassets in Resources */,
+				MACOSX000000000000000011 /* TarotMac.icns in Resources */,
 			);
 		};
 /* End PBXResourcesBuildPhase section */
@@ -563,8 +565,6 @@
 		MACOSX000000000000000009 /* Debug configuration for PBXNativeTarget "TarotMac" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = TarotApp/TarotMac.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -587,8 +587,6 @@
 		MACOSX00000000000000000A /* Release configuration for PBXNativeTarget "TarotMac" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_ENTITLEMENTS = TarotApp/TarotMac.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;

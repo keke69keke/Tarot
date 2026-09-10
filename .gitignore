@@ -1,0 +1,13 @@
+# Xcode / SwiftPM build artifacts
+.build/
+.build-benchmark/DerivedData/
+.build-benchmark/*.log
+
+# SwiftPM workspace state
+.swiftpm/
+
+# Agent worktrees (local only)
+.claude/worktrees/
+
+# Xcode user state
+xcuserdata/

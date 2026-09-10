@@ -4,16 +4,23 @@ import TarotDI
 
 @main
 struct TarotIPhoneApp: App {
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some Scene {
-        WindowGroup { AppRoot() }
+        WindowGroup {
+            AppRoot()
+                .onChange(of: scenePhase) { phase in
+                    if phase == .background {
+                        TarotAudioService.shared.shutdown()
+                    }
+                }
+        }
     }
 }
 
 private struct AppRoot: View {
     // Swift 5.7+ requires explicit `any` when using a protocol as a concrete type.
-    // The property wrapper correctly handles the existential type as long as the
-    // protocol conforms to the required trait (ObservableObject in this case).
-    @State private var container: (any AppContainerProtocol)?
+    @State private var container: AppContainer?
     @State private var errorMessage: String?
 
     init() {

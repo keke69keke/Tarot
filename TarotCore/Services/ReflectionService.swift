@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 
 public protocol ReflectionServiceProtocol {
     /// Generates provocative, Socratic-style questions for a specific reading to invite deep introspection.

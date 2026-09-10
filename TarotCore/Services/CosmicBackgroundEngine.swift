@@ -1,12 +1,12 @@
-import TarotUI
+import SwiftUI
 
 /// Basic implementation of the cosmic background engine used by the UI.
 /// Conforms to `CosmicBackgroundEngineProtocol` so callers can rely on
 /// methods such as `updateForBiometrics` and `setZenMode`.
 @MainActor
 public final class CosmicBackgroundEngine: ObservableObject, CosmicBackgroundEngineProtocol {
-    @Published public var primaryColor: Color = .tarotBackground
-    @Published public var accentColor: Color = .tarotGold
+    @Published public var primaryColor: Color = Color.black
+    @Published public var accentColor: Color = Color.yellow
     @Published public var particleSpeed: Double = 1.0
 
     // Public read-only for external callers; mutated internally.
@@ -33,8 +33,8 @@ public final class CosmicBackgroundEngine: ObservableObject, CosmicBackgroundEng
             accentColor = .blue
             particleSpeed = 0.55
         } else {
-            primaryColor = .tarotBackground
-            accentColor = .tarotGold
+            primaryColor = Color.black
+            accentColor = Color.yellow
             particleSpeed = 1.0
         }
     }
@@ -61,8 +61,8 @@ public final class CosmicBackgroundEngine: ObservableObject, CosmicBackgroundEng
         let normalized = (hr - 40.0) / (180.0 - 40.0) // 0 @40bpm, 1 @180bpm
 
         // Compute target values based on state
-        var targetAccent: Color = .tarotGold
-        var targetPrimary: Color = .tarotBackground
+        var targetAccent: Color = Color.yellow
+        var targetPrimary: Color = Color.black
         var targetParticleSpeed: Double = 1.0
 
         switch state {
@@ -83,8 +83,8 @@ public final class CosmicBackgroundEngine: ObservableObject, CosmicBackgroundEng
             targetPrimary = Color(red: 0.08, green: 0.02, blue: 0.02)
             targetParticleSpeed = clamp(lerp(1.2, 2.0, normalized), min: 1.0, max: 2.5)
         case .unknown:
-            targetAccent = .tarotGold
-            targetPrimary = .tarotBackground
+            targetAccent = Color.yellow
+            targetPrimary = Color.black
             targetParticleSpeed = 1.0
         }
 
@@ -98,3 +98,4 @@ public final class CosmicBackgroundEngine: ObservableObject, CosmicBackgroundEng
         particleSpeed = lerp(particleSpeed, targetParticleSpeed, smoothing)
     }
 }
+

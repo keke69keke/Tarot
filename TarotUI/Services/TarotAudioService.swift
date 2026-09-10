@@ -10,7 +10,6 @@ import AppKit
 #endif
 
 /// Service managing tactile haptic responses and subtle sound effects during card readings.
-@MainActor
 public final class TarotAudioService: ObservableObject {
     public static let shared = TarotAudioService()
 
@@ -18,12 +17,30 @@ public final class TarotAudioService: ObservableObject {
     private let audioEngine = AVAudioEngine()
     private var planetaryNodes: [Planet: AVAudioPlayerNode] = [:]
     private var currentPlanet: Planet?
+    private var setupTask: Task<Void, Never>?
 
     private init() {
-        setupAmbienceEngine()
+        // Configure and activate audio session off the main thread to avoid UI stalls.
+        setupTask = Task.detached { [weak self] in
+            #if os(iOS)
+            let session = AVAudioSession.sharedInstance()
+            do {
+                try session.setCategory(.ambient, mode: .default, options: [.mixWithOthers])
+                // Use async activate when available to avoid blocking the main thread.
+                if #available(iOS 17.0, *) {
+                    try session.setActive(true)
+                } else {
+                    try session.setActive(true)
+                }
+            } catch {
+                print("TarotAudioService: Failed to configure/activate audio session: \(error)")
+            }
+            #endif
+            await self?.setupAmbienceEngine()
+        }
     }
 
-    private func setupAmbienceEngine() {
+    private func setupAmbienceEngine() async {
         let planets: [Planet] = [.sun, .moon, .mercury, .venus, .mars, .jupiter, .saturn, .uranus, .neptune, .pluto]
 
         for planet in planets {
@@ -45,6 +62,7 @@ public final class TarotAudioService: ObservableObject {
     }
 
     /// Updates the ambient soundscape based on celestial and biometric data.
+    @MainActor
     public func updateAmbience(dominantPlanet: Planet, heartRate: Double) {
         let targetPlanet = dominantPlanet
 
@@ -63,11 +81,11 @@ public final class TarotAudioService: ObservableObject {
         // 2. Biometric Sync: Modulate playback rate based on BPM
         // 60 BPM -> 1.0x, 100 BPM -> 1.2x
         let rate = 1.0 + (heartRate - 60) * 0.002
-        let clampedRate = max(0.8, min(1.5, rate))
+        _ = max(0.8, min(1.5, rate))
 
-        if let currentNode = planetaryNodes[targetPlanet] {
+        if planetaryNodes[targetPlanet] != nil {
             // In a full implementation, we would use AVAudioUnitTimePitch to shift rate
-            // without changing pitch. For now, we've calculated the clampedRate.
+            // without changing pitch. For now, we've calculated the clamped rate.
         }
     }
 
@@ -92,6 +110,7 @@ public final class TarotAudioService: ObservableObject {
         }
     }
 
+    @MainActor
     public func playZenChime() {
         triggerHaptic(.success)
         #if os(iOS)
@@ -109,6 +128,7 @@ public final class TarotAudioService: ObservableObject {
     }
     
     /// Triggers subtle haptic vibration (iOS only).
+    @MainActor
     public func triggerHaptic(_ style: HapticStyle = .medium) {
         #if os(iOS)
         switch style {
@@ -139,6 +159,7 @@ public final class TarotAudioService: ObservableObject {
     // MARK: - Native Sound Effects
     
     /// Plays subtle card flip sound.
+    @MainActor
     public func playCardFlip() {
         triggerHaptic(.medium)
         #if os(iOS)
@@ -149,6 +170,7 @@ public final class TarotAudioService: ObservableObject {
     }
     
     /// Plays card selection sound.
+    @MainActor
     public func playCardSelect() {
         triggerHaptic(.selection)
         #if os(iOS)
@@ -157,6 +179,7 @@ public final class TarotAudioService: ObservableObject {
     }
     
     /// Plays golden chime sound for card reveal / completion.
+    @MainActor
     public func playGoldenChime() {
         triggerHaptic(.success)
         #if os(iOS)
@@ -165,6 +188,7 @@ public final class TarotAudioService: ObservableObject {
     }
 
     /// Triggers a failure notification.
+    @MainActor
     public func triggerError() {
         #if os(iOS)
         UINotificationFeedbackGenerator().notificationOccurred(.error)
@@ -172,7 +196,35 @@ public final class TarotAudioService: ObservableObject {
     }
 
     /// Triggers a suit-specific tactile signature.
+    @MainActor
     public func triggerSuitHaptic(suit: CardSuit) {
         HapticManager.shared.triggerSuitHaptic(suit: suit)
     }
+
+    // MARK: - Lifecycle
+
+    /// Cancels any pending setup tasks and tears down the audio engine.
+    /// Call this when the app enters the background or terminates.
+    public func shutdown() {
+        setupTask?.cancel()
+        setupTask = nil
+
+        if audioEngine.isRunning {
+            audioEngine.stop()
+            audioEngine.reset()
+        }
+
+        for node in planetaryNodes.values {
+            node.stop()
+            node.reset()
+        }
+        planetaryNodes.removeAll()
+        currentPlanet = nil
+
+        #if os(iOS)
+        let session = AVAudioSession.sharedInstance()
+        try? session.setActive(false, options: .notifyOthersOnDeactivation)
+        #endif
+    }
 }
+

@@ -40,7 +40,9 @@ struct SpiritualPathView: View {
                 }
             }
             .navigationTitle("Senda de Crecimiento")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
     }
 }
@@ -97,7 +99,7 @@ struct PathCard: View {
 
 class PathViewModel: ObservableObject {
     @Published var paths: [SpiritualPath] = []
-    var service: PathProgressProtocol = PathProgressService()
+    var service: any PathProgressProtocol = PathProgressService()
 
     init() {
         paths = service.getAllPaths()

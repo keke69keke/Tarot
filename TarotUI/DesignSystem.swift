@@ -47,21 +47,59 @@ struct LuxuryGlass: ViewModifier {
     var borderOpacity: Double = 0.13
     func body(content: Content) -> some View {
         content
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(Color.white.opacity(0.055))
-                    .background(
-                        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                            .fill(.ultraThinMaterial)
-                            .opacity(0.55)
-                    )
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .stroke(Color.tarotGold.opacity(borderOpacity), lineWidth: 0.75)
-            )
-            .shadow(color: Color.black.opacity(0.32), radius: 24, x: 0, y: 12)
-            .shadow(color: Color.tarotGold.opacity(0.07), radius: 18, x: 0, y: 0)
+            .background {
+                ZStack {
+                    // 1. Base Nativa: Material de vidrio ultra delgado
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                    
+                    // 2. Capa de Reflejo Líquido: Degradado blanco suave para simular superficie pulida
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    .white.opacity(0.12),
+                                    .white.opacity(0.03),
+                                    .clear,
+                                    .white.opacity(0.05)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .blendMode(.screen)
+                    
+                    // 3. Brillo Interno (Inner Glow): Simula la refracción en los bordes
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .stroke(
+                            LinearGradient(
+                                colors: [.white.opacity(0.2), .clear, .white.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1.5
+                        )
+                        .blur(radius: 1)
+                }
+                .overlay(
+                    // 4. Borde de Oro Refinado: Línea ultra fina para definición
+                    RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                        .stroke(
+                            LinearGradient(
+                                colors: [
+                                    Color.tarotGold.opacity(borderOpacity * 2),
+                                    Color.tarotGold.opacity(borderOpacity * 0.5),
+                                    Color.tarotGold.opacity(borderOpacity * 1.5)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 0.6
+                        )
+                )
+            }
+            .shadow(color: Color.black.opacity(0.25), radius: 20, x: 0, y: 12)
+            .shadow(color: Color.tarotGold.opacity(0.05), radius: 15, x: 0, y: 0)
     }
 }
 struct LuxuryHairlinePanel: ViewModifier {

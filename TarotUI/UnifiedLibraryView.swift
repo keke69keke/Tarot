@@ -54,7 +54,7 @@ struct UnifiedLibraryView: View {
                 }
                 .padding(.bottom, 24)
             }
-            .background(Color.tarotBackground.ignoresSafeArea())
+            .background(StarfieldBackgroundView(starCount: 80))
             .navigationTitle("Biblioteca")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -154,7 +154,6 @@ struct UnifiedLibraryView: View {
                 ForEach(cards) { card in
                     NavigationLink { CardDetailView(card: card, orientation: .upright, repository: repository, activeDeck: activeDeck, cardBackDesign: cardBackDesign) } label: { LibraryCardCell(card: card, activeDeck: activeDeck, cardBackDesign: cardBackDesign) }
                         .buttonStyle(.plain)
-                        .simultaneousGesture(TapGesture().onEnded { TarotAudioService.shared.playCardSelect() })
                 }
             }.padding(.horizontal, 16)
         }
@@ -211,19 +210,16 @@ private struct LibraryCardCell: View {
     let card: Card
     let activeDeck: DeckType
     let cardBackDesign: CardBackDesign
-    @State private var isPressed = false
+
     var body: some View {
         VStack(spacing: 8) {
             CardFace(name: card.name, imageName: card.imageName, textureName: card.textureImageName, reversed: false, useTexture: true, size: CGSize(width: 96, height: 144), activeDeck: activeDeck, backDesign: cardBackDesign)
                 .shadow(color: .black.opacity(0.25), radius: 8, x: 0, y: 5)
-                .scaleEffect(isPressed ? 0.94 : 1.0)
-                .animation(.spring(response: 0.3, dampingFraction: 0.6), value: isPressed)
             Text(card.name).font(.system(size: 11, weight: .semibold, design: .serif)).foregroundStyle(Color.tarotIvory).lineLimit(2).multilineTextAlignment(.center).minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity).padding(8)
         .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.white.opacity(0.05)).background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(.ultraThinMaterial).opacity(0.30)))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).stroke(card.arcanaType == .major ? Color.tarotGold.opacity(0.22) : Color.white.opacity(0.08), lineWidth: 0.8))
-        .onLongPressGesture(minimumDuration: 0.05, pressing: { isPressed = $0 }, perform: {})
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("\(card.name)")
     }

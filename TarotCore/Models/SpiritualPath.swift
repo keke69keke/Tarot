@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 
 /// A structured spiritual journey consisting of milestones.
 public struct SpiritualPath: Identifiable, Codable {

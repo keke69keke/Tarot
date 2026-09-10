@@ -8,6 +8,7 @@ let package = Package(
         .macOS(.v13)  // enables running tests on macOS CI
     ],
     products: [
+        .library(name: "TarotColors",          targets: ["TarotColors"]),
         .library(name: "TarotCore",          targets: ["TarotCore"]),
         .library(name: "TarotData",          targets: ["TarotData"]),
         .library(name: "TarotUI",            targets: ["TarotUI"]),
@@ -23,6 +24,11 @@ let package = Package(
         ),
     ],
     targets: [
+        // MARK: - TarotColors
+        .target(
+            name: "TarotColors",
+            path: "TarotColors"
+        ),
 
         // MARK: - TarotCore
         .target(
@@ -70,7 +76,7 @@ let package = Package(
 // MARK: - TarotUI
         .target(
             name: "TarotUI",
-            dependencies: ["TarotCore", "TarotData", "TarotContent", "TarotNotifications", "TarotDI"],
+            dependencies: ["TarotColors", "TarotCore", "TarotData", "TarotContent", "TarotNotifications", "TarotDI"],
             path: "TarotUI",
             exclude: ["README.md"]
         ),
@@ -78,7 +84,7 @@ let package = Package(
         // MARK: - TarotApp
         .executableTarget(
             name: "TarotApp",
-            dependencies: ["TarotUI", "TarotDI"],
+            dependencies: ["TarotColors", "TarotUI", "TarotDI"],
             path: "TarotApp",
             exclude: ["Info.plist", "Assets.xcassets"]
         ),

@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 import Combine
 
 /// Service that monitors user patterns and environment to provide proactive spiritual guidance.

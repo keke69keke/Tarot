@@ -1,6 +1,5 @@
 import Foundation
 import SwiftUI
-import TarotCore
 
 /// A unified intelligence engine that handles chat, synthesis, and spiritual reflection.
 /// It merges the roles of the AI Chat, Synthesis Engine, and Reflection Service into one "Soul" for the app.

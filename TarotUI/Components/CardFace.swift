@@ -75,7 +75,7 @@ struct CardFace: View {
                                 )
                         }
                     )
-                    .colorMultiply(activeDeck.tintColor.map { Color(red: $0.r, green: $0.g, blue: $0.b) } ?? .white)
+                    .colorMultiply(activeDeck.tintColor.map { Color(red: $0.r, green: $0.g, blue: $0.b).opacity(0.8) } ?? .white)
             } else {
                 // Fallback card illustration when image is not present
                 CardFallbackIllustration(name: name, size: cardSize, textureStyle: activeDeck.textureStyle)

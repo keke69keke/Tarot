@@ -14,8 +14,7 @@ struct SharedDestinyView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.tarotBackground.ignoresSafeArea()
-                Color.tarotBackgroundGradient.ignoresSafeArea()
+                StarfieldBackgroundView(starCount: 90)
 
                 VStack(spacing: 30) {
                     VStack(spacing: 16) {

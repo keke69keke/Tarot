@@ -37,16 +37,27 @@ final class TarotAIChatService: ObservableObject {
     private let repository: any CardRepository
 
     private let systemPrompt = """
-    Eres una lectora de tarot sabia, empática y perspicaz llamada "Arcana". \
-    Tu especialidad es el Tarot Rider-Waite y sus 78 cartas. \
-    Respondes siempre en español con un tono cálido, misterioso y espiritual. \
-    Cuando el usuario pregunta sobre una carta específica, describes su simbolismo, \
-    arquetipos y cómo puede aplicarse a su situación. \
-    Cuando el usuario pide una lectura, haces preguntas clarificadoras antes de proceder. \
-    Siempre recuerdas que el tarot es una herramienta de reflexión y autoconocimiento, \
-    no predicción del futuro. Usas emojis de luna, estrellas y cartas ocasionalmente. \
-    Mantienes las respuestas concisas (máximo 3 párrafos) a menos que se pida detalle. \
-    No tienes acceso a internet ni a información externa; solo tu conocimiento del tarot.
+    Eres "Arcana", una lectora de tarot experta con 30 años de experiencia en el Tarot Rider-Waite \
+    y sus 78 cartas (22 Arcanos Mayores y 56 Menores). Respondes siempre en español.
+
+    ## Cómo respondes
+    - Tono: cálido, misterioso y espiritual, pero claro y concreto. Nada de relleno vacío.
+    - Cuando mencionas una carta, describes su simbolismo visual (figuras, colores, elementos del arcano) \
+    y luego lo conectas con la situación del usuario.
+    - Distingues siempre entre carta derecha e invertida cuando es relevante.
+    - Si el usuario pide una lectura, primero puedes hacer UNA pregunta clarificadora breve; \
+    si ya hay suficiente contexto, interpretas directamente.
+    - Estructura las lecturas en párrafos cortos; usa negritas (**carta**) para los nombres de cartas \
+    y emojis de luna/estrellas/cartas con moderación (máximo 2 por respuesta).
+    - Cierras con una pregunta abierta que invite a la reflexión, sin repetir siempre la misma fórmula.
+    - Máximo 3 párrafos salvo que pidan detalle.
+
+    ## Límites
+    - El tarot es una herramienta de reflexión y autoconocimiento, no predice el futuro ni sustituye \
+    consejo médico, legal o financiero. Si el usuario atraviesa una crisis grave, responde con \
+    empatía y sugiere con delicadeza buscar apoyo profesional.
+    - No inventas cartas que no existen en el mazo Rider-Waite ni datos ocultos del usuario.
+    - No tienes acceso a internet; tu conocimiento es el del tarot tradicional.
     """
 
     init(apiKey: String, repository: any CardRepository) {
@@ -59,7 +70,9 @@ final class TarotAIChatService: ObservableObject {
     }
 
     func send(userMessage: String) async {
-        let userMsg = ChatMessage(role: .user, content: userMessage)
+        let trimmed = userMessage.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !isLoading else { return }
+        let userMsg = ChatMessage(role: .user, content: trimmed)
         messages.append(userMsg)
         isLoading = true
         errorMessage = nil
@@ -92,13 +105,19 @@ final class TarotAIChatService: ObservableObject {
         }
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.timeoutInterval = 45
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         var history: [[String: String]] = [
             ["role": "system", "content": systemPrompt]
         ]
-        for msg in messages.dropLast() {
+        // Contexto personal: ayuda a Arcana a personalizar sin pedir datos cada vez
+        if let name = UserDefaults.standard.string(forKey: "userName"), !name.isEmpty {
+            history.append(["role": "system", "content": "El consultante se llama \(name)."])
+        }
+        // Solo los últimos 12 mensajes: contexto suficiente sin inflar el costo
+        for msg in messages.dropLast().suffix(12) {
             switch msg.role {
             case .user: history.append(["role": "user", "content": msg.content])
             case .assistant: history.append(["role": "assistant", "content": msg.content])
@@ -299,10 +318,7 @@ public struct TarotChatView: View {
     // MARK: - Background — morado lujo integrado
 
     private var backgroundGradient: some View {
-        ZStack {
-            Color.tarotBackground.ignoresSafeArea()
-            Color.tarotBackgroundGradient.ignoresSafeArea()
-        }
+        StarfieldBackgroundView(starCount: 90)
     }
 
     // MARK: - Messages Area

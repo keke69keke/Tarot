@@ -1,3 +1,4 @@
+@MainActor
 public protocol CosmicBackgroundEngineProtocol {
     var isZenMode: Bool { get }
     func setZenMode(_ enabled: Bool)

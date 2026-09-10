@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 
 /// Service for analyzing dreams and bridging them with Tarot wisdom.
 public protocol DreamOracleProtocol: ObservableObject {

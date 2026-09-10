@@ -12,7 +12,7 @@ struct DreamJournalView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.tarotBackground.ignoresSafeArea()
+                StarfieldBackgroundView(starCount: 90)
                 AmbientBackgroundView().opacity(0.4)
 
                 ScrollView(.vertical, showsIndicators: false) {
@@ -50,7 +50,9 @@ struct DreamJournalView: View {
                 }
             }
             .navigationTitle("Diario Onírico")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button { isShowingEntrySheet = true } label: {
@@ -136,7 +138,7 @@ class DreamViewModel: ObservableObject {
 
 struct DreamEntrySheet: View {
     let repository: DreamRepositoryProtocol
-    let oracle: DreamOracleProtocol
+    let oracle: any DreamOracleProtocol
     var onSave: () -> Void
     @State private var text = ""
     @State private var tone = ""
@@ -197,7 +199,7 @@ struct DreamEntrySheet: View {
 
 struct DreamDetailView: View {
     let dream: DreamEntry
-    let oracle: DreamOracleProtocol
+    let oracle: any DreamOracleProtocol
     @State private var analysis: DreamAnalysis?
     @State private var isLoading = false
 

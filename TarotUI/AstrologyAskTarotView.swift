@@ -165,6 +165,7 @@ public struct AskTarotView: View {
                 }
                 .padding(20)
             }
+            .background(StarfieldBackgroundView(starCount: 90))
              .navigationTitle("Pregunta al Tarot")
              #if os(iOS)
              .navigationBarTitleDisplayMode(.inline)
@@ -417,11 +418,7 @@ public struct HoroscopeView: View {
 
     // MARK: - Background Layer (morado lujo)
     private var backgroundLayer: some View {
-        ZStack {
-            Color.tarotBackground.ignoresSafeArea()
-            Color.tarotBackgroundGradient.ignoresSafeArea()
-            AmbientBackgroundView().opacity(0.35)
-        }
+        StarfieldBackgroundView(starCount: 90)
     }
 
     public var body: some View {
@@ -535,6 +532,7 @@ public struct HoroscopeView: View {
                 }
                 .padding(20)
             }
+            .background(backgroundLayer)
              .navigationTitle("Horóscopo")
              #if os(iOS)
              .navigationBarTitleDisplayMode(.inline)

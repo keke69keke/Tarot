@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 
 /// Analyzes the user's reading history to identify recurring themes and dominant energies.
 public protocol PatternRecognitionServiceProtocol {

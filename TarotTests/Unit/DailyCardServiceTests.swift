@@ -10,7 +10,7 @@ final class DailyCardServiceTests: XCTestCase {
     func testProperty8_sameCalendarDayAlwaysReturnsSameCard() {
         let defaults = UserDefaults(suiteName: "DailyCardServiceTests")!
         defaults.removePersistentDomain(forName: "DailyCardServiceTests")
-        let service = DeterministicDailyCardService(cards: SystemRandomizationEngine.withPlaceholderDeck().drawCards(count: 78, allowReversed: false, positions: Array(repeating: SpreadType.dailyCard.positions[0], count: 78)).map(\.card), userDefaults: defaults)
+        let service = DeterministicDailyCardService(cards: SystemRandomizationEngine.withPlaceholderDeck().drawCards(count: 78, allowReversed: false, positions: Array(repeating: SpreadType.dailyCard.positions[0], count: 78)).map(\.card), lunarService: LunarService(), userDefaults: defaults)
         let date = Date(timeIntervalSince1970: 1_700_000_000)
         XCTAssertEqual(service.dailyCard(for: date).id, service.dailyCard(for: date.addingTimeInterval(3_600)).id)
         XCTAssertFalse(service.isRevealed(for: date))

@@ -249,15 +249,9 @@ public struct SecretVaultView: View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .topTrailing) {
                 Group {
-                    if entry.mediaType == .photo {
-                        AsyncImage(url: vaultManager.getImageURL(for: entry)) { phase in
-                            if let image = phase.image {
-                                image.resizable().aspectRatio(contentMode: .fill).frame(height: 160).clipped().cornerRadius(12)
-                            } else {
-                                Rectangle().fill(Color.tarotPanel).frame(height: 160).cornerRadius(12).overlay(Image(systemName: "photo").foregroundStyle(Color.tarotIvory.opacity(0.58)))
-                            }
-                        }
-                    } else if entry.mediaType == .video {
+                     if entry.mediaType == .photo {
+                         VaultImageView(url: vaultManager.getImageURL(for: entry))
+                     } else if entry.mediaType == .video {
                         Rectangle().fill(Color.tarotPanel).frame(height: 160).cornerRadius(12)
                             .overlay(VStack(spacing: 6) { Image(systemName: "video").font(.system(size: 28)).foregroundStyle(Color.tarotGold); Text("Video").font(.caption2).foregroundStyle(Color.tarotIvory.opacity(0.6)) })
                     } else {
@@ -520,3 +514,52 @@ private struct PhotoCapturePicker: UIViewControllerRepresentable {
     }
 }
 #endif
+
+// MARK: - VaultImageView
+
+private struct VaultImageView: View {
+    let url: URL
+
+    var body: some View {
+        if FileManager.default.fileExists(atPath: url.path) {
+            #if canImport(UIKit)
+            if let image = UIImage(contentsOfFile: url.path) {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 160)
+                    .clipped()
+                    .cornerRadius(12)
+            } else {
+                fallbackView
+            }
+            #elseif canImport(AppKit)
+            if let image = NSImage(contentsOf: url) {
+                Image(nsImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 160)
+                    .clipped()
+                    .cornerRadius(12)
+            } else {
+                fallbackView
+            }
+            #else
+            fallbackView
+            #endif
+        } else {
+            fallbackView
+        }
+    }
+
+    private var fallbackView: some View {
+        Rectangle()
+            .fill(Color.tarotPanel)
+            .frame(height: 160)
+            .cornerRadius(12)
+            .overlay(
+                Image(systemName: "photo")
+                    .foregroundStyle(Color.tarotIvory.opacity(0.58))
+            )
+    }
+}

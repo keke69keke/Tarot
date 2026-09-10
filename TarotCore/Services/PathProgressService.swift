@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 
 /// Service for tracking and managing spiritual paths and soul milestones.
 public protocol PathProgressProtocol: ObservableObject {

@@ -123,15 +123,18 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         if let d = settings.natalBirthTime { userDefaults.set(d, forKey: Keys.natalBirthTime) } else { userDefaults.removeObject(forKey: Keys.natalBirthTime) }
         userDefaults.set(settings.natalPlace, forKey: Keys.natalPlace)
 
-        // Ensure mandatory tabs are always in activeTabs and never in inactiveTabs when saving
-        _ = UserSettings().activeTabs
-        var activeTabsToSave = settings.activeTabs
+        // Sanitiza al guardar: sin duplicados ni solapamientos (prevalece
+        // `active`), tabs obligatorios siempre activos y límite respetado.
         let mandatory: [AppTab] = [.learn, .horoscope, .chat]
+        var activeTabsToSave = settings.activeTabs
         for tab in mandatory where !activeTabsToSave.contains(tab) {
             activeTabsToSave.append(tab)
         }
         // Preserve user-defined tab order
-        let inactiveTabsToSave = settings.inactiveTabs.filter { !mandatory.contains($0) }
+        let inactiveBeforeClamp = settings.inactiveTabs.filter { !mandatory.contains($0) }
+        let clamped = Self.clampTabs(active: activeTabsToSave, inactive: inactiveBeforeClamp, mandatory: mandatory)
+        activeTabsToSave = clamped.active
+        let inactiveTabsToSave = clamped.inactive
 
         userDefaults.set(activeTabsToSave.map { $0.rawValue }, forKey: Keys.activeTabs)
         userDefaults.set(inactiveTabsToSave.map { $0.rawValue }, forKey: Keys.inactiveTabs)
@@ -148,23 +151,32 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
 
     // MARK: - Tab Limit
 
-    /// iOS muestra "Más" con más de 5 tabs. Mantiene siempre los tabs
+    /// Limita los tabs activos a `maxActive`. Mantiene siempre los tabs
     /// obligatorios activos; los excedentes vuelven a `inactiveTabs`.
-    /// - Returns: Tupla `(active, inactive)` con `active.count <= 5`.
+    /// Sanitiza ambas listas: elimina duplicados y solapamientos (prevalece
+    /// `active`) que installs antiguas pudieron persistir.
+    /// - Returns: Tupla `(active, inactive)` con `active.count <= maxActive`.
     public static func clampTabs(
         active: [AppTab],
         inactive: [AppTab],
         mandatory: [AppTab] = [.learn],
         maxActive: Int = 8
     ) -> (active: [AppTab], inactive: [AppTab]) {
-        guard active.count > maxActive else { return (active, inactive) }
+        var seen = Set<AppTab>()
+        let sanitizedActive = active.filter { seen.insert($0).inserted }
+        let sanitizedInactive = inactive.filter { seen.insert($0).inserted }
+        guard sanitizedActive.count > maxActive else { return (sanitizedActive, sanitizedInactive) }
         // Conserva el orden: los primeros `maxActive` tras respetar mandatory al frente
-        var ordered = active.filter { mandatory.contains($0) }
-        for tab in active where !ordered.contains(tab) {
+        var ordered = sanitizedActive.filter { mandatory.contains($0) }
+        for tab in sanitizedActive where !ordered.contains(tab) {
             if ordered.count >= maxActive { break }
             ordered.append(tab)
         }
-        let overflow = active.filter { !ordered.contains($0) }
-        return (ordered, inactive + overflow)
+        let overflow = sanitizedActive.filter { !ordered.contains($0) }
+        var finalInactive = sanitizedInactive
+        for tab in overflow where !finalInactive.contains(tab) {
+            finalInactive.append(tab)
+        }
+        return (ordered, finalInactive)
     }
 }

@@ -2,7 +2,6 @@ import SwiftUI
 import TarotCore
 import TarotData
 import TarotDI
-import TarotUI
 
 enum JournalViewMode {
     case list, map
@@ -41,10 +40,11 @@ struct JournalView: View {
                 }
                 .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewMode)
             }
+            .background(StarfieldBackgroundView(starCount: 90))
             .navigationTitle(TarotStrings.journalTitle.localized)
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Color.tarotBackground, for: .navigationBar)
+            .toolbarBackground(.clear, for: .navigationBar)
             #endif
         }
     }
@@ -157,7 +157,15 @@ struct JournalView: View {
                 .foregroundStyle(viewMode == mode ? Color.tarotGold : Color.tarotIvory.opacity(0.4))
                 .padding(.horizontal, 16)
                 .padding(.vertical, 8)
-                .background(viewMode == mode ? Capsule().fill(Color.tarotGold.opacity(0.15)) as! Color as! Color : Color.clear)
+                .background(
+                    Group {
+                        if viewMode == mode {
+                            Capsule().fill(Color.tarotGold.opacity(0.15))
+                        } else {
+                            Color.clear
+                        }
+                    }
+                )
                 .cornerRadius(10)
         }
         .buttonStyle(.plain)

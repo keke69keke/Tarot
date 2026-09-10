@@ -231,13 +231,22 @@ public class LibraryManager: ObservableObject {
         saveBooks()
     }
 
-    public func deleteBook(_ book: ImportedBook) {
+        public func deleteBook(_ book: ImportedBook) {
         importedBooks.removeAll { $0.id == book.id }
         let libraryFolder = getDocumentsDirectory()
         let fileURL = libraryFolder.appendingPathComponent(book.fileName)
         try? FileManager.default.removeItem(at: fileURL)
         saveBooks()
     }
+
+    /// Persists the last-read page for a book so the next session resumes here.
+    public func updateReadingProgress(for book: ImportedBook, to page: Int) {
+        if let idx = importedBooks.firstIndex(of: book) {
+            importedBooks[idx].lastReadPage = page
+            saveBooks()
+        }
+    }
+
 
     public func getFileURL(for book: ImportedBook) -> URL {
         let documentsURL = getDocumentsDirectory().appendingPathComponent(book.fileName)

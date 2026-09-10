@@ -5,6 +5,7 @@ import TarotData
 import TarotContent
 
 /// The central dependency injection root for the Tarot application.
+@MainActor
 public protocol AppContainerProtocol: ObservableObject {
     var cards: BundleCardRepository { get }
     var journal: CoreDataJournalRepository { get }

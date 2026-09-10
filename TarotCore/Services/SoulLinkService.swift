@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 
 /// Service that manages "Soul Linking" between users, calculating spiritual resonance based on their destiny patterns.
 public final class SoulLinkService: ObservableObject {

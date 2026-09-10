@@ -108,6 +108,7 @@ struct BiorhythmView: View {
                 }
                 .padding(20)
             }
+            .background(StarfieldBackgroundView(starCount: 90))
             .navigationTitle(TarotStrings.biorhythmTitle.localized)
             .onChange(of: birthDate) { newValue in
                 model.settings.biorhythmBirthDate = newValue

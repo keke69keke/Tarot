@@ -733,10 +733,14 @@ private func moonPhaseCard(index: Int, phase: String, yOffset: CGFloat) -> some 
         size: CGSize,
         cardRotation: Angle = .zero
     ) -> some View {
+        guard spread.drawnCards.indices.contains(index) else {
+            // Blindado: nunca indexar fuera de rango (evita crash al cambiar/revolver tirada)
+            return AnyView(Color.clear.frame(width: 0, height: 0))
+        }
         let drawn = spread.drawnCards[index]
         let isRevealed = revealedIndices.contains(index)
 
-        return Button {
+        return AnyView(Button {
             TarotAudioService.shared.playCardFlip()
             if !isRevealed {
                 onRevealCard?(index)
@@ -835,6 +839,6 @@ private func moonPhaseCard(index: Int, phase: String, yOffset: CGFloat) -> some 
                 Label("Cambiar carta", systemImage: "arrow.triangle.2.circlepath")
             }
         }
-        .animation(.spring(response: 0.55, dampingFraction: 0.70, blendDuration: 0), value: isRevealed)
+        .animation(.spring(response: 0.55, dampingFraction: 0.70, blendDuration: 0), value: isRevealed))
     }
 }

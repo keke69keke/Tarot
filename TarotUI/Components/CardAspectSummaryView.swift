@@ -7,10 +7,10 @@ struct CardAspectSummaryView: View {
     private let highlightKeys = ["Amor", "Economía", "Salud", "Carrera"]
     private let aspectIcons = ["Amor": "heart.fill", "Economía": "banknote.fill", "Salud": "cross.fill", "Carrera": "briefcase.fill"]
     private let aspectColors: [String: Color] = [
-        "Amor": Color(red: 0.72, green: 0.18, blue: 0.18),
-        "Economía": Color(red: 0.78, green: 0.58, blue: 0.18),
-        "Salud": Color(red: 0.20, green: 0.46, blue: 0.28),
-        "Carrera": Color(red: 0.18, green: 0.28, blue: 0.52)
+        "Amor": .tarotAspectAmor,
+        "Economía": .tarotAspectEconomia,
+        "Salud": .tarotAspectSalud,
+        "Carrera": .tarotAspectCarrera
     ]
 
     var body: some View {

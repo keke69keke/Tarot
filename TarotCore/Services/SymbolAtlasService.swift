@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 
 /// A bridge between esoteric universal symbols and the user's personal tarot history.
 public protocol SymbolAtlasServiceProtocol {

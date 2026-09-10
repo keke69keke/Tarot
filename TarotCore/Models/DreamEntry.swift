@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 
 /// A record of a dream, separate from a standard Tarot reading.
 /// The "Oneiric Bridge" uses these entries to find spiritual synchronicity.

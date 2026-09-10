@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 
 /// Service for calculating and scheduling celestial events based on planetary and lunar data.
 public final class CelestialEventService {

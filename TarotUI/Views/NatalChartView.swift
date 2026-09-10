@@ -29,8 +29,7 @@ struct NatalChartView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.tarotBackground.ignoresSafeArea()
-                Color.tarotBackgroundGradient.ignoresSafeArea()
+                StarfieldBackgroundView(starCount: 90)
                 AmbientBackgroundView().opacity(0.5)
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 22) {
@@ -171,7 +170,13 @@ struct NatalChartView: View {
                 .tracking(0.3)
                 .foregroundStyle(Color.tarotIvory)
             ZStack {
-                ZodiacWheelView(highlightIndices: [sunIndex: Color.tarotGold, moonIndex: Color.white.opacity(0.82), ascIndex: Color.tarotGold.opacity(0.55)])
+                ZodiacWheelView(highlightIndices: {
+                    var highlights: [Int: Color] = [:]
+                    highlights[sunIndex] = Color.tarotGold
+                    highlights[moonIndex] = Color.white.opacity(0.82)
+                    highlights[ascIndex] = Color.tarotGold.opacity(0.55)
+                    return highlights
+                }())
                     .frame(maxWidth: .infinity)
                     .frame(height: 220)
                 VStack(spacing: 3) {

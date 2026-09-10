@@ -1,6 +1,5 @@
 import Foundation
 import CoreLocation
-import TarotCore
 
 /// Service that provides spiritual insights based on the user's physical environment.
 public final class EnvironmentOracleService: NSObject, ObservableObject, CLLocationManagerDelegate {

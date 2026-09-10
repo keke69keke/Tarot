@@ -1,5 +1,4 @@
 import Foundation
-import TarotCore
 
 /// The AstralSynchronicity service provides real-time planetary data to synchronize the app with the cosmos.
 public protocol PlanetaryServiceProtocol {

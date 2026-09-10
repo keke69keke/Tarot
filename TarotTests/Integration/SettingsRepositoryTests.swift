@@ -67,7 +67,7 @@ class UserDefaultsSettingsRepositoryTests: XCTestCase {
             allowReversedCards: false,
             selectedLanguage: .english,
             cardBackDesign: .mystical,
-            activeDeck: .thoth,
+            activeDeck: .marseille,
             dailyNotificationHour: 22,
             notificationsEnabled: true
         )

@@ -31,11 +31,11 @@ public struct UserSettings {
     /// OpenAI API Key for AI chat feature (optional).
     public var openAIKey: String = ""
 
-    /// Active tabs — 5 fijos (Tirada/Hoy/Biblioteca/Aprender/Diario) + resto en More vía Ajustes
-    public var activeTabs: [AppTab] = [.reading, .daily, .horoscope, .chat, .learn]
-    
+    /// Active tabs — Settings is fixed and cannot be removed
+    public var activeTabs: [AppTab] = [.reading, .horoscope, .library, .daily, .learn, .journal, .settings, .biorhythm, .natal, .soulLink]
+
     /// Inactive tabs hidden from the bottom navigation menu
-    public var inactiveTabs: [AppTab] = [.settings, .biorhythm, .natal, .ask, .reference, .library, .journal]
+    public var inactiveTabs: [AppTab] = [.ask, .chat, .reference]
 
     /// User display name used for personalized greetings in the UI.
     public var userName: String = ""
@@ -55,8 +55,8 @@ public struct UserSettings {
         dailyNotificationHour: Int = 8,
         notificationsEnabled: Bool = false,
         openAIKey: String = "",
-        activeTabs: [AppTab] = [.reading, .daily, .horoscope, .chat, .learn],
-        inactiveTabs: [AppTab] = [.settings, .biorhythm, .natal, .ask, .reference, .library, .journal],
+        activeTabs: [AppTab] = [.reading, .horoscope, .library, .daily, .learn, .journal, .settings, .biorhythm, .natal, .soulLink],
+        inactiveTabs: [AppTab] = [.ask, .chat, .reference],
         userName: String = "",
         biorhythmBirthDate: Date? = nil,
         natalBirthDate: Date? = nil,
@@ -152,46 +152,23 @@ public enum CardBackDesign: String, CaseIterable, Codable {
 
 /// Available card-front artwork decks (Requirement 6.2).
 public enum DeckType: String, CaseIterable, Codable {
-    // Original decks
     case riderWaite = "riderWaite"
-    case thoth      = "thoth"
     case helloKitty = "helloKitty"
-    // New decks
     case marseille  = "marseille"
-    case osho       = "osho"
-    case darkSide   = "darkSide"
-    case celestial  = "celestial"
-    case botanical  = "botanical"
-    case cyberpunk  = "cyberpunk"
-    case egyptian   = "egyptian"
 
     public var displayName: String {
         switch self {
         case .riderWaite: return "Rider-Waite Clásico"
-        case .thoth:      return "Thoth Crowley"
         case .helloKitty: return "Hello Kitty Kawaii"
         case .marseille:  return "Tarot de Marsella"
-        case .osho:       return "Osho Zen"
-        case .darkSide:   return "Dark Side (Oscuro)"
-        case .celestial:  return "Tarot Celestial"
-        case .botanical:  return "Tarot Botánico"
-        case .cyberpunk:  return "Neo-Cyberpunk"
-        case .egyptian:   return "Egipto Antiguo"
         }
     }
 
     public var description: String {
         switch self {
         case .riderWaite: return "El mazo más popular del siglo XX, con ilustraciones simbólicas de Pamela Colman Smith."
-        case .thoth:      return "Diseñado por Aleister Crowley y Lady Frieda Harris. Geometría proyectiva sagrada."
         case .helloKitty: return "Una versión kawaii y adorable del Tarot para lecturas ligeras y divertidas."
         case .marseille:  return "El mazo europeo más antiguo (s. XVII), origen del Tarot moderno. Arte medieval."
-        case .osho:       return "Basado en las enseñanzas de Osho. Acuarelas vibrantes y espiritualidad Zen."
-        case .darkSide:   return "Estética oscura y subversiva. Para quienes trabajan con la sombra y el inconsciente."
-        case .celestial:  return "Inspirado en constelaciones y cosmología. Cartas que reflejan el cosmos interior."
-        case .botanical:  return "Ilustraciones botánicas de plantas sagradas y la sabiduría de la naturaleza."
-        case .cyberpunk:  return "Simbología tecnológica y distópica. Para navegar el ruido del siglo XXI."
-        case .egyptian:   return "Arcanos basados en la cosmogonía egipcia y el Libro de los Muertos."
         }
     }
 
@@ -199,47 +176,33 @@ public enum DeckType: String, CaseIterable, Codable {
     public var textureStyle: DeckTextureStyle {
         switch self {
         case .riderWaite: return .agedParchment
-        case .thoth:      return .sacredGeometry
         case .helloKitty: return .softPastel
         case .marseille:  return .medievalEmbroidery
-        case .osho:       return .watercolor
-        case .darkSide:   return .grunge
-        case .celestial:  return .starfield
-        case .botanical:  return .leafVeins
-        case .cyberpunk:  return .digitalGrid
-        case .egyptian:   return .papyrus
         }
     }
 
-    /// Whether this deck has dedicated image assets in the bundle (Rider-Waite base + Hello Kitty).
-    public var hasDedicatedArtwork: Bool {
+        public var hasDedicatedArtwork: Bool {
         switch self {
-        case .riderWaite, .helloKitty: return true
-        case .thoth, .marseille, .osho, .darkSide, .celestial, .botanical, .cyberpunk, .egyptian: return false
+        case .riderWaite, .helloKitty, .marseille: return true
         }
     }
 
-    /// Prefix used for deck-specific image names (e.g. "helloKitty_card_00...")
+    /// Prefix used for deck-specific image names (e.g. "helloKitty_card_00...", "marseille_card_00...").
     public var assetPrefix: String? {
         switch self {
         case .helloKitty: return "helloKitty"
-        default: return nil
+        case .marseille:  return "marseille"
+        case .riderWaite: return nil  // base images, no prefix
         }
     }
 
-    /// Deck-specific color tint applied over base artwork when the deck has no dedicated images.
-    /// Keeps luxury minimal but gives each deck a distinct mood.
+        /// Deck-specific color tint applied over base artwork — Marseille uses a subtle sepia
+    /// wash (the dedicated woodcut-style images already carry this, tint is a mild depth layer).
     public var tintColor: (r: Double, g: Double, b: Double, opacity: Double)? {
         switch self {
-        case .riderWaite, .helloKitty: return nil
-        case .thoth:      return (0.45, 0.20, 0.80, 0.10) // violeta sagrado
-        case .marseille:  return (0.65, 0.45, 0.20, 0.10) // sepia medieval
-        case .osho:       return (0.90, 0.55, 0.30, 0.08) // acuarela cálida
-        case .darkSide:   return (0.12, 0.05, 0.08, 0.16) // grunge oscuro
-        case .celestial:  return (0.10, 0.18, 0.45, 0.12) // noche estrellada
-        case .botanical:  return (0.18, 0.38, 0.22, 0.09) // verde botánico
-        case .cyberpunk:  return (0.0, 0.8, 1.0, 0.12) // neon cyan
-        case .egyptian:   return (0.8, 0.6, 0.2, 0.12) // golden sand
+        case .riderWaite: return nil
+        case .helloKitty: return nil
+        case .marseille:  return (0.65, 0.45, 0.20, 0.06)
         }
     }
 }

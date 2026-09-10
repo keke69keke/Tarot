@@ -49,6 +49,18 @@ struct SymbolAtlasView: View {
     private func symbolDetail(_ symbol: UniversalSymbol) -> some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
+                // Medallón del símbolo
+                if let platformImage = PlatformImageLoader.image(named: "symbol_" + symbol.id) {
+                    Image(platformImage: platformImage)
+                        .resizable()
+                        .renderingMode(.original)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 56, height: 56)
+                        .clipShape(Circle())
+                        .overlay(Circle().stroke(Color.tarotGold.opacity(0.45), lineWidth: 1))
+                        .shadow(color: Color.tarotGold.opacity(0.25), radius: 10, x: 0, y: 4)
+                }
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(symbol.name)
                         .font(.system(size: 26, weight: .bold, design: .serif))
@@ -153,9 +165,21 @@ struct SymbolAtlasView: View {
                         )
                         .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 5)
 
-                    Text(symbol.name.prefix(1))
-                        .font(.system(size: 26, weight: .bold, design: .serif))
-                        .foregroundStyle(isSelected ? Color.black : Color.tarotGold)
+                     // Symbol artwork loaded from symbol_<id>.png in the asset bundle
+                     if let platformImage = PlatformImageLoader.image(named: "symbol_" + symbol.id) {
+                         Image(platformImage: platformImage)
+                             .resizable()
+                             .renderingMode(.original)
+                             .aspectRatio(contentMode: .fit)
+                             .frame(width: 64, height: 64)
+                             .clipShape(Circle())
+                             .overlay(Circle().stroke(Color.tarotGold.opacity(isSelected ? 0.6 : 0.25), lineWidth: 1))
+                     } else {
+                         // Fallback: text initial if image not found
+                         Text(symbol.name.prefix(1))
+                             .font(.system(size: 26, weight: .bold, design: .serif))
+                             .foregroundStyle(isSelected ? Color.black : Color.tarotGold)
+                     }
                 }
 
                 Text(symbol.name)

@@ -6,114 +6,139 @@ import TarotDI
 public struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
     @StateObject private var model: TarotViewModel
+    private let container: AppContainer
     /// Welcome solo en el primer arranque — persistido entre sesiones.
     @AppStorage("hasSeenWelcome") private var hasSeenWelcome = false
-    @State private var selectedTab: AppTab?
+    @State private var selectedTab: AppTab = .reading
     /// Sheet de ajustes — siempre accesible desde el toolbar aunque Settings no esté en activeTabs
     @State private var showSettings = false
 
-    // Swift 5.7+ requires explicit `any` when using a protocol as a concrete type.
-    public init(container: any AppContainerProtocol) { _model = StateObject(wrappedValue: TarotViewModel(container: container)) }
+    public init(container: AppContainer) {
+        self.container = container
+        _model = StateObject(wrappedValue: TarotViewModel(container: container))
+    }
+
+    private var safeTabSelection: Binding<AppTab> {
+        Binding<AppTab>(
+            get: {
+                selectedTab
+            },
+            set: { selectedTab = $0 }
+        )
+    }
 
     public var body: some View {
-        ZStack {
-            Color.tarotBackground.ignoresSafeArea()
-            Color.tarotBackgroundGradient.ignoresSafeArea()
-            AmbientBackgroundView()
+        Group {
+            #if os(macOS)
+            // macOS layout: Sidebar + Content
+            HStack(spacing: 0) {
+                MacSidebarView(selectedTab: safeTabSelection, activeTabs: AppTab.allCases)
+                
+                ZStack {
+                    StarfieldBackgroundView(starCount: 110)
+                    
+                    if !hasSeenWelcome {
+                        WelcomeView(colorScheme: colorScheme, userName: model.settings.userName) {
+                            withAnimation(.easeInOut(duration: 0.72)) {
+                                hasSeenWelcome = true
+                            }
+                        }
+                        .transition(.asymmetric(insertion: .opacity, removal: .opacity.combined(with: .scale(scale: 1.04))))
+                        .zIndex(10)
+                    } else {
+                        tabContent(for: selectedTab)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .transition(.opacity)
+                    }
+                }
+            }
+            #else
+            // iOS layout: ZStack with SlidingTabBar
+            ZStack {
+                StarfieldBackgroundView(starCount: 110)
 
-            TabView(selection: $selectedTab) {
-                ForEach(model.settings.activeTabs) { tab in
-                    tabContent(for: tab)
-                        .tabItem {
-                            Label {
-                                Text(tab.label)
-                                    .font(.system(size: 10, weight: .medium, design: .serif))
-                                    .tracking(0.2)
-                            } icon: {
-                                Image(systemName: tab.systemImage)
-                                    .font(.system(size: 15, weight: .light))
-                            }
+                TabView(selection: safeTabSelection) {
+                    ForEach(AppTab.allCases) { tab in
+                        tabContent(for: tab)
+                            .ignoresSafeArea(edges: .top)
+                            .tag(tab)
+                    }
+                }
+                #if os(iOS)
+                        .tabViewStyle(.page(indexDisplayMode: .never))
+                        #endif
+                .tint(Color.tarotGold)
+                #if os(iOS)
+                        .ignoresSafeArea(edges: .bottom)
+                        #endif
+                .onChange(of: selectedTab) { _ in
+                    TarotAudioService.shared.triggerHaptic(.light)
+                }
+                .allowsHitTesting(hasSeenWelcome)
+
+                if hasSeenWelcome {
+                    VStack(spacing: 0) {
+                        Spacer()
+                        SlidingTabBar(
+                            selectedTab: safeTabSelection,
+                            activeTabs: AppTab.allCases
+                        )
+                        Color.clear
+                            .frame(height: 0)
+                            #if os(iOS)
+                        .ignoresSafeArea(edges: .bottom)
+                        #endif
+                    }
+                    #if os(iOS)
+                        .ignoresSafeArea(edges: .bottom)
+                        #endif
+                    .zIndex(3)
+                }
+
+                if !hasSeenWelcome {
+                    WelcomeView(colorScheme: colorScheme, userName: model.settings.userName) {
+                        withAnimation(.easeInOut(duration: 0.72)) {
+                            hasSeenWelcome = true
                         }
-                        .tag(tab)
+                    }
+                    .transition(.asymmetric(
+                        insertion: .opacity,
+                        removal: .opacity.combined(with: .scale(scale: 1.04))
+                    ))
+                    .zIndex(10)
                 }
             }
-            .tint(Color.tarotGold)
-            // Haptic sutil al cambiar de tab — feedback táctil consistente
-            .onChange(of: selectedTab) { _ in
-                TarotAudioService.shared.triggerHaptic(.light)
-            }
-            .opacity(hasSeenWelcome ? 1 : 0)
-            // Sheet ajustes — acceso garantizado independiente del tab bar
-            .sheet(isPresented: $showSettings) {
-                NavigationStack {
-                    SettingsView(model: model)
-                        .toolbar {
-                            ToolbarItem(placement: .automatic) {
-                                Button {
-                                    showSettings = false
-                                } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .font(.system(size: 20, weight: .light))
-                                        .foregroundStyle(Color.tarotIvory.opacity(0.55))
-                                }
+            #endif
+        }
+        .sheet(isPresented: $showSettings) {
+            NavigationStack {
+                SettingsView(model: model)
+                    .toolbar {
+                        ToolbarItem(placement: .automatic) {
+                            Button {
+                                showSettings = false
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.system(size: 20, weight: .light))
+                                    .foregroundStyle(Color.tarotIvory.opacity(0.55))
                             }
                         }
+                    }
                 }
+                #if os(iOS)
                 .presentationDetents([.large])
+                #endif
+                #if os(iOS)
                 .presentationDragIndicator(.visible)
+                #endif
                 .preferredColorScheme(.dark)
             }
-            // Hairline joya sobre tab bar
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                GoldDivider(opacity: 0.11)
-                    .opacity(hasSeenWelcome ? 1 : 0)
-            }
-
-            // Botón flotante ⚙ — solo visible cuando Settings NO está en activeTabs
-            if hasSeenWelcome && !model.settings.activeTabs.contains(.settings) {
-                VStack {
-                    HStack {
-                        Spacer()
-                        Button {
-                            TarotAudioService.shared.triggerHaptic(.light)
-                            showSettings = true
-                        } label: {
-                            Image(systemName: "slider.horizontal.3")
-                                .font(.system(size: 14, weight: .light))
-                                .foregroundStyle(Color.tarotGold)
-                                .frame(width: 36, height: 36)
-                                .background(.ultraThinMaterial.opacity(0.85))
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.tarotGold.opacity(0.25), lineWidth: 0.75))
-                                .shadow(color: Color.black.opacity(0.3), radius: 6, x: 0, y: 3)
-                        }
-                        .accessibilityLabel("Ajustes")
-                        .padding(.trailing, 16)
-                        .padding(.top, 56)
-                    }
-                    Spacer()
-                }
-                .zIndex(5)
-            }
-
-            if !hasSeenWelcome {
-                WelcomeView(colorScheme: colorScheme, userName: model.settings.userName) {
-                    withAnimation(.easeInOut(duration: 0.72)) {
-                        hasSeenWelcome = true
-                    }
-                }
-                .transition(.asymmetric(
-                    insertion: .opacity,
-                    removal: .opacity.combined(with: .scale(scale: 1.04))
-                ))
-                .zIndex(10)
-            }
-        }
-        .environmentObject(model.container.cosmicBackground)
-        .preferredColorScheme(.dark)
-        .alert(TarotStrings.errorTitle.localized, isPresented: Binding(get: { model.errorMessage != nil }, set: { if !$0 { model.errorMessage = nil } })) {
-            Button(TarotStrings.ok.localized, role: .cancel) {}
-        } message: { Text(model.errorMessage ?? "") }
+            .environmentObject(model.container.cosmicBackground)
+            .environmentObject(container)
+            .preferredColorScheme(.dark)
+            .alert(TarotStrings.errorTitle.localized, isPresented: Binding(get: { model.errorMessage != nil }, set: { _ in model.errorMessage = nil })) {
+                Button(TarotStrings.ok.localized, role: .cancel) {}
+            } message: { Text(model.errorMessage ?? "") }
     }
 
     @ViewBuilder
@@ -122,7 +147,8 @@ public struct ContentView: View {
         case .reading:          ReadingView(model: model)
         case .ask:              AskTarotView(repository: model.container.cards)
         case .horoscope:        HoroscopeView(repository: model.container.cards)
-        case .library, .reference: UnifiedLibraryView(repository: model.container.cards, activeDeck: model.settings.activeDeck, cardBackDesign: model.settings.cardBackDesign)
+        case .library:          UnifiedLibraryView(repository: model.container.cards, activeDeck: model.settings.activeDeck, cardBackDesign: model.settings.cardBackDesign)
+        case .reference:        Text("Referencia en desarrollo").foregroundStyle(Color.tarotIvory).navigationTitle("Referencia")
         case .daily:            DailyCardView(model: model)
         case .learn:            LearningCenterView()
         case .journal:          JournalView(model: model)

@@ -106,8 +106,7 @@ public struct LearningCenterView: View {
     public var body: some View {
         NavigationStack {
             ZStack {
-                 Color.tarotBackground
-                .ignoresSafeArea()
+                 StarfieldBackgroundView(starCount: 90)
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
@@ -204,7 +203,10 @@ public struct LearningCenterView: View {
 
     // MARK: - Section Tabs
     private var sectionTabs: some View {
-         HStack(spacing: 0) {
+        // Scrollable: 6 botones no caben en pantalla; sin esto SwiftUI comprime
+        // los textos y las letras se apilan en vertical.
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
             ForEach(LibrarySection.allCases, id: \.self) { section in
                 Button {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -213,7 +215,10 @@ public struct LearningCenterView: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: section.icon).font(.caption)
-                        Text(section.label).font(.system(size: 13, weight: .semibold, design: .serif))
+                        Text(section.label)
+                            .font(.system(size: 13, weight: .semibold, design: .serif))
+                            .lineLimit(1)
+                            .fixedSize(horizontal: true, vertical: false)
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, 9)
@@ -237,6 +242,8 @@ public struct LearningCenterView: View {
                 }
                 .buttonStyle(.plain)
             }
+            }
+            .padding(.horizontal, 2)
         }
         .padding(4)
         .background(Color.tarotPanel)
@@ -259,9 +266,15 @@ public struct LearningCenterView: View {
                 bookmarksSection.padding(.horizontal)
             }
 
-            sectionLabel("📖 Guía Integrada").padding(.horizontal)
+                        sectionLabel("📖 Guía Integrada").padding(.horizontal)
             NavigationLink(destination: PDFReaderView(book: builtInGuideBook, libraryManager: libraryManager)) {
                 builtInBookRow
+            }
+            .padding(.horizontal)
+
+            sectionLabel("📜 Mensaje de Marsella").padding(.horizontal)
+            NavigationLink(destination: PDFReaderView(book: builtInMarselleBook, libraryManager: libraryManager)) {
+                builtInMarselleBookRow
             }
             .padding(.horizontal)
 
@@ -380,12 +393,22 @@ public struct LearningCenterView: View {
         .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).stroke(Color.white.opacity(0.07), lineWidth: 0.6))
     }
 
-    private var builtInGuideBook: ImportedBook {
+        private var builtInGuideBook: ImportedBook {
         ImportedBook(
             title: "Guía Definitiva del Tarot",
             fileName: "rider_waite_guide.pdf"
         )
     }
+
+    private var builtInMarselleBook: ImportedBook {
+        ImportedBook(
+            title: "El Tarot de Marsella",
+            fileName: "El_Tarot_de_Marsella.pdf",
+            lastReadPage: 1,
+            totalPages: 27
+        )
+    }
+
 
     private var builtInBookRow: some View {
         HStack(spacing: 16) {
@@ -409,9 +432,36 @@ public struct LearningCenterView: View {
         .padding(14)
         .background(Color.tarotPanel)
         .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
+                 .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
             .stroke(Color.tarotGold.opacity(0.3), lineWidth: 0.75))
     }
+
+    private var builtInMarselleBookRow: some View {
+        HStack(spacing: 16) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(LinearGradient(colors: [Color.tarotBurgundy.opacity(0.5), Color.tarotBurgundy.opacity(0.2)],
+                                         startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .frame(width: 56, height: 72)
+                Image(systemName: "book.closed").font(.title2).foregroundStyle(Color.tarotGold)
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text("El Tarot de Marsella")
+                    .font(.system(size: 16, weight: .bold, design: .serif))
+                    .foregroundStyle(Color.tarotIvory)
+                Text("Mazo clásico XVII · 22+56 · Incluido")
+                    .font(.system(size: 11, design: .serif)).foregroundStyle(Color.tarotIvory.opacity(0.55))
+            }
+            Spacer()
+            Image(systemName: "chevron.right").foregroundStyle(Color.tarotIvory.opacity(0.3)).font(.caption)
+        }
+        .padding(14)
+        .background(Color.tarotPanel)
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous)
+            .stroke(Color.tarotBurgundy.opacity(0.5), lineWidth: 0.75))
+    }
+
 
     private var bookGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)], spacing: 16) {

@@ -86,7 +86,7 @@ let package = Package(
             name: "TarotApp",
             dependencies: ["TarotColors", "TarotUI", "TarotDI"],
             path: "TarotApp",
-            exclude: ["Info.plist", "Assets.xcassets"]
+            exclude: ["Info.plist", "Assets.xcassets", "PrivacyInfo.xcprivacy", "TarotMac.icns", "TarotMac.iconset"]
         ),
 
         // MARK: - TarotNotifications

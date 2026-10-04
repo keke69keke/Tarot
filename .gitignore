@@ -10,5 +10,31 @@
 # Agent worktrees (local only)
 .claude/worktrees/
 
+# Agent skills (installed locally via `skills` CLI)
+.agents/
+.claude/skills/
+skills-lock.json
+
 # Xcode user state
 xcuserdata/
+
+# Caches de build y estado de herramientas que no estaban cubiertos
+# (asi no vuelven a colarse en el indice al limpiar)
+.build-ios/
+.build-benchmark/
+.DS_Store
+.mimosa/
+.venv/
+.v2c/
+.video_agent/
+.zwork/
+scratch/
+*backup.json
+process_tarot*.py
+.build-derived/
+.claude/
+._*
+**/._*
+.DS_Store
+**/.DS_Store
+

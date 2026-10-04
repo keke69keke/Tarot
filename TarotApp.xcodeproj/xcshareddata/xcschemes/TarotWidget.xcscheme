@@ -17,6 +17,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "WIDGET000000000000000010"
                BuildableName = "TarotWidget.appex"
+               BlueprintName = "TarotWidget"
                ReferencedContainer = "container:TarotApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,6 +31,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A1000000000000000000000B"
                BuildableName = "Tarot.app"
+               BlueprintName = "Tarot"
                ReferencedContainer = "container:TarotApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -62,6 +64,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "WIDGET000000000000000010"
             BuildableName = "TarotWidget.appex"
+            BlueprintName = "TarotWidget"
             ReferencedContainer = "container:TarotApp.xcodeproj">
          </BuildableReference>
       </RemoteRunnable>
@@ -70,6 +73,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A1000000000000000000000B"
             BuildableName = "Tarot.app"
+            BlueprintName = "Tarot"
             ReferencedContainer = "container:TarotApp.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -97,7 +101,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES"
-      askForAppToLaunch = "Yes"
       launchAutomaticallySubstyle = "2">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
@@ -105,6 +108,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A1000000000000000000000B"
             BuildableName = "Tarot.app"
+            BlueprintName = "Tarot"
             ReferencedContainer = "container:TarotApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

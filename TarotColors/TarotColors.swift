@@ -5,9 +5,9 @@ import SwiftUI
 public struct TarotColors {
     // MARK: - Primary Palette
     public static let ivory = Color(red: 0.95, green: 0.95, blue: 0.90)
-    public static let gold = Color(red: 0.60, green: 0.52, blue: 1.0) // Lavanda Tarot
-    public static let goldHighlight = Color(red: 0.78, green: 0.72, blue: 1.0)
-    public static let goldDeep = Color(red: 0.36, green: 0.28, blue: 0.78)
+    public static let gold = Color(red: 0.843, green: 0.651, blue: 0.247) // Ámbar Tarot (Ash Thorp cálido, sin azul frío)
+    public static let goldHighlight = Color(red: 0.941, green: 0.808, blue: 0.478)
+    public static let goldDeep = Color(red: 0.541, green: 0.392, blue: 0.125)
     public static let burgundy = Color(red: 0.28, green: 0.08, blue: 0.14)
     public static let burgundyDeep = Color(red: 0.18, green: 0.04, blue: 0.08)
 
@@ -25,8 +25,8 @@ public struct TarotColors {
     public static let cardBase = Color(red: 0.11, green: 0.08, blue: 0.19)
 
     // MARK: - Accents & Borders
-    public static let border = Color(red: 0.60, green: 0.52, blue: 1.0).opacity(0.13)
-    public static let borderStrong = Color(red: 0.60, green: 0.52, blue: 1.0).opacity(0.20)
+    public static let border = Color(red: 0.843, green: 0.651, blue: 0.247).opacity(0.13)
+    public static let borderStrong = Color(red: 0.843, green: 0.651, blue: 0.247).opacity(0.20)
     public static let shadow = Color.black.opacity(0.45)
     public static let shadowSoft = Color.black.opacity(0.28)
 

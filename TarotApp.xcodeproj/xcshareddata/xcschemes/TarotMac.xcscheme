@@ -17,6 +17,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "MACOSX000000000000000001"
                BuildableName = "TarotMac.app"
+               BlueprintName = "TarotMac"
                ReferencedContainer = "container:TarotApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -46,6 +47,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "MACOSX000000000000000001"
             BuildableName = "TarotMac.app"
+            BlueprintName = "TarotMac"
             ReferencedContainer = "container:TarotApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -62,6 +64,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "MACOSX000000000000000001"
             BuildableName = "TarotMac.app"
+            BlueprintName = "TarotMac"
             ReferencedContainer = "container:TarotApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

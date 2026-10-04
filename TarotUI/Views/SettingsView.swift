@@ -277,145 +277,227 @@ struct SettingsView: View {
     private var openAISection: some View {
         luxurySection(title: "Inteligencia Artificial", systemImage: "brain.head.profile") {
 
-            // --- Selector de proveedor ---
+            // --- Motor activo: una sola eleccion, plegada ---
+            // Antes se listaban los seis proveedores a la vez, cada uno con su
+            // descripcion, modelo, URL y clave: la seccion era un muro de ajustes.
+            // Ahora se muestra solo el motor elegido y se cambia desde un
+            // desplegable; el resto de campos vive en "Opciones avanzadas".
             VStack(alignment: .leading, spacing: 10) {
-                Text("Proveedor")
+                Text("Motor")
                     .font(.system(size: 11, weight: .bold, design: .serif))
                     .tracking(1.2)
                     .foregroundStyle(Color.tarotGold.opacity(0.85))
                     .textCase(.uppercase)
 
-                ForEach(AIProvider.allCases) { p in
-                    Button {
-                        model.settings.aiProvider = p
-                        // Si cambiamos proveedor, borramos model name para usar el default
-                        if model.settings.aiModelName.isEmpty || !isCustomModel {
-                            model.settings.aiModelName = ""
+                Menu {
+                    ForEach(AIProvider.allCases) { p in
+                        Button {
+                            model.settings.aiProvider = p
+                            if model.settings.aiModelName.isEmpty || !isCustomModel {
+                                model.settings.aiModelName = ""
+                            }
+                            model.persistSettings()
+                        } label: {
+                            if model.settings.aiProvider == p {
+                                Label(p.displayName, systemImage: "checkmark")
+                            } else {
+                                Text(p.displayName)
+                            }
                         }
+                    }
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: model.settings.aiProvider.systemImage)
+                            .font(.system(size: 14, weight: .light))
+                            .frame(width: 22)
+                            .foregroundStyle(Color.tarotGold)
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(model.settings.aiProvider.displayName)
+                                .font(.system(size: 13, weight: .semibold, design: .serif))
+                                .foregroundStyle(Color.tarotIvory)
+                            Text(model.settings.aiProvider.hint)
+                                .font(.system(size: 10, design: .serif))
+                                .foregroundStyle(Color.tarotIvory.opacity(0.45))
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.system(size: 11, weight: .light))
+                            .foregroundStyle(Color.tarotIvory.opacity(0.45))
+                    }
+                    .padding(12)
+                    .background(Color.white.opacity(0.05))
+                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(Color.tarotGold.opacity(0.22), lineWidth: 0.8)
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+
+            // --- Estado del motor elegido: por que responde o por que no ---
+            estadoDelMotor
+
+            // --- Seguridad: donde vive la clave ---
+            if !model.settings.aiProvider.isLocal {
+                seguridadDeLaClave
+            }
+
+            // --- Opciones avanzadas, plegadas ---
+            DisclosureGroup {
+                VStack(alignment: .leading, spacing: 16) {
+                    campoAvanzado(
+                        titulo: "Modelo",
+                        ayuda: "por defecto: \(model.settings.aiProvider.defaultModel)",
+                        texto: $model.settings.aiModelName,
+                        placeholder: model.settings.aiProvider.defaultModel,
+                        esURL: false
+                    )
+                    campoAvanzado(
+                        titulo: "URL base",
+                        ayuda: model.settings.aiProvider.defaultBaseURL.isEmpty
+                            ? "sin valor por defecto"
+                            : "por defecto: \(model.settings.aiProvider.defaultBaseURL)",
+                        texto: $model.settings.aiBaseURL,
+                        placeholder: model.settings.aiProvider.defaultBaseURL.isEmpty ? "https://…" : model.settings.aiProvider.defaultBaseURL,
+                        esURL: true
+                    )
+                    Text("Se añade /v1/chat/completions automaticamente.")
+                        .font(.system(size: 9, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.30))
+                }
+                .padding(.top, 10)
+            } label: {
+                Text("Opciones avanzadas")
+                    .font(.system(size: 12, weight: .semibold, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.85))
+            }
+            .tint(Color.tarotGold)
+        }
+    }
+
+    /// Explica en una linea por que el motor elegido responde o no.
+    @ViewBuilder
+    private var estadoDelMotor: some View {
+        let p = model.settings.aiProvider
+        HStack(alignment: .top, spacing: 8) {
+            Image(systemName: p == .apple ? "lock.shield.fill" : (p.isLocal ? "house.circle.fill" : "lock.circle.fill"))
+                .font(.caption)
+                .foregroundStyle(Color.tarotGold.opacity(0.85))
+            VStack(alignment: .leading, spacing: 2) {
+                if p == .apple {
+                    Text("Apple Intelligence se ejecuta en este dispositivo.")
+                        .font(.system(size: 10, weight: .semibold, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.80))
+                    Text(estadoAppleTexto)
+                        .font(.system(size: 10, design: .serif))
+                        .foregroundStyle(ArcanaIntelligenceRouter.appleAvailable ? Color.tarotGold : Color.tarotIvory.opacity(0.50))
+                } else if p.isLocal {
+                    Text("Proveedor local — sin clave y sin salir del equipo. Asegurate de tener \(p.displayName) corriendo.")
+                        .font(.system(size: 10, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.50))
+                } else {
+                    Text("La clave se guarda cifrada en el Llavero del dispositivo, nunca en texto plano.")
+                        .font(.system(size: 10, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.50))
+                }
+            }
+        }
+        .padding(10)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(Color.tarotGold.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+    }
+
+    /// Estado real de Apple Intelligence, para que se pueda diagnosticar.
+    private var estadoAppleTexto: String {
+        if ArcanaIntelligenceRouter.appleAvailable {
+            return "Disponible y listo."
+        }
+        #if canImport(FoundationModels)
+        if #available(iOS 26.0, macOS 26.0, *) {
+            if let motivo = AppleArcanaModel.unavailableReason {
+                return "No disponible: \(motivo)."
+            }
+        }
+        return "No disponible en este dispositivo o version del sistema."
+        #else
+        return "No disponible: el sistema no expone Foundation Models."
+        #endif
+    }
+
+    /// Seguridad de la clave: estado visible y borrado explicito.
+    private var seguridadDeLaClave: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Clave de API")
+                .font(.system(size: 12, weight: .semibold, design: .serif))
+                .foregroundStyle(Color.tarotIvory)
+
+            SecureField("sk-… / gsk_… / tu clave", text: $model.settings.aiApiKey)
+                .font(.system(size: 12, design: .monospaced))
+                .foregroundStyle(Color.tarotIvory)
+                .autocorrectionDisabled()
+                #if os(iOS)
+                .textInputAutocapitalization(.never)
+                #endif
+                .padding(10)
+                .background(Color.white.opacity(0.05))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.tarotGold.opacity(0.20), lineWidth: 0.75))
+                .onChange(of: model.settings.aiApiKey) { _ in model.persistSettings() }
+
+            HStack(spacing: 6) {
+                Image(systemName: model.settings.aiApiKey.isEmpty ? "key.slash" : "checkmark.shield.fill")
+                    .font(.caption)
+                    .foregroundStyle(model.settings.aiApiKey.isEmpty ? Color.tarotIvory.opacity(0.40) : Color.tarotGold)
+                Text(model.settings.aiApiKey.isEmpty
+                     ? "Sin clave guardada."
+                     : "Clave guardada cifrada en el Llavero del dispositivo.")
+                    .font(.system(size: 10, design: .serif))
+                    .foregroundStyle(model.settings.aiApiKey.isEmpty ? Color.tarotIvory.opacity(0.40) : Color.tarotGold)
+
+                Spacer()
+
+                if !model.settings.aiApiKey.isEmpty {
+                    Button {
+                        model.settings.aiApiKey = ""
                         model.persistSettings()
                     } label: {
-                        HStack(spacing: 10) {
-                            Image(systemName: p.systemImage)
-                                .font(.system(size: 13, weight: .light))
-                                .frame(width: 22)
-                                .foregroundStyle(model.settings.aiProvider == p ? Color.tarotGold : Color.tarotIvory.opacity(0.45))
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text(p.displayName)
-                                    .font(.system(size: 13, weight: model.settings.aiProvider == p ? .semibold : .regular, design: .serif))
-                                    .foregroundStyle(model.settings.aiProvider == p ? Color.tarotIvory : Color.tarotIvory.opacity(0.65))
-                                Text(p.hint)
-                                    .font(.system(size: 10, design: .serif))
-                                    .foregroundStyle(Color.tarotIvory.opacity(0.38))
-                            }
-                            Spacer()
-                            if model.settings.aiProvider == p {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .font(.system(size: 16, weight: .light))
-                                    .foregroundStyle(Color.tarotGold)
-                            }
-                        }
-                        .padding(.vertical, 6)
-                        .contentShape(Rectangle())
+                        Text("Borrar")
+                            .font(.system(size: 10, weight: .semibold, design: .serif))
+                            .foregroundStyle(Color.tarotBurgundy)
                     }
                     .buttonStyle(.plain)
                 }
             }
+        }
+    }
 
-            Divider().overlay(Color.tarotGold.opacity(0.12))
-
-            // --- Modelo (editable) ---
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
-                    Text("Modelo")
-                        .font(.system(size: 12, weight: .semibold, design: .serif))
-                        .foregroundStyle(Color.tarotIvory)
-                    Text("· por defecto: \(model.settings.aiProvider.defaultModel)")
-                        .font(.system(size: 10, design: .serif))
-                        .foregroundStyle(Color.tarotIvory.opacity(0.38))
-                }
-                TextField(model.settings.aiProvider.defaultModel, text: $model.settings.aiModelName)
-                    .font(.system(size: 12, design: .monospaced))
+    /// Campo de las opciones avanzadas, con estilo coherente.
+    private func campoAvanzado(titulo: String, ayuda: String, texto: Binding<String>, placeholder: String, esURL: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
+                Text(titulo)
+                    .font(.system(size: 12, weight: .semibold, design: .serif))
                     .foregroundStyle(Color.tarotIvory)
-                    .autocorrectionDisabled()
-                    #if os(iOS)
-                    .textInputAutocapitalization(.never)
-                    #endif
-                    .padding(10)
-                    .background(Color.white.opacity(0.05))
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.tarotGold.opacity(0.20), lineWidth: 0.75))
-                    .onChange(of: model.settings.aiModelName) { _ in model.persistSettings() }
-            }
-
-            // --- URL base (solo para Personalizado + opcional para el resto) ---
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 6) {
-                    Text("URL base")
-                        .font(.system(size: 12, weight: .semibold, design: .serif))
-                        .foregroundStyle(Color.tarotIvory)
-                    if !model.settings.aiProvider.defaultBaseURL.isEmpty {
-                        Text("· por defecto: \(model.settings.aiProvider.defaultBaseURL)")
-                            .font(.system(size: 9, design: .serif))
-                            .foregroundStyle(Color.tarotIvory.opacity(0.35))
-                            .lineLimit(1)
-                    }
-                }
-                TextField(model.settings.aiProvider.defaultBaseURL.isEmpty ? "https://…" : model.settings.aiProvider.defaultBaseURL, text: $model.settings.aiBaseURL)
-                    .font(.system(size: 12, design: .monospaced))
-                    .foregroundStyle(Color.tarotIvory)
-                    .autocorrectionDisabled()
-                    #if os(iOS)
-                    .textInputAutocapitalization(.never)
-                    .keyboardType(.URL)
-                    #endif
-                    .padding(10)
-                    .background(Color.white.opacity(0.05))
-                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.tarotGold.opacity(0.20), lineWidth: 0.75))
-                    .onChange(of: model.settings.aiBaseURL) { _ in model.persistSettings() }
-
-                Text("Se añade /v1/chat/completions automáticamente.")
+                Text("· \(ayuda)")
                     .font(.system(size: 9, design: .serif))
-                    .foregroundStyle(Color.tarotIvory.opacity(0.30))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.35))
+                    .lineLimit(1)
             }
-
-            // --- API Key (oculta si es local) ---
-            if !model.settings.aiProvider.isLocal {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("API Key")
-                        .font(.system(size: 12, weight: .semibold, design: .serif))
-                        .foregroundStyle(Color.tarotIvory)
-                    SecureField("sk-… / gsk_… / tu clave", text: $model.settings.aiApiKey)
-                        .font(.system(size: 12, design: .monospaced))
-                        .foregroundStyle(Color.tarotIvory)
-                        .autocorrectionDisabled()
-                        #if os(iOS)
-                        .textInputAutocapitalization(.never)
-                        #endif
-                        .padding(10)
-                        .background(Color.white.opacity(0.05))
-                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                        .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.tarotGold.opacity(0.20), lineWidth: 0.75))
-                        .onChange(of: model.settings.aiApiKey) { _ in model.persistSettings() }
-
-                    if !model.settings.aiApiKey.isEmpty {
-                        HStack(spacing: 6) {
-                            Image(systemName: "checkmark.circle.fill").font(.caption).foregroundStyle(Color.tarotGold)
-                            Text("Clave configurada").font(.caption).foregroundStyle(Color.tarotGold)
-                        }
-                    }
-                }
-            } else {
-                HStack(spacing: 6) {
-                    Image(systemName: "house.circle.fill").font(.caption).foregroundStyle(Color.tarotGold.opacity(0.8))
-                    Text("Proveedor local — no necesita API key. Asegúrate de tener \(model.settings.aiProvider.displayName) corriendo.")
-                        .font(.system(size: 10, design: .serif))
-                        .foregroundStyle(Color.tarotIvory.opacity(0.50))
-                }
+            TextField(placeholder, text: texto)
+                .font(.system(size: 12, design: .monospaced))
+                .foregroundStyle(Color.tarotIvory)
+                .autocorrectionDisabled()
+                #if os(iOS)
+                .textInputAutocapitalization(.never)
+                #endif
+                .keyboardType(esURL ? .URL : .default)
                 .padding(10)
-                .background(Color.tarotGold.opacity(0.06))
+                .background(Color.white.opacity(0.05))
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-            }
+                .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.tarotGold.opacity(0.20), lineWidth: 0.75))
+                .onChange(of: texto.wrappedValue) { _ in model.persistSettings() }
         }
     }
 

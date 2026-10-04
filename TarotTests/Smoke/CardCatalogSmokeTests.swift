@@ -40,8 +40,9 @@ final class CardCatalogSmokeTests: XCTestCase {
         let cards = repo.allCards()
         for card in cards {
             let cleanName = card.imageName.replacingOccurrences(of: ".png", with: "")
-            let url = Bundle.tarotContent.url(forResource: cleanName, withExtension: "png")
-            XCTAssertNotNil(url, "La imagen \(cleanName).png debe existir en el bundle TarotContent")
+            // El arte puede estar en HEIC (mas ligero) o en PNG heredado.
+            let url = ["png", "heic"].compactMap { Bundle.tarotContent.url(forResource: cleanName, withExtension: $0) }.first
+            XCTAssertNotNil(url, "La imagen \(cleanName) (.heic/.png) debe existir en el bundle TarotContent")
             if let url {
                 let imageData = try Data(contentsOf: url)
                 XCTAssertGreaterThan(
@@ -58,8 +59,8 @@ final class CardCatalogSmokeTests: XCTestCase {
         let cards = repo.allCards()
         for card in cards {
             let helloName = "helloKitty_\(card.imageName)"
-            let url = Bundle.tarotContent.url(forResource: helloName, withExtension: "png")
-            XCTAssertNotNil(url, "La imagen \(helloName).png debe existir en el bundle TarotContent para el mazo Hello Kitty")
+            let url = ["png", "heic"].compactMap { Bundle.tarotContent.url(forResource: helloName, withExtension: $0) }.first
+            XCTAssertNotNil(url, "La imagen \(helloName) (.heic/.png) debe existir en el bundle TarotContent para el mazo Hello Kitty")
         }
     }
 

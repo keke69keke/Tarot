@@ -12,24 +12,15 @@ struct DreamJournalView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                StarfieldBackgroundView(starCount: 90)
-                AmbientBackgroundView().opacity(0.4)
 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 32) {
                         // Header
-                        VStack(alignment: .leading, spacing: 12) {
-                            EyebrowLabel(text: "MEMORIAS ONÍRICAS")
-                            Text("El Oráculo de los Sueños")
-                                .font(.system(size: 32, weight: .bold, design: .serif))
-                                .foregroundStyle(Color.tarotIvory)
-                            Text("Donde el inconsciente habla en símbolos y el tarot traduce su misterio.")
-                                .font(.system(size: 15, weight: .regular, design: .serif))
-                                .foregroundStyle(Color.tarotIvory.opacity(0.55))
-                                .lineSpacing(4)
-                        }
-                        .padding(.horizontal, 4)
-                        .padding(.top, 12)
+                        LuxuryPageHeader(
+                            eyebrow: "MEMORIAS ONÍRICAS",
+                            title: "El Oráculo de los Sueños",
+                            subtitle: "Donde el inconsciente habla en símbolos y el tarot traduce su misterio."
+                        )
 
                         // Dream List
                         if viewModel.entries.isEmpty {
@@ -71,6 +62,7 @@ struct DreamJournalView: View {
             .onAppear {
                 viewModel.reload(using: container.dreams)
             }
+            .tarotNightBackground()
         }
     }
 
@@ -82,6 +74,7 @@ struct DreamJournalView: View {
             }
             Text("Tu mapa onírico está vacío")
                 .font(.system(size: 18, weight: .medium, design: .serif))
+                .multilineTextAlignment(.center)
                 .foregroundStyle(Color.tarotIvory.opacity(0.7))
             Text("Registra tus sueños para descubrir los hilos que los unen con tu destino.")
                 .font(.system(size: 14, design: .serif))

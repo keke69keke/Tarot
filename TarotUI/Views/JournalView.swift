@@ -40,12 +40,12 @@ struct JournalView: View {
                 }
                 .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewMode)
             }
-            .background(StarfieldBackgroundView(starCount: 90))
             .navigationTitle(TarotStrings.journalTitle.localized)
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.clear, for: .navigationBar)
             #endif
+            .tarotNightBackground()
         }
     }
 
@@ -57,6 +57,11 @@ struct JournalView: View {
             } else {
                 ScrollView(.vertical, showsIndicators: false) {
                     LazyVStack(spacing: 20) {
+                        LuxuryPageHeader(
+                            eyebrow: "Diario",
+                            title: TarotStrings.journalTitle.localized
+                        )
+
                         ForEach(model.entries) { entry in
                             NavigationLink {
                                 JournalDetail(
@@ -123,7 +128,7 @@ struct JournalView: View {
             Text(entry.spread.drawnCards.map { $0.card.name }.joined(separator: "  ·  "))
                 .font(.system(size: 13, weight: .regular, design: .serif))
                 .foregroundStyle(Color.tarotIvory.opacity(0.75))
-                .lineLimit(1)
+                .lineLimit(2)
                 .tracking(0.1)
                 .truncationMode(.tail)
         }
@@ -131,10 +136,20 @@ struct JournalView: View {
         .background(
             RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous)
                 .fill(Color.white.opacity(0.03))
-                .background(RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous).fill(.ultraThinMaterial).opacity(0.3))
-                .overlay(RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous).stroke(Color.white.opacity(0.06), lineWidth: 0.8))
+                .background(
+                    RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous)
+                        .fill(.ultraThinMaterial)
+                        .opacity(0.4)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous)
+                        .stroke(
+                            LinearGradient(colors: [.tarotGold.opacity(0.2), .clear, .tarotGold.opacity(0.2)], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            lineWidth: 0.8
+                        )
+                )
         )
-        .shadow(color: Color.black.opacity(0.1), radius: 12, x: 0, y: 6)
+        .shadow(color: Color.black.opacity(0.2), radius: 12, x: 0, y: 6)
     }
 
     private var mapContent: some View {

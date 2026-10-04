@@ -8,12 +8,13 @@ struct CardDetailView: View {
     let activeDeck: DeckType
     let cardBackDesign: CardBackDesign
     @State private var orientation: CardOrientation
+    @State private var showAIDeepDive = false
 
     private var currentInterpretation: Interpretation {
         repository.interpretation(for: card, position: nil, orientation: orientation)
     }
 
-    private let orderedAspectKeys = ["Amor", "Economía", "Salud", "Carrera"]
+    private let orderedAspectKeys = ["Amor", "Economía", "Salud", "Carrera", "Espiritualidad"]
 
     init(drawn: DrawnCard, repository: any CardRepository, activeDeck: DeckType = .riderWaite, cardBackDesign: CardBackDesign = .classic) {
         self.card = drawn.card
@@ -59,7 +60,7 @@ struct CardDetailView: View {
                 VStack(alignment: .leading, spacing: 6) {
                     Text(card.name)
                         .font(.title.bold())
-                    HStack(spacing: 10) {
+                    HStack(alignment: .firstTextBaseline, spacing: 10) {
                         if let number = card.number, !number.isEmpty {
                             Text(number)
                                 .font(.subheadline)
@@ -77,6 +78,55 @@ struct CardDetailView: View {
                     }
                 }
 
+                // AI Deep Dive Hero Button
+                Button {
+                    showAIDeepDive = true
+                } label: {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(LinearGradient(
+                                    colors: [Color.tarotGold, Color.tarotGoldDeep],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                ))
+                                .frame(width: 44, height: 44)
+                            Image(systemName: "sparkles")
+                                .font(.title3.weight(.bold))
+                                .foregroundStyle(.white)
+                        }
+                        VStack(alignment: .leading, spacing: 3) {
+                            HStack(spacing: 6) {
+                                Text("Profundizar con Arcana IA")
+                                    .font(.headline)
+                                    .foregroundStyle(Color.tarotIvory)
+                                Image(systemName: "arrow.up.right.circle.fill")
+                                    .font(.caption)
+                                    .foregroundStyle(Color.tarotGold)
+                            }
+                            Text("Análisis esotérico, psicológico y oracular personalizado")
+                                .font(.caption)
+                                .foregroundStyle(Color.tarotIvory.opacity(0.65))
+                        }
+                        Spacer()
+                    }
+                    .padding(14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .fill(LinearGradient(
+                                colors: [Color.tarotGold.opacity(0.15), Color.tarotBurgundy.opacity(0.12)],
+                                startPoint: .topLeading, endPoint: .bottomTrailing
+                            ))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .stroke(LinearGradient(
+                                colors: [Color.tarotGold.opacity(0.6), Color.tarotGold.opacity(0.2)],
+                                startPoint: .topLeading, endPoint: .bottomTrailing
+                            ), lineWidth: 1)
+                    )
+                }
+                .buttonStyle(.plain)
+
                 // Orientation toggle
                 Picker("Orientación", selection: $orientation) {
                     Text("Al derecho").tag(CardOrientation.upright)
@@ -84,13 +134,16 @@ struct CardDetailView: View {
                 }
                 .pickerStyle(.segmented)
 
-// Quick aspects summary
+                // Quick aspects summary
                 if !currentInterpretation.aspects.isEmpty {
                     CardAspectSummaryView(interpretation: currentInterpretation)
                 }
 
                 // Esoteric wisdom panel (unified card info)
                 CardWisdomView(card: card)
+
+                // Lectura ampliada: numerología, elemento, simbolismo y planos
+                CardDeepDiveView(card: card, orientation: orientation)
 
                 // Book content from OCR (Fiebig & Bürger)
                 if let bookContent = card.bookContent, !bookContent.isEmpty {
@@ -145,10 +198,20 @@ struct CardDetailView: View {
             }
             .padding()
         }
+        .sheet(isPresented: $showAIDeepDive) {
+            CardAIDeepDiveSheet(card: card, orientation: orientation, repository: repository)
+        }
         .navigationTitle(card.name)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        // Una vista empujada sustituye el contenido del stack y NO hereda el
+        // fondo del padre. `CardDetailView` se abre desde la biblioteca, el
+        // diario y la lectura: sin esto caia al negro del sistema (0,0,0) con
+        // siete franjas negras. Se usa la base solida (sin el cielo animado)
+        // para no montar un `TimelineView` extra en cada detalle. Verificado
+        // midiendo la captura.
+        .tarotNightBase()
     }
 
     private func aspectKeys(in interpretation: Interpretation) -> [String] {

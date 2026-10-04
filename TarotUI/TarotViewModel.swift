@@ -5,6 +5,9 @@ import TarotDI
 import Combine
 
 @MainActor final class TarotViewModel: ObservableObject {
+    /// Tabs obligatorios reexportados para la UI (Settings).
+    static let mandatoryTabs: [AppTab] = AppTab.mandatoryTabs
+
     @Published var selectedSpread: SpreadType = .threeCard {
         didSet {
             if oldValue != selectedSpread {
@@ -108,25 +111,52 @@ import Combine
         return selectedSpread.positions
     }
 
+    /// Reconstruye la tirada tras el reparto garantizando:
+    /// 1) el significador ocupa la posición 0 cuando está activo,
+    /// 2) las cartas elegidas (first/second) caen en sus slots reales,
+    /// 3) cada DrawnCard i mapea EXACTAMENTE a positions[i] y el conteo
+    ///    final coincide con el de posiciones (p. ej. 12 casas, 10 sefirot).
+    /// Antes se insertaban cartas a mitad de lista y se descartaba el resto,
+    /// dejando tiradas sin todas sus posiciones ("algunas tiradas no funcionan").
     private func applyChosenFirstCards(to drawn: [DrawnCard], positions: [SpreadPosition]) -> [DrawnCard] {
         let chosen = [firstCardChoice, secondCardChoice].compactMap { $0 }
-        guard !chosen.isEmpty else { return drawn }
-
         let hasSigAtFront: Bool = {
             guard useSignificator, let sig = significatorCard, !drawn.isEmpty else { return false }
             return drawn.first?.card.id == sig.id
         }()
-        let offset = hasSigAtFront ? 1 : 0
+        let chosenIDs = Set(chosen.map { $0.id })
 
-        var placed = drawn.filter { dc in !chosen.contains { $0.id == dc.card.id } }
-        for (slot, card) in chosen.enumerated() {
-            let targetIndex = offset + slot
-            let pos = positions.indices.contains(slot)
-                ? positions[slot]
-                : SpreadPosition(name: "Carta \(slot + 1)", displayName: "Carta \(slot + 1)")
-            placed.insert(DrawnCard(card: card, position: pos, orientation: .upright), at: min(targetIndex, placed.count))
+        // 1) El significador ya viene al frente desde draw(); si no, colócalo.
+        var pool = drawn
+        if useSignificator, let sig = significatorCard, !pool.isEmpty {
+            if let idx = pool.firstIndex(where: { $0.card.id == sig.id }), idx != 0 {
+                let entry = pool.remove(at: idx)
+                pool.insert(entry, at: 0)
+            }
         }
-        return placed
+
+        // 2) Fuera las cartas elegidas: se recolocan en sus slots explícitos.
+        pool.removeAll { chosenIDs.contains($0.card.id) }
+
+        // 3) Ensamblado determinista: slot 0 = significador (si aplica),
+        //    slots siguientes = elecciones del usuario, resto del mazo.
+        var queue = pool
+        var result: [DrawnCard] = []
+        for (slot, position) in positions.enumerated() {
+            if slot == 0, useSignificator, let sig = significatorCard {
+                result.append(DrawnCard(card: sig, position: position, orientation: .upright))
+                continue
+            }
+            let slotIndex = slot - (hasSigAtFront ? 1 : 0)
+            if slotIndex >= 0, slotIndex < chosen.count {
+                result.append(DrawnCard(card: chosen[slotIndex], position: position, orientation: .upright))
+            } else if !queue.isEmpty {
+                result.append(queue.removeFirst())
+            } else {
+                break
+            }
+        }
+        return result
     }
 
     func clearChosenFirstCards() {

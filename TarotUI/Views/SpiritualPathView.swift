@@ -13,18 +13,11 @@ struct SpiritualPathView: View {
 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 32) {
-                        VStack(alignment: .leading, spacing: 12) {
-                            EyebrowLabel(text: "ASCENSIÓN ESPIRITUAL")
-                            Text("El Camino del Maestro")
-                                .font(.system(size: 32, weight: .bold, design: .serif))
-                                .foregroundStyle(Color.tarotIvory)
-                            Text("Recorre senderos de autodescubrimiento. Cada hito completado es un paso hacia la maestría de tu propio espejo.")
-                                .font(.system(size: 15, weight: .regular, design: .serif))
-                                .foregroundStyle(Color.tarotIvory.opacity(0.55))
-                                .lineSpacing(4)
-                        }
-                        .padding(.horizontal, 4)
-                        .padding(.top, 12)
+                        LuxuryPageHeader(
+                            eyebrow: "ASCENSIÓN ESPIRITUAL",
+                            title: "El Camino del Maestro",
+                            subtitle: "Recorre senderos de autodescubrimiento. Cada hito completado es un paso hacia la maestría de tu propio espejo."
+                        )
 
                         LazyVStack(spacing: 24) {
                             ForEach(viewModel.paths, id: \.id) { path in
@@ -43,6 +36,7 @@ struct SpiritualPathView: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .tarotNightBackground()
         }
     }
 }

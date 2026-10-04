@@ -741,11 +741,15 @@ private func moonPhaseCard(index: Int, phase: String, yOffset: CGFloat) -> some 
         let isRevealed = revealedIndices.contains(index)
 
         return AnyView(Button {
-            TarotAudioService.shared.playCardFlip()
-            if !isRevealed {
+            if isRevealed {
+                // Ya revelada: abre el detalle con significado (haptic ligero, sin sonido de volteo).
+                HapticManager.shared.triggerLight()
+                onSelectCard(drawn)
+            } else {
+                // Boca abajo: solo revela, conservando su animación y sonido de volteo.
+                TarotAudioService.shared.playCardFlip()
                 onRevealCard?(index)
             }
-            onSelectCard(drawn)
         } label: {
             VStack(spacing: 6) {
                 ZStack {
@@ -828,10 +832,12 @@ private func moonPhaseCard(index: Int, phase: String, yOffset: CGFloat) -> some 
         .accessibilityHint(isRevealed ? "Toca para ver detalles" : "Toca para revelar")
         .accessibilityAddTraits(.isButton)
         .contextMenu {
-            Button {
-                onSelectCard(drawn)
-            } label: {
-                Label("Ver detalles", systemImage: "eye")
+            if isRevealed {
+                Button {
+                    onSelectCard(drawn)
+                } label: {
+                    Label("Ver detalles", systemImage: "eye")
+                }
             }
             Button {
                 onReplaceCard?(index, drawn.position)

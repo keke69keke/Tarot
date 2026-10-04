@@ -25,101 +25,146 @@ public struct ChatMessage: Identifiable, Equatable {
     }
 }
 
-// MARK: - AI Chat Service
+// MARK: - AI Chat Service (multi-provider)
 
 @MainActor
 final class TarotAIChatService: ObservableObject {
     @Published var messages: [ChatMessage] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var lastEngineName: String = ArcanaIntelligenceRouter.preferredEngineName
 
     private var apiKey: String
+    private var provider: AIProvider
+    private var baseURL: String
+    private var modelName: String
     private let repository: any CardRepository
+
+    /// URL efectiva del endpoint (sin trailing slash).
+    private var effectiveBaseURL: String {
+        let raw = baseURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        let resolved = raw.isEmpty ? provider.defaultBaseURL : raw
+        return resolved.hasSuffix("/") ? String(resolved.dropLast()) : resolved
+    }
+
+    /// Modelo efectivo enviado a la API.
+    private var effectiveModel: String {
+        let raw = modelName.trimmingCharacters(in: .whitespacesAndNewlines)
+        return raw.isEmpty ? provider.defaultModel : raw
+    }
 
     private let systemPrompt = """
     Eres "Arcana", una lectora de tarot experta con 30 años de experiencia en el Tarot Rider-Waite \
-    y sus 78 cartas (22 Arcanos Mayores y 56 Menores). Respondes siempre en español.
+    y sus 78 cartas. No eres una simple IA, eres un puente entre lo consciente y el inconsciente. Respondes siempre en español.
+
+    ## Filosofía de Interpretación
+    - No te limites a definir la carta; conecta el arquetipo con la psique del consultante.
+    - Integra la visión de Jung (Sombra, Anima/Animus, Sincronicidad) y la Cábala Hermética.
+    - Si el consultante pregunta por una tirada, analiza la *sintaxis* de las cartas: cómo una modifica a la otra y qué elemento (Fuego, Agua, Aire, Tierra) domina la lectura.
+    - Distingues siempre entre carta derecha e invertida, viendo la inversión no como "negativa", sino como energía bloqueada, internalizada o en proceso de transmutación.
 
     ## Cómo respondes
-    - Tono: cálido, misterioso y espiritual, pero claro y concreto. Nada de relleno vacío.
-    - Cuando mencionas una carta, describes su simbolismo visual (figuras, colores, elementos del arcano) \
-    y luego lo conectas con la situación del usuario.
-    - Distingues siempre entre carta derecha e invertida cuando es relevante.
-    - Si el usuario pide una lectura, primero puedes hacer UNA pregunta clarificadora breve; \
-    si ya hay suficiente contexto, interpretas directamente.
-    - Estructura las lecturas en párrafos cortos; usa negritas (**carta**) para los nombres de cartas \
-    y emojis de luna/estrellas/cartas con moderación (máximo 2 por respuesta).
-    - Cierras con una pregunta abierta que invite a la reflexión, sin repetir siempre la misma fórmula.
-    - Máximo 3 párrafos salvo que pidan detalle.
+    - Tono: Cálido, misterioso y espiritual, pero con una claridad quirúrgica. Evita el lenguaje genérico de "el universo te dice"; prefiere "la energía de esta carta sugiere...".
+    - Simbolismo Visual: Describe detalles específicos de la ilustración (colores, gestos, elementos) y conéctalos con la situación real del usuario.
+    - Estructura: Párrafos cortos. Usa negritas (**Carta**) para los nombres. Emojis de luna/estrellas/cartas con moderación (máximo 2 por respuesta).
+    - Cierre: Termina siempre con una pregunta oracular que obligue al usuario a mirar hacia adentro, no una fórmula repetitiva.
+    - Longitud: Máximo 3 párrafos salvo que pidan un análisis exhaustivo.
 
     ## Límites
-    - El tarot es una herramienta de reflexión y autoconocimiento, no predice el futuro ni sustituye \
-    consejo médico, legal o financiero. Si el usuario atraviesa una crisis grave, responde con \
-    empatía y sugiere con delicadeza buscar apoyo profesional.
-    - No inventas cartas que no existen en el mazo Rider-Waite ni datos ocultos del usuario.
-    - No tienes acceso a internet; tu conocimiento es el del tarot tradicional.
+    - El tarot es una herramienta de reflexión y autoconocimiento, no predice el futuro fatalmente ni sustituye consejo médico, legal o financiero.
+    - Si el usuario atraviesa una crisis grave, responde con empatía profunda y sugiere buscar apoyo profesional.
+    - No inventas cartas ni datos; te ciñes al mazo Rider-Waite y la sabiduría esotérica tradicional.
     """
 
-    init(apiKey: String, repository: any CardRepository) {
+    init(apiKey: String, provider: AIProvider = .openAI, baseURL: String = "", modelName: String = "", repository: any CardRepository) {
         self.apiKey = apiKey
+        self.provider = provider
+        self.baseURL = baseURL
+        self.modelName = modelName
         self.repository = repository
     }
 
-    func updateAPIKey(_ key: String) {
-        self.apiKey = key
+    func updateAPIKey(_ key: String) { self.apiKey = key }
+
+    /// Propaga cambios en caliente desde Ajustes sin recrear el servicio.
+    func updateProvider(_ newProvider: AIProvider, baseURL: String, modelName: String, apiKey: String) {
+        self.provider = newProvider
+        self.baseURL = baseURL
+        self.modelName = modelName
+        self.apiKey = apiKey
+        lastEngineName = newProvider.isLocal
+            ? "\(newProvider.displayName)"
+            : "\(newProvider.displayName) · \(effectiveModel)"
     }
 
     func send(userMessage: String) async {
         let trimmed = userMessage.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !isLoading else { return }
-        let userMsg = ChatMessage(role: .user, content: trimmed)
-        messages.append(userMsg)
+        messages.append(ChatMessage(role: .user, content: trimmed))
         isLoading = true
         errorMessage = nil
 
         do {
-            let reply = try await callOpenAI(userMessage: userMessage)
+            let reply = try await callAI(userMessage: trimmed)
             messages.append(ChatMessage(role: .assistant, content: reply))
         } catch {
-            if let chatError = error as? ChatError {
-                errorMessage = chatError.localizedDescription
-            } else {
-                errorMessage = "Error de conexión: \(error.localizedDescription)"
-            }
+            errorMessage = (error as? ChatError)?.localizedDescription
+                ?? "Error de conexión: \(error.localizedDescription)"
         }
         isLoading = false
     }
 
-    func clearHistory() {
-        messages.removeAll()
-    }
+    func clearHistory() { messages.removeAll() }
 
-    private func callOpenAI(userMessage: String) async throws -> String {
+    // MARK: - Router Apple → proveedor configurado → local
+
+    private func callAI(userMessage: String) async throws -> String {
+        // 1) Apple Intelligence on-device (solo para proveedor OpenAI sin URL custom)
+        if provider == .openAI && baseURL.isEmpty && ArcanaIntelligenceRouter.appleAvailable {
+            let history: [ArcanaChatTurn] = messages.dropLast().suffix(12).map {
+                ArcanaChatTurn(role: $0.role == .user ? "user" : "assistant", content: $0.content)
+            }
+            if let appleReply = await ArcanaIntelligenceRouter.tryApple(
+                systemPrompt: systemPrompt, history: history, userMessage: userMessage
+            ) {
+                lastEngineName = appleReply.engine
+                return appleReply.text
+            }
+        }
+
+        // 2) Proveedor local (Ollama / LM Studio): sin API key
+        if provider.isLocal {
+            return try await callOpenAICompatible(userMessage: userMessage)
+        }
+
+        // 3) Proveedor remoto: necesita API key
         guard !apiKey.isEmpty, apiKey != "sk-..." else {
-            // Fallback: local tarot response engine
+            lastEngineName = "Local"
             return try await localTarotResponse(for: userMessage)
         }
+        return try await callOpenAICompatible(userMessage: userMessage)
+    }
 
-        guard let url = URL(string: "https://api.openai.com/v1/chat/completions") else {
+    /// Endpoint `/v1/chat/completions` compatible con OpenAI.
+    private func callOpenAICompatible(userMessage: String) async throws -> String {
+        guard !effectiveBaseURL.isEmpty,
+              let url = URL(string: "\(effectiveBaseURL)/v1/chat/completions") else {
             throw ChatError.serverError(0)
         }
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.timeoutInterval = 45
-        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.timeoutInterval = 60
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if !apiKey.isEmpty { request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization") }
 
-        var history: [[String: String]] = [
-            ["role": "system", "content": systemPrompt]
-        ]
-        // Contexto personal: ayuda a Arcana a personalizar sin pedir datos cada vez
+        var history: [[String: String]] = [["role": "system", "content": systemPrompt]]
         if let name = UserDefaults.standard.string(forKey: "userName"), !name.isEmpty {
             history.append(["role": "system", "content": "El consultante se llama \(name)."])
         }
-        // Solo los últimos 12 mensajes: contexto suficiente sin inflar el costo
         for msg in messages.dropLast().suffix(12) {
             switch msg.role {
-            case .user: history.append(["role": "user", "content": msg.content])
+            case .user:      history.append(["role": "user",      "content": msg.content])
             case .assistant: history.append(["role": "assistant", "content": msg.content])
             default: break
             }
@@ -127,91 +172,53 @@ final class TarotAIChatService: ObservableObject {
         history.append(["role": "user", "content": userMessage])
 
         let body: [String: Any] = [
-            "model": "gpt-4o-mini",
-            "messages": history,
-            "temperature": 0.85,
-            "max_tokens": 600
+            "model": effectiveModel, "messages": history,
+            "temperature": 0.85, "max_tokens": 600
         ]
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
 
         let (data, response) = try await URLSession.shared.data(for: request)
-
-        if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode != 200 {
-            if httpResponse.statusCode == 401 {
-                throw ChatError.invalidAPIKey
-            } else if httpResponse.statusCode == 429 {
-                throw ChatError.rateLimited
-            }
-            throw ChatError.serverError(httpResponse.statusCode)
+        if let http = response as? HTTPURLResponse, http.statusCode != 200 {
+            if http.statusCode == 401 { throw ChatError.invalidAPIKey }
+            if http.statusCode == 429 { throw ChatError.rateLimited }
+            throw ChatError.serverError(http.statusCode)
         }
 
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any],
               let choices = json["choices"] as? [[String: Any]],
               let first = choices.first,
-              let message = first["message"] as? [String: Any],
-              let content = message["content"] as? String else {
+              let msg = first["message"] as? [String: Any],
+              let content = msg["content"] as? String else {
             throw ChatError.parseError
         }
+        lastEngineName = "\(provider.displayName) · \(effectiveModel)"
         return content
     }
 
-    // MARK: - Local Tarot Engine (no API key needed)
-    private func localTarotResponse(for query: String) async throws -> String {
-        // Small artificial delay for realism
-        try await Task.sleep(nanoseconds: 900_000_000)
+    // MARK: - Motor local determinista (sin API)
 
+    private func localTarotResponse(for query: String) async throws -> String {
+        try await Task.sleep(nanoseconds: 900_000_000)
         let q = query.lowercased()
         let allCards = repository.allCards()
 
-        // Check if query mentions a specific card
         if let card = allCards.first(where: { q.contains($0.name.lowercased()) }) {
             let interp = repository.interpretation(for: card, position: nil, orientation: .upright)
-            return """
-            ✨ **\(card.name)** es una carta de gran profundidad. \
-            \(interp.summary)
-
-            🌙 Palabras clave: \(interp.keywords.prefix(5).joined(separator: " · "))
-
-            Recuerda que las cartas son espejos de tu alma interior. ¿Qué resuena más contigo en este momento?
-            """
+            return "✨ **\(card.name)** es una carta de gran profundidad. \(interp.summary)\n\n🌙 Palabras clave: \(interp.keywords.prefix(5).joined(separator: " · "))\n\nRecuerda que las cartas son espejos de tu alma interior. ¿Qué resuena más contigo en este momento?"
         }
 
-        // Draw a random card for general questions
-        guard let randomCard = allCards.randomElement() else {
-            throw ChatError.parseError // Or a more appropriate error
-        }
+        guard let randomCard = allCards.randomElement() else { throw ChatError.parseError }
         let interp = repository.interpretation(for: randomCard, position: nil, orientation: .upright)
 
-        let responses = [
-            """
-            🌟 Las cartas me muestran **\(randomCard.name)** para tu pregunta.
-
-            \(interp.summary)
-
-            ¿Hay algo específico en tu vida sobre lo que quieras explorar con mayor profundidad?
-            """,
-            """
-            ✨ El universo responde con **\(randomCard.name)**.
-
-            \(interp.summary)
-
-            Energías presentes: \(interp.keywords.prefix(4).joined(separator: " · ")). ¿Cómo se relaciona esto con tu situación?
-            """,
-            """
-            🔮 Siento la energía de **\(randomCard.name)** rodeando tu pregunta.
-
-            \(interp.summary)
-
-            Las cartas siempre revelan lo que necesitamos ver, no siempre lo que queremos. ¿Qué te habla esta energía?
-            """
-        ]
-
-        guard let response = responses.randomElement() else {
-            throw ChatError.parseError
-        }
-        return response
+        return [
+            "🌟 Las cartas me muestran **\(randomCard.name)** para tu pregunta.\n\n\(interp.summary)\n\n¿Hay algo específico en tu vida sobre lo que quieras explorar con mayor profundidad?",
+            "✨ El universo responde con **\(randomCard.name)**.\n\n\(interp.summary)\n\nEnergías presentes: \(interp.keywords.prefix(4).joined(separator: " · ")). ¿Cómo se relaciona esto con tu situación?",
+            "🔮 Siento la energía de **\(randomCard.name)** rodeando tu pregunta.\n\n\(interp.summary)\n\nLas cartas siempre revelan lo que necesitamos ver, no siempre lo que queremos. ¿Qué te habla esta energía?"
+        ].randomElement()!
     }
 }
+
+// MARK: - ChatError
 
 enum ChatError: LocalizedError {
     case invalidAPIKey
@@ -221,10 +228,10 @@ enum ChatError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .invalidAPIKey: return "API Key inválida. Ve a Ajustes y verifica tu clave de OpenAI."
-        case .rateLimited: return "Demasiadas consultas. Espera un momento antes de continuar."
-        case .serverError(let code): return "Error del servidor (\(code)). Intenta de nuevo."
-        case .parseError: return "Error al procesar la respuesta. Intenta de nuevo."
+        case .invalidAPIKey:      return "API Key inválida. Ve a Ajustes y verifica tu clave."
+        case .rateLimited:        return "Demasiadas consultas. Espera un momento antes de continuar."
+        case .serverError(let c): return "Error del servidor (\(c)). Intenta de nuevo."
+        case .parseError:         return "Error al procesar la respuesta. Intenta de nuevo."
         }
     }
 }
@@ -233,11 +240,21 @@ enum ChatError: LocalizedError {
 
 public struct TarotChatView: View {
     @StateObject private var service: TarotAIChatService
+    @State private var isShadowMode = false
     @State private var inputText = ""
     @State private var showClearAlert = false
+    @FocusState private var inputFocused: Bool
     @Environment(\.colorScheme) private var colorScheme
 
-    // Suggested questions
+    // Valores vigentes para detectar cambios en caliente desde Ajustes
+    private let apiKey: String
+    private let provider: AIProvider
+    private let baseURL: String
+    private let modelName: String
+
+    // Spread actual para inyectar al contexto
+    private let currentSpread: Spread?
+
     private let suggestions = [
         "¿Qué me dice El Loco?",
         "Necesito una lectura rápida",
@@ -247,25 +264,44 @@ public struct TarotChatView: View {
         "Explícame el significado de La Luna"
     ]
 
-    public init(apiKey: String, repository: any CardRepository) {
-        _service = StateObject(wrappedValue: TarotAIChatService(apiKey: apiKey, repository: repository))
+    public init(apiKey: String, repository: any CardRepository,
+                provider: AIProvider = .openAI, baseURL: String = "", modelName: String = "",
+                currentSpread: Spread? = nil) {
+        self.apiKey = apiKey
+        self.provider = provider
+        self.baseURL = baseURL
+        self.modelName = modelName
+        self.currentSpread = currentSpread
+        _service = StateObject(wrappedValue: TarotAIChatService(
+            apiKey: apiKey, provider: provider, baseURL: baseURL, modelName: modelName,
+            repository: repository
+        ))
     }
 
     public var body: some View {
         NavigationStack {
             ZStack {
-                // Background gradient
-                backgroundGradient
+                Color.clear
 
                 VStack(spacing: 0) {
-                    // Messages list
                     messagesArea
-
-                    // Input bar
+                    if let spread = currentSpread, !spread.drawnCards.isEmpty {
+                        spreadContextBar(spread: spread)
+                    }
                     inputBar
                 }
             }
             .navigationTitle("Arcana IA")
+            .onChange(of: apiKey) { nueva in service.updateAPIKey(nueva) }
+            .onChange(of: provider) { _ in
+                service.updateProvider(provider, baseURL: baseURL, modelName: modelName, apiKey: apiKey)
+            }
+            .onChange(of: baseURL) { _ in
+                service.updateProvider(provider, baseURL: baseURL, modelName: modelName, apiKey: apiKey)
+            }
+            .onChange(of: modelName) { _ in
+                service.updateProvider(provider, baseURL: baseURL, modelName: modelName, apiKey: apiKey)
+            }
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -275,29 +311,32 @@ public struct TarotChatView: View {
                         ZStack {
                             Circle()
                                 .fill(LinearGradient(
-                                    colors: [Color.tarotGold, Color.tarotGoldDeep],
+                                    colors: isShadowMode ? [Color.black, Color.purple] : [Color.tarotGold, Color.tarotGoldDeep],
                                     startPoint: .topLeading, endPoint: .bottomTrailing
                                 ))
                                 .frame(width: 30, height: 30)
-                            Image(systemName: "sparkles")
+                            Image(systemName: isShadowMode ? "moon.stars.fill" : "sparkles")
                                 .font(.caption.weight(.bold))
                                 .foregroundStyle(.white)
+                        }
+                        .onTapGesture {
+                            withAnimation(.spring()) {
+                                isShadowMode.toggle()
+                            }
                         }
                         VStack(alignment: .leading, spacing: 0) {
                             Text("Arcana IA")
                                 .font(.headline)
                                 .foregroundStyle(Color.tarotIvory)
-                            Text(service.isLoading ? "escribiendo..." : "Lectora de Tarot")
+                            Text(service.isLoading ? "escribiendo..." : (isShadowMode ? "Sombra Activa · \(service.lastEngineName)" : "Lectora de Tarot · \(service.lastEngineName)"))
                                 .font(.caption2)
-                                .foregroundStyle(Color.tarotIvory.opacity(0.58))
+                                .foregroundStyle(isShadowMode ? Color.purple : Color.tarotIvory.opacity(0.58))
                         }
                     }
                 }
                 #if os(iOS)
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showClearAlert = true
-                    } label: {
+                    Button { showClearAlert = true } label: {
                         Image(systemName: "trash")
                             .font(.caption)
                             .foregroundStyle(Color.tarotIvory.opacity(0.58))
@@ -312,13 +351,40 @@ public struct TarotChatView: View {
             } message: {
                 Text("¿Borrar todos los mensajes de esta sesión?")
             }
+            .tarotNightBackground()
         }
     }
 
-    // MARK: - Background — morado lujo integrado
+    // MARK: - Barra de contexto: tirada actual
 
-    private var backgroundGradient: some View {
-        StarfieldBackgroundView(starCount: 90)
+    private func spreadContextBar(spread: Spread) -> some View {
+        let cardNames = spread.drawnCards.map { "\($0.card.name)\($0.orientation == .reversed ? " (inv.)" : "")" }
+        let preview = cardNames.prefix(3).joined(separator: " · ")
+        let more = cardNames.count > 3 ? " +\(cardNames.count - 3)" : ""
+
+        return Button {
+            let ctx = "Tengo esta tirada: \(cardNames.joined(separator: ", ")). ¿Puedes interpretarla?"
+            Task { await service.send(userMessage: ctx) }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "rectangle.stack")
+                    .font(.system(size: 11, weight: .light))
+                    .foregroundStyle(Color.tarotGold)
+                Text("Tirada actual: \(preview)\(more)")
+                    .font(.system(size: 11, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.75))
+                    .lineLimit(1)
+                Spacer(minLength: 0)
+                Text("Interpretar →")
+                    .font(.system(size: 10, weight: .semibold, design: .serif))
+                    .foregroundStyle(Color.tarotGold)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(Color.tarotGold.opacity(0.08))
+            .overlay(Rectangle().fill(Color.tarotGold.opacity(0.18)).frame(height: 0.5), alignment: .top)
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Messages Area
@@ -328,12 +394,8 @@ public struct TarotChatView: View {
         ScrollViewReader { proxy in
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 0) {
-                    // Welcome banner if empty
-                    if service.messages.isEmpty {
-                        welcomeBanner
-                    }
+                    if service.messages.isEmpty { welcomeBanner }
 
-                    // Messages
                     ForEach(service.messages) { message in
                         if message.role != .system {
                             MessageBubble(message: message)
@@ -343,7 +405,6 @@ public struct TarotChatView: View {
                         }
                     }
 
-                    // Typing indicator
                     if service.isLoading {
                         TypingIndicator()
                             .padding(.horizontal, 14)
@@ -351,7 +412,6 @@ public struct TarotChatView: View {
                             .id("typing")
                     }
 
-                    // Error message
                     if let error = service.errorMessage {
                         ErrorBanner(message: error)
                             .padding(.horizontal, 14)
@@ -362,16 +422,20 @@ public struct TarotChatView: View {
                 }
                 .padding(.top, 12)
             }
+            #if os(iOS)
+            .scrollDismissesKeyboard(.interactively)
+            #endif
             .onChange(of: service.messages.count) { _ in
-                withAnimation(.easeOut(duration: 0.3)) {
-                    proxy.scrollTo("bottom", anchor: .bottom)
-                }
+                withAnimation(.easeOut(duration: 0.3)) { proxy.scrollTo("bottom", anchor: .bottom) }
             }
             .onChange(of: service.isLoading) { loading in
-                if loading {
-                    withAnimation(.easeOut(duration: 0.3)) {
-                        proxy.scrollTo("typing", anchor: .bottom)
-                    }
+                if loading { withAnimation(.easeOut(duration: 0.3)) { proxy.scrollTo("typing", anchor: .bottom) } }
+            }
+            .onChange(of: inputFocused) { focused in
+                guard focused else { return }
+                Task { @MainActor in
+                    try? await Task.sleep(nanoseconds: 280_000_000)
+                    withAnimation(.easeOut(duration: 0.25)) { proxy.scrollTo("bottom", anchor: .bottom) }
                 }
             }
         }
@@ -381,7 +445,6 @@ public struct TarotChatView: View {
 
     private var welcomeBanner: some View {
         VStack(spacing: 20) {
-            // Icon
             ZStack {
                 Circle()
                     .fill(LinearGradient(
@@ -389,11 +452,9 @@ public struct TarotChatView: View {
                         startPoint: .topLeading, endPoint: .bottomTrailing
                     ))
                     .frame(width: 90, height: 90)
-
                 Circle()
                     .stroke(Color.tarotGoldGradient, lineWidth: 1.5)
                     .frame(width: 90, height: 90)
-
                 Image(systemName: "moon.stars")
                     .font(.system(size: 36, weight: .thin))
                     .foregroundStyle(Color.tarotGoldGradient)
@@ -404,7 +465,6 @@ public struct TarotChatView: View {
                 Text("Arcana IA")
                     .font(.title2.bold())
                     .foregroundStyle(Color.tarotIvory)
-
                 Text("Tu guía de tarot con inteligencia artificial.\nHaz preguntas sobre cartas, tiradas o pide una lectura.")
                     .font(.subheadline)
                     .foregroundStyle(Color.tarotIvory.opacity(0.58))
@@ -472,6 +532,7 @@ public struct TarotChatView: View {
                     .padding(.vertical, 4)
                     .scrollContentBackground(.hidden)
                     .background(Color.clear)
+                    .focused($inputFocused)
             }
             .background(
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
@@ -480,24 +541,15 @@ public struct TarotChatView: View {
                     .overlay(RoundedRectangle(cornerRadius: 22, style: .continuous).stroke(Color.tarotGold.opacity(inputText.isEmpty ? 0.14 : 0.32), lineWidth: 0.9))
             )
 
-            // Send button
-            Button {
-                sendMessage()
-            } label: {
+            Button { sendMessage() } label: {
                 ZStack {
                     if inputText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || service.isLoading {
-                        Circle()
-                            .fill(Color.secondary.opacity(0.20))
-                            .frame(width: 40, height: 40)
+                        Circle().fill(Color.secondary.opacity(0.20)).frame(width: 40, height: 40)
                     } else {
                         Circle()
-                            .fill(LinearGradient(
-                                colors: [Color.tarotGold, Color.tarotGoldDeep],
-                                startPoint: .topLeading, endPoint: .bottomTrailing
-                            ))
+                            .fill(LinearGradient(colors: [Color.tarotGold, Color.tarotGoldDeep], startPoint: .topLeading, endPoint: .bottomTrailing))
                             .frame(width: 40, height: 40)
                     }
-
                     Image(systemName: service.isLoading ? "ellipsis" : "arrow.up")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(.white)
@@ -509,19 +561,24 @@ public struct TarotChatView: View {
         .padding(.horizontal, 14)
         .padding(.vertical, 8)
         .background(.ultraThinMaterial)
-        .overlay(
-            Rectangle()
-                .fill(Color.tarotBorder.opacity(0.5))
-                .frame(height: 0.5),
-            alignment: .top
-        )
+        .overlay(Rectangle().fill(Color.tarotBorder.opacity(0.5)).frame(height: 0.5), alignment: .top)
+        #if os(iOS)
+        .onTapGesture { inputFocused = true }
+        #endif
     }
 
     private func sendMessage() {
         let text = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !text.isEmpty, !service.isLoading else { return }
         inputText = ""
-        Task { await service.send(userMessage: text) }
+        inputFocused = true
+
+        var finalMessage = text
+        if isShadowMode {
+            finalMessage = "[MODO SOMBRA] \(text)"
+        }
+
+        Task { await service.send(userMessage: finalMessage) }
     }
 }
 
@@ -529,8 +586,6 @@ public struct TarotChatView: View {
 
 private struct MessageBubble: View {
     let message: ChatMessage
-    @Environment(\.colorScheme) private var colorScheme
-
     private var isUser: Bool { message.role == .user }
 
     var body: some View {
@@ -538,23 +593,16 @@ private struct MessageBubble: View {
             if isUser { Spacer(minLength: 50) }
 
             if !isUser {
-                // Arcana avatar
                 ZStack {
                     Circle()
-                        .fill(LinearGradient(
-                            colors: [Color.tarotGold, Color.tarotGoldDeep],
-                            startPoint: .topLeading, endPoint: .bottomTrailing
-                        ))
+                        .fill(LinearGradient(colors: [Color.tarotGold, Color.tarotGoldDeep], startPoint: .topLeading, endPoint: .bottomTrailing))
                         .frame(width: 28, height: 28)
-                    Image(systemName: "sparkles")
-                        .font(.system(size: 12, weight: .bold))
-                        .foregroundStyle(.white)
+                    Image(systemName: "sparkles").font(.system(size: 12, weight: .bold)).foregroundStyle(.white)
                 }
             }
 
             VStack(alignment: isUser ? .trailing : .leading, spacing: 4) {
-                // Bubble
-                Text(LocalizedStringKey(markdownSafe(message.content)))
+                Text(LocalizedStringKey(message.content))
                     .font(.body)
                     .foregroundStyle(isUser ? Color.white : Color.primary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -563,7 +611,6 @@ private struct MessageBubble: View {
                     .background(bubbleBackground)
                     .shadow(color: .black.opacity(0.10), radius: 4, x: 0, y: 2)
 
-                // Timestamp
                 Text(message.timestamp.formatted(date: .omitted, time: .shortened))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
@@ -578,10 +625,7 @@ private struct MessageBubble: View {
     private var bubbleBackground: some View {
         if isUser {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
-                .fill(LinearGradient(
-                    colors: [Color.tarotGold, Color.tarotGoldDeep],
-                    startPoint: .topLeading, endPoint: .bottomTrailing
-                ))
+                .fill(LinearGradient(colors: [Color.tarotGold, Color.tarotGoldDeep], startPoint: .topLeading, endPoint: .bottomTrailing))
                 .shadow(color: Color.tarotGold.opacity(0.18), radius: 8, x: 0, y: 4)
         } else {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
@@ -590,11 +634,6 @@ private struct MessageBubble: View {
                 .overlay(RoundedRectangle(cornerRadius: 18, style: .continuous).stroke(Color.tarotGold.opacity(0.14), lineWidth: 0.8))
                 .shadow(color: Color.black.opacity(0.18), radius: 8, x: 0, y: 4)
         }
-    }
-
-    /// Converts **bold** markdown for SwiftUI LocalizedStringKey compatibility
-    private func markdownSafe(_ text: String) -> String {
-        text // SwiftUI's Text with LocalizedStringKey handles **bold** natively
     }
 }
 
@@ -605,17 +644,11 @@ private struct TypingIndicator: View {
 
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
-            // Arcana avatar
             ZStack {
                 Circle()
-                    .fill(LinearGradient(
-                        colors: [Color.tarotGold, Color.tarotGoldDeep],
-                        startPoint: .topLeading, endPoint: .bottomTrailing
-                    ))
+                    .fill(LinearGradient(colors: [Color.tarotGold, Color.tarotGoldDeep], startPoint: .topLeading, endPoint: .bottomTrailing))
                     .frame(width: 28, height: 28)
-                Image(systemName: "sparkles")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(.white)
+                Image(systemName: "sparkles").font(.system(size: 12, weight: .bold)).foregroundStyle(.white)
             }
 
             HStack(spacing: 4) {
@@ -639,9 +672,7 @@ private struct TypingIndicator: View {
             Spacer(minLength: 50)
         }
         .onAppear {
-            withAnimation(.easeInOut(duration: 0.4).repeatForever()) {
-                phase = 1
-            }
+            withAnimation(.easeInOut(duration: 0.4).repeatForever()) { phase = 1 }
         }
     }
 }
@@ -677,8 +708,7 @@ private struct FlowLayout: Layout {
     var spacing: CGFloat = 8
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let result = FlowResult(in: proposal.replacingUnspecifiedDimensions().width, subviews: subviews, spacing: spacing)
-        return result.size
+        FlowResult(in: proposal.replacingUnspecifiedDimensions().width, subviews: subviews, spacing: spacing).size
     }
 
     func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
@@ -693,17 +723,10 @@ private struct FlowLayout: Layout {
         var size: CGSize = .zero
 
         init(in maxWidth: CGFloat, subviews: Subviews, spacing: CGFloat) {
-            var x: CGFloat = 0
-            var y: CGFloat = 0
-            var rowHeight: CGFloat = 0
-
+            var x: CGFloat = 0; var y: CGFloat = 0; var rowHeight: CGFloat = 0
             for subview in subviews {
                 let size = subview.sizeThatFits(.unspecified)
-                if x + size.width > maxWidth, x > 0 {
-                    y += rowHeight + spacing
-                    x = 0
-                    rowHeight = 0
-                }
+                if x + size.width > maxWidth, x > 0 { y += rowHeight + spacing; x = 0; rowHeight = 0 }
                 frames.append(CGRect(origin: CGPoint(x: x, y: y), size: size))
                 x += size.width + spacing
                 rowHeight = max(rowHeight, size.height)

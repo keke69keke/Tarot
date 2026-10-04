@@ -34,6 +34,9 @@ struct CardFace: View {
                 let useFit: Bool = {
                     // HK cards have ratio ~0.682 matching the frame — use fit to avoid crops
                     if activeDeck == .helloKitty { return false }
+                    // Marseille cards are much taller (ratio ~0.536 vs frame ~0.682):
+                    // .fill would crop ~21% of the artwork, so show the complete card.
+                    if activeDeck == .marseille { return true }
                     return imageAspect > frameAspect + 0.03
                 }()
 

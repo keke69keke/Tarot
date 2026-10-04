@@ -130,6 +130,107 @@ extension View {
     func luxuryShadow() -> some View { shadow(color: Color.black.opacity(0.4), radius: 20, x: 0, y: 10) }
 }
 
+// MARK: - Fondo nocturno compartido
+/// Aplica la base nocturna solida (color + degradado) sin dibujar el cielo
+/// estrellado.
+///
+/// Se usa como capa base tanto en la raiz como dentro de cada `sheet`: los
+/// modales no heredan el fondo de la vista que los presenta, asi que sin esto
+/// caian al negro del sistema y cortaban la atmosfera de la app.
+struct TarotNightBase: ViewModifier {
+    func body(content: Content) -> some View {
+        content.background(
+            ZStack {
+                Color.tarotBackground
+                Color.tarotBackgroundGradient
+            }
+            .ignoresSafeArea()
+        )
+    }
+}
+
+/// Fondo nocturno completo para vistas de nivel superior: la base solida mas el
+/// cielo estrellado animado por encima.
+///
+/// Debe aplicarse **dentro** de cada `NavigationStack`, no fuera: el stack es una
+/// capa opaca que tapa todo lo que quede por debajo, asi que un cielo pintado en
+/// la raiz de la escena no se ve. Se comprobo midiendo capturas del simulador:
+/// con el fondo dentro del stack la zona de contenido da violeta (~24,14,33) y
+/// con el cielo solo en la raiz da negro puro (0,0,0).
+///
+/// Contrapartida asumida: cada pestana monta su propio `StarfieldBackgroundView`
+/// y, por tanto, su propio `TimelineView` a 30 fps. Es el precio de que el fondo
+/// se vea; en iOS la raiz no pinta fondo porque quedaria tapada igualmente.
+struct TarotNightBackground: ViewModifier {
+    func body(content: Content) -> some View {
+        content.background(
+            ZStack {
+                Color.tarotBackground
+                Color.tarotBackgroundGradient
+                StarfieldBackgroundView()
+            }
+            .ignoresSafeArea()
+        )
+    }
+}
+
+extension View {
+    /// Base nocturna solida, sin cielo animado. Para `sheet` y secciones.
+    func tarotNightBase() -> some View { modifier(TarotNightBase()) }
+    /// Fondo nocturno completo con cielo estrellado. Va **dentro** del
+    /// `NavigationStack` de la vista (ver nota de `TarotNightBackground`).
+    func tarotNightBackground() -> some View { modifier(TarotNightBackground()) }
+    /// Fondo para el contenido de un `sheet`.
+    ///
+    /// Un modal no hereda el fondo de la vista que lo presenta: sin esto caia al
+    /// negro del sistema. Combina el fondo del propio modal
+    /// (`presentationBackground`, alli donde existe) con la base nocturna de su
+    /// contenido, de modo que no queda ninguna franja negra ni al arrastrar ni
+    /// en las esquinas redondeadas.
+    func tarotSheetBackground() -> some View {
+        modifier(TarotSheetBackground())
+    }
+}
+
+/// Vease `View.tarotSheetBackground()`.
+struct TarotSheetBackground: ViewModifier {
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(iOS 16.4, macOS 13.3, *) {
+            content
+                .presentationBackground(Color.tarotBackground)
+                .tarotNightBase()
+        } else {
+            content.tarotNightBase()
+        }
+    }
+}
+
+// MARK: - Liquid Glass real (iOS 26 / macOS 26) con fallback
+/// Aplica el vidrio nativo del sistema cuando el SDK lo soporta y, si no,
+/// cae al material luxury equivalente. Así las barras dejan de ser una
+/// imitación y muestran la UI real de Liquid Glass.
+struct LiquidGlassSurface: ViewModifier {
+    var cornerRadius: CGFloat = LuxuryRadius.lg
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(iOS 26.0, macOS 26.0, *) {
+            content.glassEffect(
+                .regular,
+                in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+            )
+        } else {
+            content.luxuryGlass(cornerRadius: cornerRadius)
+        }
+    }
+}
+
+extension View {
+    func liquidGlassSurface(cornerRadius: CGFloat = LuxuryRadius.lg) -> some View {
+        modifier(LiquidGlassSurface(cornerRadius: cornerRadius))
+    }
+}
+
 // MARK: - Legacy shim (compatibilidad con código existente)
 extension Color {
     static let tarotBackgroundDeep = Color.tarotBackground

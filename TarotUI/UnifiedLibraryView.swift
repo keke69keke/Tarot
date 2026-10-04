@@ -54,11 +54,11 @@ struct UnifiedLibraryView: View {
                 }
                 .padding(.bottom, 24)
             }
-            .background(StarfieldBackgroundView(starCount: 80))
             .navigationTitle("Biblioteca")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .tarotNightBackground()
         }
         .searchable(text: $query, prompt: mode == .galeria ? "Buscar carta, palo o número" : "Buscar en el libro Rider")
     }
@@ -201,7 +201,7 @@ struct UnifiedLibraryView: View {
     private func emptyState(text: String) -> some View {
         VStack(spacing: 12) {
             Image(systemName: "magnifyingglass").font(.system(size: 36, weight: .thin)).foregroundStyle(Color.tarotIvory.opacity(0.35))
-            Text(text).font(.system(size: 13, weight: .regular, design: .serif)).foregroundStyle(Color.tarotIvory.opacity(0.55))
+            Text(text).font(.system(size: 13, weight: .regular, design: .serif)).foregroundStyle(Color.tarotIvory.opacity(0.55)).multilineTextAlignment(.center)
         }.frame(maxWidth: .infinity).padding(.top, 40)
     }
 }

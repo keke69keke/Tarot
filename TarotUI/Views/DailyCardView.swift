@@ -16,21 +16,11 @@ struct DailyCardView: View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 32) {
                 // Header editorial
-                VStack(alignment: .leading, spacing: 12) {
-                    EyebrowLabel(text: "RITUAL  ·  HOY")
-                    Text("Carta del día")
-                        .font(.system(size: 32, weight: .bold, design: .serif))
-                        .tracking(-0.8)
-                        .foregroundStyle(Color.tarotIvory)
-                    Text("Una sola carta. Luz suficiente para el día.")
-                        .font(.system(size: 14, weight: .regular, design: .serif))
-                        .foregroundStyle(Color.tarotIvory.opacity(0.56))
-                        .lineSpacing(5)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 4)
-                .padding(.top, 12)
+                LuxuryPageHeader(
+                    eyebrow: "RITUAL  ·  HOY",
+                    title: "Carta del día",
+                    subtitle: "Una sola carta. Luz suficiente para el día."
+                )
 
                 // Escenario joya
                 ZStack {
@@ -133,5 +123,6 @@ struct DailyCardView: View {
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        .tarotNightBackground()
     }
 }

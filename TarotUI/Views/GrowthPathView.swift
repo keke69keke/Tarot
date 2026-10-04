@@ -62,6 +62,7 @@ struct GrowthPathView: View {
         VStack(spacing: 12) {
             Text("Aún no hay datos suficientes")
                 .font(.system(size: 15, design: .serif))
+                .multilineTextAlignment(.center)
                 .foregroundStyle(Color.tarotIvory.opacity(0.5))
             Text("Realiza más lecturas para trazar tu mapa de evolución.")
                 .font(.system(size: 13, design: .serif))

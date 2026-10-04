@@ -29,31 +29,23 @@ struct NatalChartView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                StarfieldBackgroundView(starCount: 90)
-                AmbientBackgroundView().opacity(0.5)
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 22) {
 
-                        // Header — editorial lujo morado
+                        // Header — cabecera de página unificada
                         VStack(alignment: .leading, spacing: 10) {
-                            HStack(spacing: 8) {
-                                EyebrowLabel(text: TarotStrings.natalEyebrow.localized)
-                                Spacer()
-                                Image(systemName: "star.circle").font(.system(size: 22, weight: .light)).foregroundStyle(Color.tarotGold.opacity(0.85))
+                            LuxuryPageHeader(
+                                eyebrow: TarotStrings.natalEyebrow.localized,
+                                title: TarotStrings.natalTitle.localized,
+                                subtitle: TarotStrings.natalDescription.localized
+                            ) {
+                                Image(systemName: "star.circle")
+                                    .font(.system(size: 22, weight: .light))
+                                    .foregroundStyle(Color.tarotGold.opacity(0.85))
                             }
-                            Text(TarotStrings.natalTitle.localized)
-                                .font(.system(size: 28, weight: .bold, design: .serif))
-                                .tracking(-0.5)
-                                .foregroundStyle(Color.tarotIvory)
-                            Text(TarotStrings.natalDescription.localized)
-                                .font(.system(size: 13, weight: .regular, design: .serif))
-                                .foregroundStyle(Color.tarotIvory.opacity(0.60))
-                                .lineSpacing(4)
-                                .fixedSize(horizontal: false, vertical: true)
-                            GoldDivider().padding(.top, 4)
+                            GoldDivider()
                         }
-                        .padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                        .luxuryGlass(cornerRadius: 22)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     // Inputs
                     VStack(alignment: .leading, spacing: 12) {
@@ -134,6 +126,7 @@ struct NatalChartView: View {
                 model.settings.natalPlace = newValue
                 model.persistSettings()
             }
+            .tarotNightBackground()
         }
     }
 
@@ -223,7 +216,7 @@ struct NatalChartView: View {
             }
             Spacer()
         }
-        .padding(14)
+        .padding(LuxurySpacing.md)
         .luxuryGlass(cornerRadius: LuxuryRadius.md)
     }
 }
@@ -266,6 +259,21 @@ private struct ZodiacWheelView: View {
                 let lx = center.x + labelRadius * CGFloat(cos(midAngle))
                 let ly = center.y + labelRadius * CGFloat(sin(midAngle))
                 context.draw(Text(sign.symbol).font(.system(size: 15)), at: CGPoint(x: lx, y: ly))
+            }
+
+            // Lineas entre Sol, Luna y Ascendente: el triangulo que da forma a la carta.
+            let marcados = highlightIndices.keys.sorted()
+            if marcados.count > 1 {
+                for a in 0..<marcados.count {
+                    for b in (a + 1)..<marcados.count {
+                        let anguloA = -Double.pi / 2 + (Double(marcados[a]) + 0.5) * slice
+                        let anguloB = -Double.pi / 2 + (Double(marcados[b]) + 0.5) * slice
+                        var linea = Path()
+                        linea.move(to: CGPoint(x: center.x + inner * 0.94 * CGFloat(cos(anguloA)), y: center.y + inner * 0.94 * CGFloat(sin(anguloA))))
+                        linea.addLine(to: CGPoint(x: center.x + inner * 0.94 * CGFloat(cos(anguloB)), y: center.y + inner * 0.94 * CGFloat(sin(anguloB))))
+                        context.stroke(linea, with: .color(Color.tarotGold.opacity(0.42)), lineWidth: 1.1)
+                    }
+                }
             }
 
             var ring = Path()

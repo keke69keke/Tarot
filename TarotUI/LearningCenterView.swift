@@ -98,15 +98,59 @@ public struct LearningCenterView: View {
     @StateObject private var libraryManager = LibraryManager()
     @State private var showingFilePicker = false
     @State private var showingBrowser = false
-    @State private var selectedSection: LibrarySection = .books
+    @State private var selectedSection: LibrarySection = .spreads
     @State private var animateIn = false
 
-    public init() {}
+    /// Permite saltar a la sección Referencia (biblioteca de consulta).
+    public var onOpenReference: (() -> Void)?
+
+    public init(onOpenReference: (() -> Void)? = nil) {
+        self.onOpenReference = onOpenReference
+    }
+
+    // MARK: - Puente a Referencia
+    private var referenceBanner: some View {
+        Button {
+            onOpenReference?()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "book.closed.fill")
+                    .font(.system(size: 16, weight: .light))
+                    .foregroundStyle(Color.tarotGold)
+                    .frame(width: 40, height: 40)
+                    .background(Circle().fill(Color.tarotGold.opacity(0.12)))
+                    .overlay(Circle().stroke(Color.tarotGold.opacity(0.3), lineWidth: 0.8))
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Libros y Atlas de Símbolos")
+                        .font(.system(size: 13, weight: .semibold, design: .serif))
+                        .foregroundStyle(Color.tarotIvory)
+                    Text("Ahora viven en Referencia — tu biblioteca de consulta")
+                        .font(.system(size: 11, weight: .light, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.55))
+                }
+                Spacer()
+                Image(systemName: "arrow.right")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(Color.tarotGold.opacity(0.8))
+            }
+            .padding(14)
+            .background(
+                RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous)
+                    .fill(Color.white.opacity(0.045))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: LuxuryRadius.md, style: .continuous)
+                    .stroke(Color.tarotGold.opacity(0.18), lineWidth: 0.75)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
 
     public var body: some View {
         NavigationStack {
             ZStack {
-                 StarfieldBackgroundView(starCount: 90)
 
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
@@ -121,11 +165,13 @@ public struct LearningCenterView: View {
                             .padding(.horizontal)
                             .padding(.bottom, 20)
 
+                        referenceBanner
+                            .padding(.horizontal)
+                            .padding(.bottom, 8)
+
                         switch selectedSection {
-                        case .books: booksSection
                         case .spreads: spreadsInfoSection
                         case .tools: toolsSection
-                        case .atlas: SymbolAtlasView()
                         case .dreams: DreamJournalView()
                         case .paths: SpiritualPathView()
                         }
@@ -133,6 +179,7 @@ public struct LearningCenterView: View {
                     .padding(.bottom, 40)
                 }
             }
+            .tarotNightBackground()
             .navigationTitle("")
             #if os(iOS)
             .navigationBarHidden(true)
@@ -638,6 +685,11 @@ public struct LearningCenterView: View {
                 .padding()
             }
             .navigationTitle(course.title)
+            // Una vista empujada por `NavigationLink` sustituye el contenido del
+            // stack y NO hereda el fondo del padre: sin esto el curso caia al
+            // negro del sistema (0,0,0) mientras el resto de la app es violeta.
+            // Verificado midiendo la captura.
+            .tarotNightBackground()
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -706,6 +758,7 @@ public struct LearningCenterView: View {
             Image(systemName: "books.vertical").font(.system(size: 48)).foregroundStyle(Color.tarotIvory.opacity(0.2))
             Text("Biblioteca vacía")
                 .font(.system(size: 17, weight: .semibold, design: .serif))
+                .multilineTextAlignment(.center)
                 .foregroundStyle(Color.tarotIvory.opacity(0.5))
             Text("Importa PDFs o espera a que los libros precargados se carguen automáticamente.")
                 .font(.system(size: 13, design: .serif))
@@ -745,7 +798,7 @@ public struct LearningCenterView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 8) {
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Text(spread.label)
                         .font(.system(size: 15, weight: .bold, design: .serif))
                         .foregroundStyle(Color.tarotIvory)
@@ -859,14 +912,14 @@ struct SchoolLesson: Identifiable {
 
 // MARK: - Section Enum
 enum LibrarySection: CaseIterable, Hashable {
-    case books, spreads, tools, atlas, dreams, paths
+    // Los libros y el Atlas de Símbolos viven ahora en la sección «Referencia»,
+    // para no duplicar contenido. Aprender se centra en el curso guiado.
+    case spreads, tools, dreams, paths
 
     var label: String {
         switch self {
-        case .books: return "Libros"
         case .spreads: return "Tiradas"
         case .tools: return "Herramientas"
-        case .atlas: return "Atlas"
         case .dreams: return "Sueños"
         case .paths: return "Senda"
         }
@@ -874,10 +927,8 @@ enum LibrarySection: CaseIterable, Hashable {
 
     var icon: String {
         switch self {
-        case .books: return "books.vertical"
         case .spreads: return "sparkles"
         case .tools: return "wrench.and.screwdriver"
-        case .atlas: return "leaf.fill"
         case .dreams: return "moon.stars.fill"
         case .paths: return "figure.walk"
         }

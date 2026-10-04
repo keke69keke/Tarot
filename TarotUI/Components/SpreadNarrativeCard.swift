@@ -57,6 +57,7 @@ struct SpreadNarrativeCard: View {
                 Text("No se pudo sintetizar la lectura: \(error)")
                     .font(.system(size: 14, design: .serif))
                     .foregroundStyle(Color.red.opacity(0.8))
+                    .multilineTextAlignment(.center)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.vertical, 20)
             } else if let text = narrative {

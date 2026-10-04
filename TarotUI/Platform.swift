@@ -38,10 +38,10 @@ extension Color {
 
     // Bordes y sombras con temperatura violeta
     static var tarotBorder: Color {
-        Color(red: 0.60, green: 0.52, blue: 1.0).opacity(0.13)
+        Color(red: 0.843, green: 0.651, blue: 0.247).opacity(0.13)
     }
     static var tarotBorderStrong: Color {
-        Color(red: 0.60, green: 0.52, blue: 1.0).opacity(0.20)
+        Color(red: 0.843, green: 0.651, blue: 0.247).opacity(0.20)
     }
     static var tarotShadow: Color {
         Color.black.opacity(0.45)
@@ -52,13 +52,13 @@ extension Color {
 
     // Violeta tarot — lavanda luminoso, no neón
     static var tarotGold: Color {
-        Color(red: 0.60, green: 0.52, blue: 1.0) // #9984FF lavanda tarot
+        Color(red: 0.843, green: 0.651, blue: 0.247) // #D7A63F ámbar tarot (cálido)
     }
     static var tarotGoldHighlight: Color {
-        Color(red: 0.78, green: 0.72, blue: 1.0) // #C7B8FF
+        Color(red: 0.941, green: 0.808, blue: 0.478) // #F0CE7A
     }
     static var tarotGoldDeep: Color {
-        Color(red: 0.36, green: 0.28, blue: 0.78) // sombra violeta profunda
+        Color(red: 0.541, green: 0.392, blue: 0.125) // sombra bronce
     }
     static var swiftUIColor: Color {
         Color.white // Or whatever the default should be
@@ -114,24 +114,31 @@ enum PlatformImageLoader {
         cache.removeAllObjects()
     }
 
+    /// Extensiones admitidas para el arte de los mazos, en orden de preferencia.
+    /// El arte se guarda en HEIC (misma imagen, ~4x menos peso que PNG); se sigue
+    /// aceptando PNG para recursos heredados y para los simbolos.
+    static let supportedImageExtensions = ["png", "heic"]
+
     static func image(named name: String) -> PlatformImage? {
         let cacheKey = name as NSString
         if let cached = cache.object(forKey: cacheKey) { return cached }
         let cleanName = (name as NSString).deletingPathExtension
 
-        // Estrategia 1: url(forResource:withExtension:) — SPM bundles
-        if let url = Bundle.tarotContent.url(forResource: cleanName, withExtension: "png"),
-           let img = loadImage(from: url) {
-            cache.setObject(img, forKey: cacheKey); return img
-        }
-        // Estrategia 2: path(forResource:ofType:) — bundles con Contents/Resources
-        if let path = Bundle.tarotContent.path(forResource: cleanName, ofType: "png"),
-           let img = loadImage(from: URL(fileURLWithPath: path)) {
-            cache.setObject(img, forKey: cacheKey); return img
-        }
-        // Estrategia 3: búsqueda manual en directorios de recursos
-        if let img = searchInResources(cleanName) {
-            cache.setObject(img, forKey: cacheKey); return img
+        for ext in supportedImageExtensions {
+            // Estrategia 1: url(forResource:withExtension:) — SPM bundles
+            if let url = Bundle.tarotContent.url(forResource: cleanName, withExtension: ext),
+               let img = loadImage(from: url) {
+                cache.setObject(img, forKey: cacheKey); return img
+            }
+            // Estrategia 2: path(forResource:ofType:) — bundles con Contents/Resources
+            if let path = Bundle.tarotContent.path(forResource: cleanName, ofType: ext),
+               let img = loadImage(from: URL(fileURLWithPath: path)) {
+                cache.setObject(img, forKey: cacheKey); return img
+            }
+            // Estrategia 3: búsqueda manual en directorios de recursos
+            if let img = searchInResources(cleanName, extension: ext) {
+                cache.setObject(img, forKey: cacheKey); return img
+            }
         }
         #if canImport(UIKit)
         // Estrategia 4: UIImage(named:in:) — xcassets
@@ -156,14 +163,14 @@ enum PlatformImageLoader {
         #endif
     }
 
-    private static func searchInResources(_ name: String) -> PlatformImage? {
+    private static func searchInResources(_ name: String, extension ext: String = "png") -> PlatformImage? {
         let bundles: [Bundle] = [.tarotContent, .main]
         let subdirs = ["", "Resources", "Contents/Resources"]
         for bundle in bundles {
             guard let base = bundle.resourceURL else { continue }
             for sub in subdirs {
                 let dir = sub.isEmpty ? base : base.appendingPathComponent(sub)
-                let file = dir.appendingPathComponent("\(name).png")
+                let file = dir.appendingPathComponent("\(name).\(ext)")
                 if FileManager.default.fileExists(atPath: file.path),
                    let img = loadImage(from: file) { return img }
             }

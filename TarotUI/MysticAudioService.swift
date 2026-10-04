@@ -61,19 +61,38 @@ public final class MysticAudioService: NSObject, ObservableObject {
         if audioPlayer == nil { preparePlayer() }
         guard let player = audioPlayer else { return }
         #if os(iOS)
-        do {
-            try audioSession.setCategory(.ambient, mode: .default, options: [.mixWithOthers])
-            try audioSession.setActive(true)
-            player.play()
-            isPlaying = true
-        } catch {
-            print("[MysticAudio] Session error: \(error.localizedDescription)")
-        }
+        // La activacion de la sesion de audio pasa a un hilo de fondo para no bloquear
+        // el principal, como recomienda Apple.
+        activateSessionAndPlay(player: player)
         #else
         player.play()
         isPlaying = true
         #endif
     }
+
+    #if os(iOS)
+    /// Configura y activa la sesion de audio y, cuando el sistema confirma la
+    /// activacion, arranca la reproduccion.
+    ///
+    /// La version anterior usaba `setActive(_:options:)` con un closure de
+    /// finalizacion: esa firma ya no existe en `AVAudioSession`, asi que el
+    /// objetivo de iOS no compilaba y el build moria a medias.
+    private func activateSessionAndPlay(player: AVAudioPlayer) {
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self else { return }
+            do {
+                try self.audioSession.setCategory(.ambient, mode: .default, options: [.mixWithOthers])
+                try self.audioSession.setActive(true)
+                DispatchQueue.main.async {
+                    player.play()
+                    self.isPlaying = true
+                }
+            } catch {
+                print("[MysticAudio] Session activate error: \(error.localizedDescription)")
+            }
+        }
+    }
+    #endif
 
     private func pause() {
         audioPlayer?.pause()
@@ -83,14 +102,25 @@ public final class MysticAudioService: NSObject, ObservableObject {
     public func stop() {
         audioPlayer?.stop()
         audioPlayer = nil
+        #if os(iOS)
+        // Desactivar la sesion tambien fuera del hilo principal: es una llamada que
+        // puede tardar y bloquear la interfaz.
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self else { return }
+            do {
+                try self.audioSession.setActive(false, options: .notifyOthersOnDeactivation)
+            } catch {
+                print("[MysticAudio] Session deactivate error: \(error.localizedDescription)")
+            }
+            DispatchQueue.main.async { self.isPlaying = false }
+        }
+        #else
         isPlaying = false
+        #endif
     }
 
     deinit {
         stop()
-        #if os(iOS)
-        try? audioSession.setActive(false)
-        #endif
     }
 }
 

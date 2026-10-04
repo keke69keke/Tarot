@@ -165,11 +165,11 @@ public struct AskTarotView: View {
                 }
                 .padding(20)
             }
-            .background(StarfieldBackgroundView(starCount: 90))
              .navigationTitle("Pregunta al Tarot")
              #if os(iOS)
              .navigationBarTitleDisplayMode(.inline)
              #endif
+            .tarotNightBackground()
         }
     }
 
@@ -344,6 +344,7 @@ public struct AskTarotView: View {
 
             Text(card.name)
                 .font(.system(size: 22, weight: .bold, design: .serif))
+                .multilineTextAlignment(.center)
                 .foregroundStyle(Color.tarotIvory)
 
             answerSummary(for: card)
@@ -370,7 +371,7 @@ public struct AskTarotView: View {
 
     private func answerSummary(for card: Card) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Image(systemName: "quote.opening")
                     .font(.caption)
                     .foregroundStyle(Color.tarotGold)
@@ -418,7 +419,7 @@ public struct HoroscopeView: View {
 
     // MARK: - Background Layer (morado lujo)
     private var backgroundLayer: some View {
-        StarfieldBackgroundView(starCount: 90)
+        Color.clear
     }
 
     public var body: some View {
@@ -445,6 +446,35 @@ public struct HoroscopeView: View {
                             .font(.system(size: 14, design: .serif))
                             .foregroundStyle(Color.tarotIvory.opacity(0.68))
                             .lineSpacing(5)
+                    }
+                    .padding(22)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .luxuryGlass(cornerRadius: 26)
+
+                    // Rueda zodiacal con las lineas de aspecto de tu signo.
+                    // Las lineas salen del signo elegido hacia los que resuenan con el.
+                    //
+                    // La rueda va ENCIMA del texto, no al lado: en un iPhone de
+                    // 402 pt, una rueda de 250 + margenes dejaba al parrafo unos
+                    // 80 pt de ancho y partia las palabras por la mitad
+                    // ("Ari es", "resuen an"). Apilado, el texto usa el ancho
+                    // completo y la rueda se ve entera.
+                    VStack(alignment: .leading, spacing: 20) {
+                        AspectWheelView(destacado: selectedSign, diameter: 230)
+                            .frame(maxWidth: .infinity)
+
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text(selectedSign.rawValue)
+                                .font(.system(size: 22, weight: .bold, design: .serif))
+                                .foregroundStyle(Color.tarotIvory)
+                            Text("Las lineas salen de tu signo hacia los que resuenan con el: trino y sextil para lo que fluye, cuadratura y oposicion para lo que te pone a prueba.")
+                                .font(.system(size: 13, design: .serif))
+                                .lineSpacing(5)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .foregroundStyle(Color.tarotIvory.opacity(0.68))
+                            AspectLegendView()
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .padding(22)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -547,6 +577,7 @@ public struct HoroscopeView: View {
                      .help("Actualizar lectura de hoy")
                  }
              }
+            .tarotNightBackground()
         }
     }
 }

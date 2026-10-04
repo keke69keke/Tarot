@@ -25,8 +25,12 @@ struct DestinyGraphView: View {
                 emptyState
             } else {
                 ZStack {
+                    // Mystical background nebula
+                    RadialGradient(colors: [Color.tarotGold.opacity(0.05), .clear], center: .center, startRadius: 0, endRadius: 300)
+                        .ignoresSafeArea()
+
                     Canvas { ctx, size in
-                        // Draw Edges with thematic coloring
+                        // Draw Edges with thematic coloring and glowing pulses
                         for edge in edges {
                             let start = nodes[edge.from].position
                             let end = nodes[edge.to].position
@@ -38,8 +42,11 @@ struct DestinyGraphView: View {
                             let color = edge.isMajor ? Color.tarotGold : Color.white.opacity(0.2)
                             let width = edge.isMajor ? 2.0 : 0.8
 
-                            // Subtle neon glow
-                            ctx.stroke(path, with: .color(color.opacity(0.15)), lineWidth: width * 3)
+                            // Deep outer glow for Major connections
+                            if edge.isMajor {
+                                ctx.stroke(path, with: .color(color.opacity(0.1)), lineWidth: width * 6)
+                            }
+                            ctx.stroke(path, with: .color(color.opacity(0.3)), lineWidth: width * 2)
                             ctx.stroke(path, with: .color(color), lineWidth: width)
                         }
                     }
@@ -50,23 +57,30 @@ struct DestinyGraphView: View {
                         DestinyNodeView(node: nodes[i], isSelected: selectedNode?.id == nodes[i].id)
                             .position(nodes[i].position)
                             .onTapGesture {
-                                TarotAudioService.shared.triggerHaptic(.light)
+                                TarotAudioService.shared.triggerHaptic(.medium)
                                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                                     selectedNode = nodes[i]
                                 }
                             }
                     }
                 }
-                .frame(height: 300)
+                .frame(height: 350)
                 .background(
-                    RoundedRectangle(cornerRadius: 24)
-                        .fill(Color.black.opacity(0.4))
-                        .blur(radius: 10)
+                    RoundedRectangle(cornerRadius: 32, style: .continuous)
+                        .fill(Color.black.opacity(0.6))
+                        .background(
+                            RoundedRectangle(cornerRadius: 32, style: .continuous)
+                                .fill(Color.tarotGold.opacity(0.03))
+                                .blur(radius: 20)
+                        )
                 )
-                .cornerRadius(24)
+                .cornerRadius(32)
                 .overlay(
-                    RoundedRectangle(cornerRadius: 24)
-                        .stroke(Color.tarotGold.opacity(0.1), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 32, style: .continuous)
+                        .stroke(
+                            LinearGradient(colors: [.tarotGold.opacity(0.3), .clear, .tarotGold.opacity(0.3)], startPoint: .topLeading, endPoint: .bottomTrailing),
+                            lineWidth: 1.5
+                        )
                 )
             }
 
@@ -81,6 +95,7 @@ struct DestinyGraphView: View {
                             .foregroundStyle(Color.tarotGold)
                         Text(path.title)
                             .font(.system(size: 10, weight: .medium, design: .serif))
+                            .multilineTextAlignment(.center)
                             .foregroundStyle(Color.tarotIvory.opacity(0.6))
                     }
                     .padding(10)
@@ -110,6 +125,7 @@ struct DestinyGraphView: View {
         VStack(spacing: 12) {
             Text("El mapa está vacío")
                 .font(.system(size: 15, design: .serif))
+                .multilineTextAlignment(.center)
                 .foregroundStyle(Color.tarotIvory.opacity(0.5))
             Text("Tus lecturas crearán constelaciones a medida que los símbolos se repitan.")
                 .font(.system(size: 13, design: .serif))

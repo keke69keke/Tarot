@@ -40,7 +40,6 @@ struct OnboardingView: View {
             // Background Atmosférico
             Color.tarotBackground.ignoresSafeArea()
             Color.tarotBackgroundGradient.ignoresSafeArea()
-            AmbientBackgroundView().opacity(0.6)
 
             VStack(spacing: 40) {
                 // Barra de progreso minimalista
@@ -74,6 +73,7 @@ struct OnboardingView: View {
                     VStack(spacing: 16) {
                         Text(steps[step].title)
                             .font(.system(size: 32, weight: .bold, design: .serif))
+                            .multilineTextAlignment(.center)
                             .foregroundStyle(Color.tarotIvory)
                             .tracking(-0.5)
 
@@ -82,7 +82,7 @@ struct OnboardingView: View {
                             .foregroundStyle(Color.tarotIvory.opacity(0.65))
                             .multilineTextAlignment(.center)
                             .lineSpacing(6)
-                            .padding(.horizontal, 30)
+                            .padding(.horizontal, LuxurySpacing.lg)
                     }
                 }
                 .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity), removal: .move(edge: .leading).combined(with: .opacity)))
@@ -137,7 +137,7 @@ struct OnboardingView: View {
                 .background(RoundedRectangle(cornerRadius: 20, style: .continuous).fill(.ultraThinMaterial).opacity(0.4))
                 .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).stroke(Color.tarotGold.opacity(0.2), lineWidth: 1))
         )
-        .padding(.horizontal, 20)
+        .padding(.horizontal, LuxurySpacing.lg)
         .transition(.opacity)
     }
 

@@ -66,21 +66,12 @@ struct BiorhythmView: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 22) {
 
-                    // Header — editorial
-                    VStack(alignment: .leading, spacing: 8) {
-                        EyebrowLabel(text: TarotStrings.biorhythmEyebrow.localized)
-                        Text(TarotStrings.biorhythmTitle.localized)
-                            .font(.system(size: 26, weight: .bold, design: .serif))
-                            .tracking(-0.4)
-                            .foregroundStyle(Color.tarotIvory)
-                        Text(TarotStrings.biorhythmDescription.localized)
-                            .font(.system(size: 13, weight: .regular, design: .serif))
-                            .foregroundStyle(Color.tarotIvory.opacity(0.58))
-                            .lineSpacing(4)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .padding(20).frame(maxWidth: .infinity, alignment: .leading)
-                    .luxuryGlass()
+                    // Header — cabecera de página unificada
+                    LuxuryPageHeader(
+                        eyebrow: TarotStrings.biorhythmEyebrow.localized,
+                        title: TarotStrings.biorhythmTitle.localized,
+                        subtitle: TarotStrings.biorhythmDescription.localized
+                    )
 
                     // Birth date picker
                     VStack(alignment: .leading, spacing: 10) {
@@ -108,19 +99,19 @@ struct BiorhythmView: View {
                 }
                 .padding(20)
             }
-            .background(StarfieldBackgroundView(starCount: 90))
             .navigationTitle(TarotStrings.biorhythmTitle.localized)
             .onChange(of: birthDate) { newValue in
                 model.settings.biorhythmBirthDate = newValue
                 model.persistSettings()
             }
+            .tarotNightBackground()
         }
     }
 
     private func cycleCard(_ cycle: Cycle) -> some View {
         let p = percent(for: cycle)
         return VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Image(systemName: cycle.symbol).font(.system(size: 11, weight: .light)).foregroundStyle(cycle.color.opacity(0.9))
                 Text(cycle.name)
                     .font(.system(size: 12, weight: .medium, design: .serif))
@@ -145,9 +136,9 @@ struct BiorhythmView: View {
             Text(statusText(cycle, p: p))
                 .font(.system(size: 10.5, weight: .regular, design: .serif))
                 .foregroundStyle(Color.tarotIvory.opacity(0.52))
-                .lineLimit(1)
+                .lineLimit(2)
         }
-        .padding(14)
+        .padding(LuxurySpacing.md)
         .luxuryGlass(cornerRadius: LuxuryRadius.md)
     }
 
@@ -177,6 +168,8 @@ struct BiorhythmView: View {
                         Text(c.name)
                             .font(.system(size: 10, weight: .medium, design: .serif))
                             .foregroundStyle(Color.tarotIvory.opacity(0.62))
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.75)
                     }
                 }
             }
@@ -194,6 +187,10 @@ private struct ChartView: View {
     let cycles: [(name: String, color: Color, values: [Double])]
     let days: Int
 
+    /// Las cuatro curvas se dibujan solas al abrir la seccion, escalonadas, y
+    /// cada una deja un punto marcando su valor de hoy.
+    @State private var avance: Double = 0
+
     var body: some View {
         Canvas { context, size in
             let midY = size.height / 2
@@ -202,7 +199,7 @@ private struct ChartView: View {
             centerLine.addLine(to: CGPoint(x: size.width, y: midY))
             context.stroke(centerLine, with: .color(Color.white.opacity(0.15)), lineWidth: 1)
 
-            for cycle in cycles {
+            for (indice, cycle) in cycles.enumerated() {
                 guard cycle.values.count > 1 else { continue }
                 let stepX = size.width / CGFloat(cycle.values.count - 1)
                 var path = Path()
@@ -212,8 +209,22 @@ private struct ChartView: View {
                     let point = CGPoint(x: x, y: y)
                     if i == 0 { path.move(to: point) } else { path.addLine(to: point) }
                 }
-                context.stroke(path, with: .color(cycle.color.opacity(0.85)), lineWidth: 1.6)
+                let progreso = min(1, max(0, (avance - Double(indice) * 0.10) / 0.6))
+                context.stroke(path.trimmedPath(from: 0, to: CGFloat(progreso)), with: .color(cycle.color.opacity(0.85)), lineWidth: 1.6)
+
+                if progreso > 0.03 {
+                    let hoyY = midY - CGFloat(cycle.values[0]) * (midY - 8)
+                    let centro = CGPoint(x: 6, y: hoyY)
+                    context.fill(
+                        Path(ellipseIn: CGRect(x: centro.x - 3, y: centro.y - 3, width: 6, height: 6)),
+                        with: .color(cycle.color)
+                    )
+                }
             }
+        }
+        .onAppear {
+            avance = 0
+            withAnimation(.easeOut(duration: 1.3)) { avance = 1 }
         }
     }
 }

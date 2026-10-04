@@ -5,11 +5,11 @@ import TarotDI
 
 struct SettingsView: View {
     @ObservedObject var model: TarotViewModel
+    @State private var showSectionsTutorial = false
 
     var body: some View {
         NavigationStack {
             ZStack {
-                StarfieldBackgroundView(starCount: 80)
                 ScrollView(showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 28) {
                         optionsSection
@@ -46,6 +46,7 @@ struct SettingsView: View {
                     Task { try? await model.container.notifications.scheduleDailyNotification(hour: value) }
                 }
             }
+            .tarotNightBackground()
         }
     }
 
@@ -55,14 +56,41 @@ struct SettingsView: View {
                 .font(.system(size: 13, weight: .medium, design: .serif))
                 .foregroundStyle(Color.tarotIvory)
                 .tint(Color.tarotGold)
+
+            Button {
+                showSectionsTutorial = true
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: "questionmark.circle")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundStyle(Color.tarotGold)
+                    Text("Repetir tutorial de secciones")
+                        .font(.system(size: 13, weight: .medium, design: .serif))
+                        .foregroundStyle(Color.tarotIvory)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.35))
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+        .sheet(isPresented: $showSectionsTutorial) {
+            SectionsTutorialView {
+                showSectionsTutorial = false
+            }
+            .preferredColorScheme(.dark)
         }
     }
 
     private var bottomMenuSection: some View {
         luxurySection(title: TarotStrings.bottomMenu.localized, systemImage: "square.grid.2x2") {
             // Activos — ordenables
-            ForEach(model.settings.activeTabs, id: \.self) { tab in
-                let idx = model.settings.activeTabs.firstIndex(of: tab) ?? 0
+            // Capturamos una copia estable del array para que el ForEach no vea
+            // el array mutado a mitad de render y crashee.
+            let activeTabs = model.settings.activeTabs
+            ForEach(activeTabs, id: \.self) { tab in
                 HStack(spacing: 12) {
                     Image(systemName: tab.systemImage)
                         .font(.system(size: 13, weight: .light))
@@ -73,35 +101,71 @@ struct SettingsView: View {
                         .foregroundStyle(Color.tarotIvory)
                     Spacer()
                     HStack(spacing: 10) {
-                        if idx > 0 {
-                            Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                model.settings.activeTabs.move(fromOffsets: IndexSet(integer: idx), toOffset: idx - 1)
+                        // Subir: re-buscamos el índice en el momento del tap (no en render)
+                        Button {
+                            guard let liveIdx = model.settings.activeTabs.firstIndex(of: tab),
+                                  liveIdx > 0 else { return }
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                model.settings.activeTabs.move(
+                                    fromOffsets: IndexSet(integer: liveIdx),
+                                    toOffset: liveIdx - 1
+                                )
                                 model.persistSettings()
-                            } } label: {
-                                Image(systemName: "chevron.up").font(.system(size: 10, weight: .bold)).foregroundStyle(Color.tarotIvory.opacity(0.35))
-                            }.buttonStyle(.plain)
+                            }
+                        } label: {
+                            Image(systemName: "chevron.up")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(
+                                    (activeTabs.firstIndex(of: tab) ?? 0) > 0
+                                        ? Color.tarotIvory.opacity(0.55)
+                                        : Color.clear
+                                )
                         }
-                        if idx < model.settings.activeTabs.count - 1 {
-                            Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                model.settings.activeTabs.move(fromOffsets: IndexSet(integer: idx), toOffset: idx + 1)
+                        .buttonStyle(.plain)
+                        .disabled((activeTabs.firstIndex(of: tab) ?? 0) == 0)
+
+                        // Bajar
+                        Button {
+                            guard let liveIdx = model.settings.activeTabs.firstIndex(of: tab),
+                                  liveIdx < model.settings.activeTabs.count - 1 else { return }
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                model.settings.activeTabs.move(
+                                    fromOffsets: IndexSet(integer: liveIdx),
+                                    toOffset: liveIdx + 2   // move(fromOffsets:toOffset:) usa índice post-remove
+                                )
                                 model.persistSettings()
-                            } } label: {
-                                Image(systemName: "chevron.down").font(.system(size: 10, weight: .bold)).foregroundStyle(Color.tarotIvory.opacity(0.35))
-                            }.buttonStyle(.plain)
+                            }
+                        } label: {
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(
+                                    (activeTabs.firstIndex(of: tab) ?? 0) < activeTabs.count - 1
+                                        ? Color.tarotIvory.opacity(0.55)
+                                        : Color.clear
+                                )
                         }
-                        if tab == .settings {
+                        .buttonStyle(.plain)
+                        .disabled((activeTabs.firstIndex(of: tab) ?? 0) >= activeTabs.count - 1)
+
+                        // Tabs obligatorios: siempre visibles (la app los restaura al guardar).
+                        if tab == .settings || TarotViewModel.mandatoryTabs.contains(tab) {
                             Image(systemName: "lock.fill")
                                 .font(.system(size: 12, weight: .light))
                                 .foregroundStyle(Color.tarotIvory.opacity(0.55))
+                                .accessibilityLabel("Obligatorio")
                         } else {
-                            Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                model.settings.activeTabs.removeAll { $0 == tab }
-                                if !model.settings.inactiveTabs.contains(tab) {
-                                    model.settings.inactiveTabs.append(tab)
+                            Button {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    model.settings.activeTabs.removeAll { $0 == tab }
+                                    if !model.settings.inactiveTabs.contains(tab) {
+                                        model.settings.inactiveTabs.append(tab)
+                                    }
+                                    model.persistSettings()
                                 }
-                                model.persistSettings()
-                            }} label: {
-                                Image(systemName: "eye.slash").font(.system(size: 12, weight: .light)).foregroundStyle(Color.tarotIvory.opacity(0.35))
+                            } label: {
+                                Image(systemName: "eye.slash")
+                                    .font(.system(size: 12, weight: .light))
+                                    .foregroundStyle(Color.tarotIvory.opacity(0.35))
                             }.buttonStyle(.plain)
                         }
                     }
@@ -126,28 +190,43 @@ struct SettingsView: View {
                             .font(.system(size: 13, design: .serif))
                             .foregroundStyle(Color.tarotIvory.opacity(0.55))
                         Spacer()
-                         Button {
-                             if let idx = model.settings.inactiveTabs.firstIndex(of: tab) {
-                                 withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                     model.settings.inactiveTabs.remove(at: idx)
-                                     if !model.settings.activeTabs.contains(tab) {
-                                         model.settings.activeTabs.append(tab)
-                                     }
-                                     model.persistSettings()
-                                 }
-                             }
-                         } label: {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 18, weight: .light))
-                                .foregroundStyle(Color.tarotGold)
+
+                        // Indicador de límite (8 tabs activos)
+                        let atLimit = model.settings.activeTabs.count >= 8
+                        if atLimit {
+                            Text("Límite 8")
+                                .font(.system(size: 9, weight: .semibold, design: .serif))
+                                .tracking(0.5)
+                                .foregroundStyle(Color.tarotGold.opacity(0.55))
+                                .padding(.horizontal, 6).padding(.vertical, 3)
+                                .background(Capsule().fill(Color.tarotGold.opacity(0.10)))
+                                .overlay(Capsule().stroke(Color.tarotGold.opacity(0.22), lineWidth: 0.5))
+                        } else {
+                            Button {
+                                // Re-buscamos el índice en el momento del tap para evitar
+                                // índices obsoletos si el array cambió desde el render.
+                                guard let liveIdx = model.settings.inactiveTabs.firstIndex(of: tab) else { return }
+                                guard model.settings.activeTabs.count < 8 else { return }
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    model.settings.inactiveTabs.remove(at: liveIdx)
+                                    if !model.settings.activeTabs.contains(tab) {
+                                        model.settings.activeTabs.append(tab)
+                                    }
+                                    model.persistSettings()
+                                }
+                            } label: {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 18, weight: .light))
+                                    .foregroundStyle(Color.tarotGold)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
                     .padding(.vertical, 4)
                 }
             }
 
-            Text("Toca ↑↓ para reordenar · Desliza para ocultar · Toca ＋ para mostrar · Barra desplazable con todos los tabs visibles")
+            Text("Toca ↑↓ para reordenar · Toca el ojo para ocultar · Toca ＋ para mostrar. Máximo 8 tabs activos. Los tabs con candado son obligatorios.")
                 .font(.system(size: 10, design: .serif))
                 .foregroundStyle(Color.tarotIvory.opacity(0.35))
                 .padding(.top, 6)
@@ -196,50 +275,155 @@ struct SettingsView: View {
     }
 
     private var openAISection: some View {
-        luxurySection(title: TarotStrings.integration.localized, systemImage: "brain.head.profile") {
-            VStack(alignment: .leading, spacing: 6) {
-                HStack(spacing: 7) {
-                    Image(systemName: "brain.head.profile")
-                        .font(.system(size: 12, weight: .light))
-                        .foregroundStyle(Color.tarotGold)
-                    Text(TarotStrings.openAIKey.localized)
-                        .font(.system(size: 13, weight: .semibold, design: .serif))
-                        .foregroundStyle(Color.tarotIvory)
+        luxurySection(title: "Inteligencia Artificial", systemImage: "brain.head.profile") {
+
+            // --- Selector de proveedor ---
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Proveedor")
+                    .font(.system(size: 11, weight: .bold, design: .serif))
+                    .tracking(1.2)
+                    .foregroundStyle(Color.tarotGold.opacity(0.85))
+                    .textCase(.uppercase)
+
+                ForEach(AIProvider.allCases) { p in
+                    Button {
+                        model.settings.aiProvider = p
+                        // Si cambiamos proveedor, borramos model name para usar el default
+                        if model.settings.aiModelName.isEmpty || !isCustomModel {
+                            model.settings.aiModelName = ""
+                        }
+                        model.persistSettings()
+                    } label: {
+                        HStack(spacing: 10) {
+                            Image(systemName: p.systemImage)
+                                .font(.system(size: 13, weight: .light))
+                                .frame(width: 22)
+                                .foregroundStyle(model.settings.aiProvider == p ? Color.tarotGold : Color.tarotIvory.opacity(0.45))
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(p.displayName)
+                                    .font(.system(size: 13, weight: model.settings.aiProvider == p ? .semibold : .regular, design: .serif))
+                                    .foregroundStyle(model.settings.aiProvider == p ? Color.tarotIvory : Color.tarotIvory.opacity(0.65))
+                                Text(p.hint)
+                                    .font(.system(size: 10, design: .serif))
+                                    .foregroundStyle(Color.tarotIvory.opacity(0.38))
+                            }
+                            Spacer()
+                            if model.settings.aiProvider == p {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 16, weight: .light))
+                                    .foregroundStyle(Color.tarotGold)
+                            }
+                        }
+                        .padding(.vertical, 6)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
                 }
-                Text(TarotStrings.openAIDescription.localized)
-                    .font(.system(size: 11, design: .serif))
-                    .foregroundStyle(Color.tarotIvory.opacity(0.55))
-                    .lineSpacing(2)
             }
 
-            SecureField(TarotStrings.openAIKeyPlaceholder.localized, text: $model.settings.openAIKey)
-                .font(.system(size: 12, design: .monospaced))
-                .foregroundStyle(Color.tarotIvory)
-                .autocorrectionDisabled()
-                #if os(iOS)
-                .textInputAutocapitalization(.never)
-                #endif
-                .padding(10)
-                .background(Color.white.opacity(0.05))
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .stroke(Color.tarotGold.opacity(0.2), lineWidth: 0.75)
-                )
-                .onChange(of: model.settings.openAIKey) { _ in model.persistSettings() }
+            Divider().overlay(Color.tarotGold.opacity(0.12))
 
-            if !model.settings.openAIKey.isEmpty {
+            // --- Modelo (editable) ---
+            VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundStyle(Color.tarotGold)
-                    Text(TarotStrings.openAIKeyConfigured.localized)
-                        .font(.caption)
-                        .foregroundStyle(Color.tarotGold)
+                    Text("Modelo")
+                        .font(.system(size: 12, weight: .semibold, design: .serif))
+                        .foregroundStyle(Color.tarotIvory)
+                    Text("· por defecto: \(model.settings.aiProvider.defaultModel)")
+                        .font(.system(size: 10, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.38))
                 }
+                TextField(model.settings.aiProvider.defaultModel, text: $model.settings.aiModelName)
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundStyle(Color.tarotIvory)
+                    .autocorrectionDisabled()
+                    #if os(iOS)
+                    .textInputAutocapitalization(.never)
+                    #endif
+                    .padding(10)
+                    .background(Color.white.opacity(0.05))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.tarotGold.opacity(0.20), lineWidth: 0.75))
+                    .onChange(of: model.settings.aiModelName) { _ in model.persistSettings() }
+            }
+
+            // --- URL base (solo para Personalizado + opcional para el resto) ---
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    Text("URL base")
+                        .font(.system(size: 12, weight: .semibold, design: .serif))
+                        .foregroundStyle(Color.tarotIvory)
+                    if !model.settings.aiProvider.defaultBaseURL.isEmpty {
+                        Text("· por defecto: \(model.settings.aiProvider.defaultBaseURL)")
+                            .font(.system(size: 9, design: .serif))
+                            .foregroundStyle(Color.tarotIvory.opacity(0.35))
+                            .lineLimit(1)
+                    }
+                }
+                TextField(model.settings.aiProvider.defaultBaseURL.isEmpty ? "https://…" : model.settings.aiProvider.defaultBaseURL, text: $model.settings.aiBaseURL)
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundStyle(Color.tarotIvory)
+                    .autocorrectionDisabled()
+                    #if os(iOS)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+                    #endif
+                    .padding(10)
+                    .background(Color.white.opacity(0.05))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                    .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.tarotGold.opacity(0.20), lineWidth: 0.75))
+                    .onChange(of: model.settings.aiBaseURL) { _ in model.persistSettings() }
+
+                Text("Se añade /v1/chat/completions automáticamente.")
+                    .font(.system(size: 9, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.30))
+            }
+
+            // --- API Key (oculta si es local) ---
+            if !model.settings.aiProvider.isLocal {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("API Key")
+                        .font(.system(size: 12, weight: .semibold, design: .serif))
+                        .foregroundStyle(Color.tarotIvory)
+                    SecureField("sk-… / gsk_… / tu clave", text: $model.settings.aiApiKey)
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundStyle(Color.tarotIvory)
+                        .autocorrectionDisabled()
+                        #if os(iOS)
+                        .textInputAutocapitalization(.never)
+                        #endif
+                        .padding(10)
+                        .background(Color.white.opacity(0.05))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .overlay(RoundedRectangle(cornerRadius: 10, style: .continuous).stroke(Color.tarotGold.opacity(0.20), lineWidth: 0.75))
+                        .onChange(of: model.settings.aiApiKey) { _ in model.persistSettings() }
+
+                    if !model.settings.aiApiKey.isEmpty {
+                        HStack(spacing: 6) {
+                            Image(systemName: "checkmark.circle.fill").font(.caption).foregroundStyle(Color.tarotGold)
+                            Text("Clave configurada").font(.caption).foregroundStyle(Color.tarotGold)
+                        }
+                    }
+                }
+            } else {
+                HStack(spacing: 6) {
+                    Image(systemName: "house.circle.fill").font(.caption).foregroundStyle(Color.tarotGold.opacity(0.8))
+                    Text("Proveedor local — no necesita API key. Asegúrate de tener \(model.settings.aiProvider.displayName) corriendo.")
+                        .font(.system(size: 10, design: .serif))
+                        .foregroundStyle(Color.tarotIvory.opacity(0.50))
+                }
+                .padding(10)
+                .background(Color.tarotGold.opacity(0.06))
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             }
         }
     }
+
+    private var isCustomModel: Bool {
+        let raw = model.settings.aiModelName.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !raw.isEmpty && raw != model.settings.aiProvider.defaultModel
+    }
+
 
     private var personalizationSection: some View {
         luxurySection(title: TarotStrings.personalization.localized, systemImage: "wand.and.stars") {
@@ -254,7 +438,7 @@ struct SettingsView: View {
 
     private var deckPicker: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack(spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: 8) {
                 Text("Baraja")
                     .font(.system(size: 11, weight: .bold, design: .serif))
                     .tracking(1.2)
@@ -388,7 +572,7 @@ private struct DeckRow: View {
                         Text(deck.displayName)
                             .font(.system(size: 12.5, weight: isSelected ? .semibold : .medium, design: .serif))
                             .foregroundStyle(isSelected ? Color.tarotIvory : Color.tarotIvory.opacity(0.86))
-                            .lineLimit(1)
+                            .lineLimit(2)
                         if !deck.hasDedicatedArtwork {
                             Text("TEXTURA")
                                 .font(.system(size: 8, weight: .bold, design: .rounded))

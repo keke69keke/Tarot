@@ -25,8 +25,6 @@ public struct SecretVaultView: View {
     public var body: some View {
         NavigationStack {
             ZStack {
-                Color.tarotBackground.ignoresSafeArea()
-                
                 if !vaultManager.isUnlocked {
                     pinKeypadView
                 } else {
@@ -37,6 +35,7 @@ public struct SecretVaultView: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .tarotNightBackground()
             .toolbar {
                 if vaultManager.isUnlocked {
                     ToolbarItem(placement: .automatic) {
@@ -80,6 +79,7 @@ public struct SecretVaultView: View {
             
             Text(vaultManager.hasPINSet ? "Introduce tu Código PIN" : "Crea tu Código PIN Secreto")
                 .font(.system(size: 20, weight: .bold, design: .serif))
+                .multilineTextAlignment(.center)
                 .foregroundStyle(Color.tarotIvory)
             
             HStack(spacing: 16) {
@@ -95,6 +95,7 @@ public struct SecretVaultView: View {
             if let error = pinError {
                 Text(error)
                     .font(.caption)
+                    .multilineTextAlignment(.center)
                     .foregroundStyle(.red)
             }
 
@@ -113,11 +114,21 @@ public struct SecretVaultView: View {
                     .overlay(Capsule().stroke(Color.tarotGold.opacity(0.22), lineWidth: 0.7))
                 }
                 .buttonStyle(.plain)
-                Toggle(isOn: Binding(get: { vaultManager.biometricEnabled }, set: { vaultManager.biometricEnabled = $0 })) {
-                    Text("Activar \(vaultManager.biometricTypeName)")
-                        .font(.system(size: 11, design: .serif))
-                        .foregroundStyle(Color.tarotIvory.opacity(0.6))
-                }.tint(Color.tarotGold).padding(.horizontal, 32).padding(.top, 4)
+                HStack {
+                    Toggle("Usar \(vaultManager.biometricTypeName)", isOn: Binding(
+                        get: { vaultManager.biometricEnabled },
+                        set: { newValue in
+                            withAnimation {
+                                vaultManager.biometricEnabled = newValue
+                            }
+                        }
+                    ))
+                    .tint(Color.tarotGold)
+                    .font(.system(size: 11, design: .serif))
+                    .foregroundStyle(Color.tarotIvory.opacity(0.6))
+                }
+                .padding(.horizontal, 32)
+                .padding(.top, 4)
             }
             
             // Keypad 1-9 & 0
@@ -220,6 +231,7 @@ public struct SecretVaultView: View {
                             .foregroundStyle(Color.tarotGold.opacity(0.6))
                         Text("No tienes lecturas secretas registradas.")
                             .font(.subheadline)
+                            .multilineTextAlignment(.center)
                             .foregroundStyle(Color.tarotIvory.opacity(0.58))
                     }
                     .frame(maxWidth: .infinity)
@@ -273,7 +285,7 @@ public struct SecretVaultView: View {
             
             Text(entry.title)
                 .font(.headline)
-                .lineLimit(1)
+                .lineLimit(2)
                 .foregroundStyle(Color.tarotIvory)
             
             if !entry.notes.isEmpty {
@@ -314,6 +326,8 @@ public struct SecretVaultView: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .tarotSheetBackground()
+            .preferredColorScheme(.dark)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancelar") { showingAddSheet = false }
@@ -354,6 +368,8 @@ public struct SecretVaultView: View {
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif
+            .tarotSheetBackground()
+            .preferredColorScheme(.dark)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancelar") { showingChangePIN = false; oldPIN=""; newPIN=""; changePINError=nil } }
                 ToolbarItem(placement: .confirmationAction) {
@@ -437,8 +453,12 @@ private struct AudioRecorderSheet: View {
                     }
                 }
             }
-            .padding().frame(maxWidth: .infinity, maxHeight: .infinity).background(Color.tarotBackground)
-            .navigationTitle("Grabar Audio").toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cerrar") { dismiss() } } }
+            .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .tarotSheetBackground()
+            .preferredColorScheme(.dark)
+            .navigationTitle("Grabar Audio")
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cerrar") { dismiss() } } }
         }
     }
 }

@@ -151,6 +151,7 @@ struct CardBackView: View {
             Text(text)
                 .font(.system(size: max(7, cardSize.width * 0.07), weight: .bold, design: .serif))
                 .tracking(1.8)
+                .multilineTextAlignment(.center)
                 .foregroundStyle(accent.opacity(0.85))
         }
     }

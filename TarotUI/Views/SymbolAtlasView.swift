@@ -10,15 +10,12 @@ struct SymbolAtlasView: View {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .leading, spacing: 32) {
-                VStack(alignment: .leading, spacing: 10) {
-                    EyebrowLabel(text: "ENCICLOPEDIA SAGRADA")
-                    HStack {
-                        Image(systemName: "leaf.fill")
-                            .foregroundStyle(Color.tarotGold)
-                        Text("Atlas de Símbolos")
-                            .font(.system(size: 28, weight: .bold, design: .serif))
-                            .foregroundStyle(Color.tarotIvory)
-                    }
+                LuxuryPageHeader(
+                    eyebrow: "ENCICLOPEDIA SAGRADA",
+                    title: "Atlas de Símbolos"
+                ) {
+                    Image(systemName: "leaf.fill")
+                        .foregroundStyle(Color.tarotGold)
                 }
                 .padding(.bottom, 8)
 
@@ -43,7 +40,11 @@ struct SymbolAtlasView: View {
             }
             .padding(24)
         }
-        .background(Color.clear)
+        // Antes terminaba en `.background(Color.clear)`, que no pinta nada: al
+        // empujarla con un `NavigationLink` (Referencia > Símbolos) la vista no
+        // hereda el fondo del padre y caia al negro del sistema, con siete
+        // franjas negras. Verificado midiendo la captura.
+        .tarotNightBackground()
     }
 
     private func symbolDetail(_ symbol: UniversalSymbol) -> some View {
@@ -186,7 +187,8 @@ struct SymbolAtlasView: View {
                     .font(.system(size: 13, weight: .medium, design: .serif))
                     .foregroundStyle(isSelected ? Color.tarotGold : Color.tarotIvory.opacity(0.7))
                     .multilineTextAlignment(.center)
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.85)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 20)

@@ -21,6 +21,8 @@ struct ReferenceCardView: View {
         repository.interpretation(for: card, position: nil, orientation: orientation)
     }
 
+    @State private var showAIDeepDive = false
+
     var body: some View {
         ScrollView(.vertical) {
             VStack(alignment: .leading, spacing: 18) {
@@ -40,7 +42,7 @@ struct ReferenceCardView: View {
 
                     VStack(alignment: .leading, spacing: 8) {
                         Text(card.name).font(.title).bold()
-                        HStack(spacing: 10) {
+                        HStack(alignment: .firstTextBaseline, spacing: 10) {
                             Text(card.suit?.displayName ?? (card.arcanaType == .major ? "Arcano Mayor" : "Arcano Menor"))
                                 .font(.subheadline)
                                 .foregroundStyle(Color.tarotIvory.opacity(0.58))
@@ -58,6 +60,38 @@ struct ReferenceCardView: View {
                 .background(Color.tarotPanel.opacity(0.96))
                 .cornerRadius(24)
                 .shadow(color: Color.tarotShadow.opacity(0.35), radius: 15, x: 0, y: 8)
+
+                // Botón AI Deep Dive
+                Button {
+                    showAIDeepDive = true
+                } label: {
+                    HStack(spacing: 12) {
+                        ZStack {
+                            Circle()
+                                .fill(LinearGradient(colors: [Color.tarotGold, Color.tarotGoldDeep], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                .frame(width: 40, height: 40)
+                            Image(systemName: "sparkles")
+                                .font(.headline.weight(.bold))
+                                .foregroundStyle(.white)
+                        }
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Consultar a Arcana IA")
+                                .font(.system(size: 15, weight: .bold, design: .serif))
+                                .foregroundStyle(Color.tarotIvory)
+                            Text("Pídele que interprete o elabore cualquier misterio de esta carta")
+                                .font(.system(size: 11, design: .serif))
+                                .foregroundStyle(Color.tarotIvory.opacity(0.65))
+                        }
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(Color.tarotGold)
+                    }
+                    .padding(14)
+                    .background(RoundedRectangle(cornerRadius: 18).fill(Color.tarotGold.opacity(0.12)))
+                    .overlay(RoundedRectangle(cornerRadius: 18).stroke(Color.tarotGold.opacity(0.3), lineWidth: 1))
+                }
+                .buttonStyle(.plain)
 
                 // Book content from OCR (Fiebig & Bürger)
                 if let bookContent = card.bookContent, !bookContent.isEmpty {
@@ -83,10 +117,17 @@ struct ReferenceCardView: View {
             }
             .padding()
         }
+        .sheet(isPresented: $showAIDeepDive) {
+            CardAIDeepDiveSheet(card: card, orientation: orientation, repository: repository)
+        }
         .navigationTitle(card.name)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         #endif
+        // Igual que `CardDetailView`: al empujarla desde la biblioteca (modo
+        // libro) no hereda el fondo del padre y caia al negro del sistema.
+        // Verificado midiendo la captura.
+        .tarotNightBase()
     }
 }
 

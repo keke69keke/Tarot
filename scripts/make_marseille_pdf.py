@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# AVISO (2026-09-26): este script incrusta en el libro los marseille_*.png que encuentre en
+# Resources. Hoy esos PNG son las cartas reales (ver scripts/deck-assets/README.md); al
+# reejecutarlo el libro se recompone con el arte actual. Requiere PIL y reportlab, que hoy no
+# estan instalados en el entorno.
 """Genera el PDF 'El Tarot de Marsella' con portada + 22 arcanos + 4 palos + cierre."""
 import os, glob
 from reportlab.lib.pagesizes import A4

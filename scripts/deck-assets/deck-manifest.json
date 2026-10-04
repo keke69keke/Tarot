@@ -1,0 +1,1592 @@
+{
+ "schema": "tarot-deck-assets/v1",
+ "generatedAt": "2026-09-26",
+ "note": "Procedencia del arte de los mazos con artwork dedicado. Los archivos se extrajeron de los dos PDF listados, carta por carta, sin recorte ni reescalado (Hello Kitty anade 6 px de relleno por lado para encajar el marco 150x220; Marsella conserva su tamano nativo y se dibuja con .fit). El arte se guarda en HEIC (misma imagen, ~4x menos peso que PNG); el cargador acepta HEIC y PNG.",
+ "sources": [
+  {
+   "deck": "helloKitty",
+   "file": "20260926-200542-edcc2169-2e5-hello-kitty-tarot-6x13.pdf",
+   "sha256": "05c98b3135a00f1d7c17bf30b467ea94d1c46e2ea2c3f71e6d5a117aa47ee1c3",
+   "pages": 14,
+   "layout": "6 imagenes por pagina, nombres de recurso continuos Im1..Im78"
+  },
+  {
+   "deck": "marseille",
+   "file": "20260926-203537-a8a4bfa0-6d1-tarot-de-marsella-cartas_compress.pdf",
+   "sha256": "7dbb76816f5cef34565b735f5611384bef1805d49e4af1dba6c174834df5e051",
+   "pages": 7,
+   "layout": "12 imagenes por pagina (6 en la ultima), orden de lectura fila por fila"
+  }
+ ],
+ "ordering": {
+  "helloKitty": "id = ImN - 1 (verificado por vision en 8 posiciones)",
+  "marseille": "sin orden canonico: 78 cartas identificadas una a una y cerradas por biyeccion + comparaciones relativas"
+ },
+ "framing": {
+  "frameAspect": 0.681818,
+  "helloKitty": "relleno de 6 px por lado hasta 349x512 (0.68164) para que .fill no recorte",
+  "marseille": "nativo 354x660 (0.536) y CardFace usa .fit para mostrar la carta completa"
+ },
+ "cards": [
+  {
+   "deck": "helloKitty",
+   "id": 0,
+   "imageName": "card_00_the_fool",
+   "source": "p1_Im1.jpg",
+   "output": "helloKitty_card_00_the_fool.heic",
+   "sha256": "e2581679f131ca2475e8f65a4a2730d1199e0cb156a16d76595662800b380da4",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 0,
+   "imageName": "card_00_the_fool",
+   "source": "seq_10.jpg",
+   "output": "marseille_card_00_the_fool.heic",
+   "sha256": "c6275a706aa73b75d03ac44dfaa061a1f567bf7897af06d1f91c059268a7e7f8",
+   "width": 354,
+   "height": 660
+  },
+  {
+   "deck": "helloKitty",
+   "id": 1,
+   "imageName": "card_01_the_magician",
+   "source": "p1_Im2.jpg",
+   "output": "helloKitty_card_01_the_magician.heic",
+   "sha256": "4f32d835e5bb6115fc1acb0c4f2df4c0c88ce4c0f984a41bcbef6c36cdb696b6",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 1,
+   "imageName": "card_01_the_magician",
+   "source": "seq_00.jpg",
+   "output": "marseille_card_01_the_magician.heic",
+   "sha256": "70ab8ad3cc90e1c93c6bbe88617bca855411f3242d5e8d21bba9d93ba086ddf2",
+   "width": 354,
+   "height": 660
+  },
+  {
+   "deck": "helloKitty",
+   "id": 2,
+   "imageName": "card_02_the_high_priestess",
+   "source": "p1_Im3.jpg",
+   "output": "helloKitty_card_02_the_high_priestess.heic",
+   "sha256": "e55b8fd3402d19849e193e840b90a49715b2ed94d94842515dc52cf613106348",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 2,
+   "imageName": "card_02_the_high_priestess",
+   "source": "seq_01.jpg",
+   "output": "marseille_card_02_the_high_priestess.heic",
+   "sha256": "2f2ae0ea8b6e308229aac5fbf6b442895f10d07a0c336061ed68725d00984a7f",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 3,
+   "imageName": "card_03_the_empress",
+   "source": "p1_Im4.jpg",
+   "output": "helloKitty_card_03_the_empress.heic",
+   "sha256": "a1ab29e00f8679b5e732dd0ba588e9bb323c6580ccb05f4a07560abd6fb1ef52",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 3,
+   "imageName": "card_03_the_empress",
+   "source": "seq_04.jpg",
+   "output": "marseille_card_03_the_empress.heic",
+   "sha256": "2590eef35ade5fcb01e5031b7c53de190205fb5289cd64316677167a75dad5f1",
+   "width": 354,
+   "height": 666
+  },
+  {
+   "deck": "helloKitty",
+   "id": 4,
+   "imageName": "card_04_the_emperor",
+   "source": "p1_Im5.jpg",
+   "output": "helloKitty_card_04_the_emperor.heic",
+   "sha256": "7ce3acabc488d24c38675907d36449d59ea809b466a01f4d238238800e4ce539",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 4,
+   "imageName": "card_04_the_emperor",
+   "source": "seq_07.jpg",
+   "output": "marseille_card_04_the_emperor.heic",
+   "sha256": "736745c4877b05adb0382cde5bf32d6032b3fd424390d1fa99e356c3dfcf87ba",
+   "width": 354,
+   "height": 661
+  },
+  {
+   "deck": "helloKitty",
+   "id": 5,
+   "imageName": "card_05_the_hierophant",
+   "source": "p1_Im6.jpg",
+   "output": "helloKitty_card_05_the_hierophant.heic",
+   "sha256": "7e6216435a4e04bd3e418f48ae0803ef774350d418012692bd4fad97a33c8324",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 5,
+   "imageName": "card_05_the_hierophant",
+   "source": "seq_08.jpg",
+   "output": "marseille_card_05_the_hierophant.heic",
+   "sha256": "35622de2f84c981c6c6f82c0a605ec49b508e7a507b0f591a36a9f1138b5e0d1",
+   "width": 354,
+   "height": 661
+  },
+  {
+   "deck": "helloKitty",
+   "id": 6,
+   "imageName": "card_06_the_lovers",
+   "source": "p2_Im7.jpg",
+   "output": "helloKitty_card_06_the_lovers.heic",
+   "sha256": "d31c26001df5962abbd794bb6d1e9828c4f792ab74732feacaf6b8f644661d26",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 6,
+   "imageName": "card_06_the_lovers",
+   "source": "seq_09.jpg",
+   "output": "marseille_card_06_the_lovers.heic",
+   "sha256": "a49c1adacb70fc644a75aee0e85bd14510334ccbc18367e4fd936ccb59651c39",
+   "width": 354,
+   "height": 661
+  },
+  {
+   "deck": "helloKitty",
+   "id": 7,
+   "imageName": "card_07_the_chariot",
+   "source": "p2_Im8.jpg",
+   "output": "helloKitty_card_07_the_chariot.heic",
+   "sha256": "8cc5b23c13321ba70a86a95812fd217306e355c6b901c56faf4668a59299ebf3",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 7,
+   "imageName": "card_07_the_chariot",
+   "source": "seq_06.jpg",
+   "output": "marseille_card_07_the_chariot.heic",
+   "sha256": "0305d8c6984e76295eff5d4233a488e119fd4f4f963ffbd173a45c6c26583237",
+   "width": 354,
+   "height": 654
+  },
+  {
+   "deck": "helloKitty",
+   "id": 8,
+   "imageName": "card_08_strength",
+   "source": "p2_Im9.jpg",
+   "output": "helloKitty_card_08_strength.heic",
+   "sha256": "4d9dfca707b4ed184838a7a081386335a2d350bf924efff63d11d46375de029f",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 8,
+   "imageName": "card_08_strength",
+   "source": "seq_11.jpg",
+   "output": "marseille_card_08_strength.heic",
+   "sha256": "a4083e3976eddfd3c3b6895f8d1c5e7a6e70f06c606543a11447ffee8aeb1a07",
+   "width": 354,
+   "height": 661
+  },
+  {
+   "deck": "helloKitty",
+   "id": 9,
+   "imageName": "card_09_the_hermit",
+   "source": "p2_Im10.jpg",
+   "output": "helloKitty_card_09_the_hermit.heic",
+   "sha256": "0b865c6105bf70c894d3b0bdb5bc506b27e75f0b7c22c780c5468a3a3cb0ad8f",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 9,
+   "imageName": "card_09_the_hermit",
+   "source": "seq_03.jpg",
+   "output": "marseille_card_09_the_hermit.heic",
+   "sha256": "f571cc4cbeb67c219ce3c1b0e11cc1bd5347603765ed8f1d8dd77157c438a0b1",
+   "width": 354,
+   "height": 656
+  },
+  {
+   "deck": "helloKitty",
+   "id": 10,
+   "imageName": "card_10_wheel_of_fortune",
+   "source": "p2_Im11.jpg",
+   "output": "helloKitty_card_10_wheel_of_fortune.heic",
+   "sha256": "dfa753152d910d65d5949b9380f3ea9cdf994048c5e4b07f7972c2cfaf973d89",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 10,
+   "imageName": "card_10_wheel_of_fortune",
+   "source": "seq_05.jpg",
+   "output": "marseille_card_10_wheel_of_fortune.heic",
+   "sha256": "c55050489d59b8985529cca772a56cf18b67de39affc490316606d514e120558",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 11,
+   "imageName": "card_11_justice",
+   "source": "p2_Im12.jpg",
+   "output": "helloKitty_card_11_justice.heic",
+   "sha256": "680262e9d8fd42cf7f9ba3924488d4a17d6495307098460b710be0b37e426864",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 11,
+   "imageName": "card_11_justice",
+   "source": "seq_02.jpg",
+   "output": "marseille_card_11_justice.heic",
+   "sha256": "858f1996765e1ca81dd2dc5044822975c7efceb7e296f15aca9f3017edb8e41c",
+   "width": 354,
+   "height": 654
+  },
+  {
+   "deck": "helloKitty",
+   "id": 12,
+   "imageName": "card_12_the_hanged_man",
+   "source": "p3_Im13.jpg",
+   "output": "helloKitty_card_12_the_hanged_man.heic",
+   "sha256": "e9daad7fd5d3d66026a7033f58fa37ad623b7c6a0c07ee357624db9729d693e5",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 12,
+   "imageName": "card_12_the_hanged_man",
+   "source": "seq_23.jpg",
+   "output": "marseille_card_12_the_hanged_man.heic",
+   "sha256": "49169dc4b231a11d61c68967a9757682db8c688958af89caefebf4b4b78b60c7",
+   "width": 354,
+   "height": 655
+  },
+  {
+   "deck": "helloKitty",
+   "id": 13,
+   "imageName": "card_13_death",
+   "source": "p3_Im14.jpg",
+   "output": "helloKitty_card_13_death.heic",
+   "sha256": "6622a9e007bc1acc2d825e95a3d8691f876fe9e90c479c4ef25468c26e6cc54b",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 13,
+   "imageName": "card_13_death",
+   "source": "seq_14.jpg",
+   "output": "marseille_card_13_death.heic",
+   "sha256": "ade769a7ee3008141092b35a159a289119bc2e3bd3822e2673976ec8218ffb9a",
+   "width": 354,
+   "height": 662
+  },
+  {
+   "deck": "helloKitty",
+   "id": 14,
+   "imageName": "card_14_temperance",
+   "source": "p3_Im15.jpg",
+   "output": "helloKitty_card_14_temperance.heic",
+   "sha256": "524af9b4f3991c3331470b4a9a38ac13771026fced52e61e8305195d558f2e49",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 14,
+   "imageName": "card_14_temperance",
+   "source": "seq_15.jpg",
+   "output": "marseille_card_14_temperance.heic",
+   "sha256": "8b6df251cd4112c9e59749a6c53131f51373fba54f269e99fe1f1fea2a857687",
+   "width": 354,
+   "height": 662
+  },
+  {
+   "deck": "helloKitty",
+   "id": 15,
+   "imageName": "card_15_the_devil",
+   "source": "p3_Im16.jpg",
+   "output": "helloKitty_card_15_the_devil.heic",
+   "sha256": "4e06dc9d5ceafa35d977b47beecadeb8bf4734560b382a5a3deaab8420c4327c",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 15,
+   "imageName": "card_15_the_devil",
+   "source": "seq_21.jpg",
+   "output": "marseille_card_15_the_devil.heic",
+   "sha256": "ea046cf2c6cf3af99aa6155e05702d430e8cf9707a6abf3a4c047f17e0128d8b",
+   "width": 354,
+   "height": 660
+  },
+  {
+   "deck": "helloKitty",
+   "id": 16,
+   "imageName": "card_16_the_tower",
+   "source": "p3_Im17.jpg",
+   "output": "helloKitty_card_16_the_tower.heic",
+   "sha256": "3321b111f48d2e376c40c47f65263e82a29a04c848ad752f7e662eedb93c62b0",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 16,
+   "imageName": "card_16_the_tower",
+   "source": "seq_20.jpg",
+   "output": "marseille_card_16_the_tower.heic",
+   "sha256": "863aa0f021a75d04c68762e1e4c6c11f78531e717e8af529c7114db6e01052ef",
+   "width": 354,
+   "height": 659
+  },
+  {
+   "deck": "helloKitty",
+   "id": 17,
+   "imageName": "card_17_the_star",
+   "source": "p3_Im18.jpg",
+   "output": "helloKitty_card_17_the_star.heic",
+   "sha256": "bcfc240bb01d22133a21ef490f4a2a1e2373241e22b9819bd436f22262a2e49a",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 17,
+   "imageName": "card_17_the_star",
+   "source": "seq_18.jpg",
+   "output": "marseille_card_17_the_star.heic",
+   "sha256": "bdf2eb6f9c0783e9702362a83e2e2f12261d6d59236e7ab67f3c8b7e2350a7f1",
+   "width": 354,
+   "height": 653
+  },
+  {
+   "deck": "helloKitty",
+   "id": 18,
+   "imageName": "card_18_the_moon",
+   "source": "p4_Im19.jpg",
+   "output": "helloKitty_card_18_the_moon.heic",
+   "sha256": "8bf439733c8ae2b0fc6964e2ae2c21b874b9549e0ac9a58e1658c280ddbdbf35",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 18,
+   "imageName": "card_18_the_moon",
+   "source": "seq_19.jpg",
+   "output": "marseille_card_18_the_moon.heic",
+   "sha256": "11132e7886bf8c0419b5e9b74e2a5293582008444e075ac95e2c4d55082a09b5",
+   "width": 354,
+   "height": 657
+  },
+  {
+   "deck": "helloKitty",
+   "id": 19,
+   "imageName": "card_19_the_sun",
+   "source": "p4_Im20.jpg",
+   "output": "helloKitty_card_19_the_sun.heic",
+   "sha256": "999a27f078d1c9edb7262e5252e3d3e44d2c32427850f0b7357098e92a824e70",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 19,
+   "imageName": "card_19_the_sun",
+   "source": "seq_22.jpg",
+   "output": "marseille_card_19_the_sun.heic",
+   "sha256": "d486a01464b056f8314ff15b5f9a6a0cad97f31606099ea58cdc55adc1db25f2",
+   "width": 354,
+   "height": 662
+  },
+  {
+   "deck": "helloKitty",
+   "id": 20,
+   "imageName": "card_20_judgement",
+   "source": "p4_Im21.jpg",
+   "output": "helloKitty_card_20_judgement.heic",
+   "sha256": "704cc66726bf963b0d650de0ccfa426d89891b3d37ca5484819c0f78c1eb4942",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 20,
+   "imageName": "card_20_judgement",
+   "source": "seq_17.jpg",
+   "output": "marseille_card_20_judgement.heic",
+   "sha256": "0592b42a000a24cad49b2ba87259e1339cf1ec27fe165c79d56228b38af7ac92",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 21,
+   "imageName": "card_21_the_world",
+   "source": "p4_Im22.jpg",
+   "output": "helloKitty_card_21_the_world.heic",
+   "sha256": "855ec76dbc4634a15d10c7bed85c935136e24b8b190ecbb186fbc29017cd49b0",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 21,
+   "imageName": "card_21_the_world",
+   "source": "seq_16.jpg",
+   "output": "marseille_card_21_the_world.heic",
+   "sha256": "1427a27df703e211e65231a506d210b19fd4c2a2638ed59059fcaac2e3aea1d3",
+   "width": 354,
+   "height": 660
+  },
+  {
+   "deck": "helloKitty",
+   "id": 22,
+   "imageName": "card_22_ace_of_wands",
+   "source": "p4_Im23.jpg",
+   "output": "helloKitty_card_22_ace_of_wands.heic",
+   "sha256": "bac8ce703e297366206c5dd32197072eca4480ed3ed261170dc5277bbc79dba0",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 22,
+   "imageName": "card_22_ace_of_wands",
+   "source": "seq_12.jpg",
+   "output": "marseille_card_22_ace_of_wands.heic",
+   "sha256": "a1454acebd18ca2fd9db3d3a8bcbf1fa461f566abcfe053b58ca8683f3840223",
+   "width": 354,
+   "height": 653
+  },
+  {
+   "deck": "helloKitty",
+   "id": 23,
+   "imageName": "card_23_two_of_wands",
+   "source": "p4_Im24.jpg",
+   "output": "helloKitty_card_23_two_of_wands.heic",
+   "sha256": "5a0af136224f3ae9c6782af45204842bb8dca6680ba025465d05f0a352625668",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 23,
+   "imageName": "card_23_two_of_wands",
+   "source": "seq_13.jpg",
+   "output": "marseille_card_23_two_of_wands.heic",
+   "sha256": "2471877ea03d773907127ded4fad91eebfc133b8be7b4bcf66e99bedad9a0c60",
+   "width": 354,
+   "height": 660
+  },
+  {
+   "deck": "helloKitty",
+   "id": 24,
+   "imageName": "card_24_three_of_wands",
+   "source": "p5_Im25.jpg",
+   "output": "helloKitty_card_24_three_of_wands.heic",
+   "sha256": "4bb361e27bd1459e038c11876d8130ab6fd7670207ad6a927a5e74eccf7c2225",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 24,
+   "imageName": "card_24_three_of_wands",
+   "source": "seq_34.jpg",
+   "output": "marseille_card_24_three_of_wands.heic",
+   "sha256": "a3097012b148d2cf4e35c3fe6dcd04b136e56dfff2a16ccd84671f3817121570",
+   "width": 354,
+   "height": 658
+  },
+  {
+   "deck": "helloKitty",
+   "id": 25,
+   "imageName": "card_25_four_of_wands",
+   "source": "p5_Im26.jpg",
+   "output": "helloKitty_card_25_four_of_wands.heic",
+   "sha256": "19c8256d4542b743411df9a20a2bbcb56d36f2977661381ed8e8c1ad01bf4822",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 25,
+   "imageName": "card_25_four_of_wands",
+   "source": "seq_49.jpg",
+   "output": "marseille_card_25_four_of_wands.heic",
+   "sha256": "181583e08e0e873da9470dd3b3926ed39389504bf29e1ea7b875359265a31915",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 26,
+   "imageName": "card_26_five_of_wands",
+   "source": "p5_Im27.jpg",
+   "output": "helloKitty_card_26_five_of_wands.heic",
+   "sha256": "670931cbbb70ac249871af2b3c401753798fe8a41de048d518a15612d6893c8f",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 26,
+   "imageName": "card_26_five_of_wands",
+   "source": "seq_24.jpg",
+   "output": "marseille_card_26_five_of_wands.heic",
+   "sha256": "fb681b8dda08bec9c73e978dabc98fbe241d4fa362d177be9384b9097535e003",
+   "width": 354,
+   "height": 657
+  },
+  {
+   "deck": "helloKitty",
+   "id": 27,
+   "imageName": "card_27_six_of_wands",
+   "source": "p5_Im28.jpg",
+   "output": "helloKitty_card_27_six_of_wands.heic",
+   "sha256": "fdc2e946904ac28180097c93777273e5f4caec4fd6af916afe7e2dbf09004177",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 27,
+   "imageName": "card_27_six_of_wands",
+   "source": "seq_25.jpg",
+   "output": "marseille_card_27_six_of_wands.heic",
+   "sha256": "4c12b7f0d408afadfef66f04b7c5781f4f1cd85073c8bf8b38f27ebe482869fb",
+   "width": 354,
+   "height": 666
+  },
+  {
+   "deck": "helloKitty",
+   "id": 28,
+   "imageName": "card_28_seven_of_wands",
+   "source": "p5_Im29.jpg",
+   "output": "helloKitty_card_28_seven_of_wands.heic",
+   "sha256": "4e99c2e5ece2bd70bccc069b7b6a374ff5fcbe734cf941a41fd7900f7d097595",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 28,
+   "imageName": "card_28_seven_of_wands",
+   "source": "seq_50.jpg",
+   "output": "marseille_card_28_seven_of_wands.heic",
+   "sha256": "f5e69acfe4aa5ca619efd9ff46f494136f21e57a51c781bc5feca2009629960c",
+   "width": 354,
+   "height": 668
+  },
+  {
+   "deck": "helloKitty",
+   "id": 29,
+   "imageName": "card_29_eight_of_wands",
+   "source": "p5_Im30.jpg",
+   "output": "helloKitty_card_29_eight_of_wands.heic",
+   "sha256": "e3f3d0b54132a97460bbf96aec865f3fc1e151f7a8d6b0b9d6db5854d5d8eb60",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 29,
+   "imageName": "card_29_eight_of_wands",
+   "source": "seq_30.jpg",
+   "output": "marseille_card_29_eight_of_wands.heic",
+   "sha256": "c7bd8ab129c7deddc4ea1e3097bf9d482fd1e9c0dac4a013e4bface4ae18d4ce",
+   "width": 354,
+   "height": 660
+  },
+  {
+   "deck": "helloKitty",
+   "id": 30,
+   "imageName": "card_30_nine_of_wands",
+   "source": "p6_Im31.jpg",
+   "output": "helloKitty_card_30_nine_of_wands.heic",
+   "sha256": "213c2b32b89bfe6fa31e7e778db32cb583c53aac20ec389a8d25aede67dd4c2a",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 30,
+   "imageName": "card_30_nine_of_wands",
+   "source": "seq_33.jpg",
+   "output": "marseille_card_30_nine_of_wands.heic",
+   "sha256": "99068ac0d6f8a2a2a6f1c94fc1f1ddbf853a818a6a456bf3c91f40444d1d98f0",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 31,
+   "imageName": "card_31_ten_of_wands",
+   "source": "p6_Im32.jpg",
+   "output": "helloKitty_card_31_ten_of_wands.heic",
+   "sha256": "67cb2648d1a2978c452fd0f44b108d313fe9c916ac745f2522c2046be2ad010f",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 31,
+   "imageName": "card_31_ten_of_wands",
+   "source": "seq_31.jpg",
+   "output": "marseille_card_31_ten_of_wands.heic",
+   "sha256": "3b892b32117236fe10ba5bb794532422e98894280f4cec0eed8b293fdc92b1df",
+   "width": 354,
+   "height": 660
+  },
+  {
+   "deck": "helloKitty",
+   "id": 32,
+   "imageName": "card_32_page_of_wands",
+   "source": "p6_Im33.jpg",
+   "output": "helloKitty_card_32_page_of_wands.heic",
+   "sha256": "fa8aba069626c32a42bfcbf3de561d31f50c33d5e9566842be37796b50fbfdf0",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 32,
+   "imageName": "card_32_page_of_wands",
+   "source": "seq_29.jpg",
+   "output": "marseille_card_32_page_of_wands.heic",
+   "sha256": "c0ab1bd7a01e099d981b199f1ab8697dd342ea8345e1a608af15bfd0863422b4",
+   "width": 354,
+   "height": 658
+  },
+  {
+   "deck": "helloKitty",
+   "id": 33,
+   "imageName": "card_33_knight_of_wands",
+   "source": "p6_Im34.jpg",
+   "output": "helloKitty_card_33_knight_of_wands.heic",
+   "sha256": "90caf0d2228d4682ac5701c7e76bb232ede9a04365d56b3597d730710c9c0428",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 33,
+   "imageName": "card_33_knight_of_wands",
+   "source": "seq_26.jpg",
+   "output": "marseille_card_33_knight_of_wands.heic",
+   "sha256": "ea7dd8acc6ad1f8f45879d0b84cc4881dc0123209be0c8dec46338136cb44847",
+   "width": 354,
+   "height": 649
+  },
+  {
+   "deck": "helloKitty",
+   "id": 34,
+   "imageName": "card_34_queen_of_wands",
+   "source": "p6_Im35.jpg",
+   "output": "helloKitty_card_34_queen_of_wands.heic",
+   "sha256": "5cc71eee914a8511b5f650b0652fd8f27310ac779515b9108328b77adea751ae",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 34,
+   "imageName": "card_34_queen_of_wands",
+   "source": "seq_27.jpg",
+   "output": "marseille_card_34_queen_of_wands.heic",
+   "sha256": "07bd5c512e76f59dfc5462f6fa8387b80921138a028983683881f30635e9dfc7",
+   "width": 354,
+   "height": 661
+  },
+  {
+   "deck": "helloKitty",
+   "id": 35,
+   "imageName": "card_35_king_of_wands",
+   "source": "p6_Im36.jpg",
+   "output": "helloKitty_card_35_king_of_wands.heic",
+   "sha256": "9ace11a58d46ed7f7ca3b9289fc2d0e61d3a2a085ef063be4bb539a98d4f4710",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 35,
+   "imageName": "card_35_king_of_wands",
+   "source": "seq_35.jpg",
+   "output": "marseille_card_35_king_of_wands.heic",
+   "sha256": "90747df9a8a215e10eca72f42d84d9da6cec72ded4984d1ea0a1aff6d185f3e6",
+   "width": 354,
+   "height": 662
+  },
+  {
+   "deck": "helloKitty",
+   "id": 36,
+   "imageName": "card_36_ace_of_cups",
+   "source": "p7_Im37.jpg",
+   "output": "helloKitty_card_36_ace_of_cups.heic",
+   "sha256": "a9e2f8718b2a0e4cdc1192c24f705f980378b16fea0c8bede404f782a672afbf",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 36,
+   "imageName": "card_36_ace_of_cups",
+   "source": "seq_45.jpg",
+   "output": "marseille_card_36_ace_of_cups.heic",
+   "sha256": "1f5d71f8a76ee33d96cd0ced0ad67cac51e89af0ad41e67d3668b976546da621",
+   "width": 354,
+   "height": 665
+  },
+  {
+   "deck": "helloKitty",
+   "id": 37,
+   "imageName": "card_37_two_of_cups",
+   "source": "p7_Im38.jpg",
+   "output": "helloKitty_card_37_two_of_cups.heic",
+   "sha256": "9be82069a0f7ce7df2c6d083523ec93a31f3111961419acea5058dce4d1f488a",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 37,
+   "imageName": "card_37_two_of_cups",
+   "source": "seq_36.jpg",
+   "output": "marseille_card_37_two_of_cups.heic",
+   "sha256": "b846f9df968d50d2436ca7aa2d1ddc33be298b8664e7b1c73e832fb7314a55a0",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 38,
+   "imageName": "card_38_three_of_cups",
+   "source": "p7_Im39.jpg",
+   "output": "helloKitty_card_38_three_of_cups.heic",
+   "sha256": "935f903f95ddc06a07eda6b3432e33541d293f9b16b2522bcfadcac94b29e903",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 38,
+   "imageName": "card_38_three_of_cups",
+   "source": "seq_37.jpg",
+   "output": "marseille_card_38_three_of_cups.heic",
+   "sha256": "48f2b4fff68ee1631686ef28a96396dc852e74ecff6792925ba41e481e54a470",
+   "width": 354,
+   "height": 653
+  },
+  {
+   "deck": "helloKitty",
+   "id": 39,
+   "imageName": "card_39_four_of_cups",
+   "source": "p7_Im40.jpg",
+   "output": "helloKitty_card_39_four_of_cups.heic",
+   "sha256": "8934192875802c11de20eeb9b049b04304467e20e96ceb0fc6ffdd30a173bae9",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 39,
+   "imageName": "card_39_four_of_cups",
+   "source": "seq_40.jpg",
+   "output": "marseille_card_39_four_of_cups.heic",
+   "sha256": "51dafd7fef7145afd7903d781f0e2ecaf686b5d9a3bdf2a8c153eade42bbf1c8",
+   "width": 354,
+   "height": 658
+  },
+  {
+   "deck": "helloKitty",
+   "id": 40,
+   "imageName": "card_40_five_of_cups",
+   "source": "p7_Im41.jpg",
+   "output": "helloKitty_card_40_five_of_cups.heic",
+   "sha256": "d0129f27bfd7c4b1ef12abcbb2f80cb058502fe022f8df74905153364f6bef79",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 40,
+   "imageName": "card_40_five_of_cups",
+   "source": "seq_41.jpg",
+   "output": "marseille_card_40_five_of_cups.heic",
+   "sha256": "afb5d0133201fa3d9676e4969ed4bdbced84176a05baa73594f601ddbf044d52",
+   "width": 354,
+   "height": 667
+  },
+  {
+   "deck": "helloKitty",
+   "id": 41,
+   "imageName": "card_41_six_of_cups",
+   "source": "p7_Im42.jpg",
+   "output": "helloKitty_card_41_six_of_cups.heic",
+   "sha256": "d77f900b85d92ba07aa50ae473a17ccb2091597b7a39cf0566bb6406e8c4acce",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 41,
+   "imageName": "card_41_six_of_cups",
+   "source": "seq_43.jpg",
+   "output": "marseille_card_41_six_of_cups.heic",
+   "sha256": "f0671cce930d1a6d83b7523a0d90d218fd11de56107ca0882b1ec0c68622522f",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 42,
+   "imageName": "card_42_seven_of_cups",
+   "source": "p8_Im43.jpg",
+   "output": "helloKitty_card_42_seven_of_cups.heic",
+   "sha256": "a6cb6ceb87a1e3a0caf512d570d4ab430118d3d13a59b9fec03d2049d317c8b3",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 42,
+   "imageName": "card_42_seven_of_cups",
+   "source": "seq_42.jpg",
+   "output": "marseille_card_42_seven_of_cups.heic",
+   "sha256": "b2fa37ac4927b66b5b29d48d013b27100a2e7c4b94863652ca123efe9d9500f6",
+   "width": 354,
+   "height": 662
+  },
+  {
+   "deck": "helloKitty",
+   "id": 43,
+   "imageName": "card_43_eight_of_cups",
+   "source": "p8_Im44.jpg",
+   "output": "helloKitty_card_43_eight_of_cups.heic",
+   "sha256": "2e5c93dc4c53d02dbde17b551e58d291fe5e44b97804e962b10484e074920d0c",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 43,
+   "imageName": "card_43_eight_of_cups",
+   "source": "seq_44.jpg",
+   "output": "marseille_card_43_eight_of_cups.heic",
+   "sha256": "6901611b44da9b18fdd8d76b39df83584acd5983f1d90307b76816bb9ffc102b",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 44,
+   "imageName": "card_44_nine_of_cups",
+   "source": "p8_Im45.jpg",
+   "output": "helloKitty_card_44_nine_of_cups.heic",
+   "sha256": "c15b2d67884d017a8c0509358cf45b741061effd53e5d950bf117ef0e7bf8529",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 44,
+   "imageName": "card_44_nine_of_cups",
+   "source": "seq_38.jpg",
+   "output": "marseille_card_44_nine_of_cups.heic",
+   "sha256": "9e5f54cfd0fa64e519c967d2efae69f14357a3c13b5a03456f76b92d7c1701ad",
+   "width": 354,
+   "height": 661
+  },
+  {
+   "deck": "helloKitty",
+   "id": 45,
+   "imageName": "card_45_ten_of_cups",
+   "source": "p8_Im46.jpg",
+   "output": "helloKitty_card_45_ten_of_cups.heic",
+   "sha256": "02303d1a260e49c59146499621ed589b69d71c722836e4d7d4c4fd28070d5021",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 45,
+   "imageName": "card_45_ten_of_cups",
+   "source": "seq_39.jpg",
+   "output": "marseille_card_45_ten_of_cups.heic",
+   "sha256": "2d4b193365e648a6cb6c3cac215b42b675704eb452c43e470d4dd816ccba4a22",
+   "width": 354,
+   "height": 659
+  },
+  {
+   "deck": "helloKitty",
+   "id": 46,
+   "imageName": "card_46_page_of_cups",
+   "source": "p8_Im47.jpg",
+   "output": "helloKitty_card_46_page_of_cups.heic",
+   "sha256": "db023e5f3a77d2d4ae663c10ad02a168e1d9621a143e1fec5edaceebaffebfe7",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 46,
+   "imageName": "card_46_page_of_cups",
+   "source": "seq_46.jpg",
+   "output": "marseille_card_46_page_of_cups.heic",
+   "sha256": "7d2f2326b82efbe616114373604f6ee47110627121e8d40098071a0e54b33eae",
+   "width": 354,
+   "height": 657
+  },
+  {
+   "deck": "helloKitty",
+   "id": 47,
+   "imageName": "card_47_knight_of_cups",
+   "source": "p8_Im48.jpg",
+   "output": "helloKitty_card_47_knight_of_cups.heic",
+   "sha256": "c5b533f02cf4bf7e6148ac0f434bf395d9bf771bed99a78829de17affe965749",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 47,
+   "imageName": "card_47_knight_of_cups",
+   "source": "seq_47.jpg",
+   "output": "marseille_card_47_knight_of_cups.heic",
+   "sha256": "18a6e3f772b5f90a19b8aef1fd3cbdc8f3615faa0c2657f45cb795e6dc1787b0",
+   "width": 354,
+   "height": 668
+  },
+  {
+   "deck": "helloKitty",
+   "id": 48,
+   "imageName": "card_48_queen_of_cups",
+   "source": "p9_Im49.jpg",
+   "output": "helloKitty_card_48_queen_of_cups.heic",
+   "sha256": "d5bc5a75abef82463076c9a93eae5fe7b13d36c32592f4025bf0700164ac3798",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 48,
+   "imageName": "card_48_queen_of_cups",
+   "source": "seq_54.jpg",
+   "output": "marseille_card_48_queen_of_cups.heic",
+   "sha256": "c992ac6f4325d71609f60fe03575adb4d6d4af938fce95fb97bcec2ff9065aed",
+   "width": 354,
+   "height": 655
+  },
+  {
+   "deck": "helloKitty",
+   "id": 49,
+   "imageName": "card_49_king_of_cups",
+   "source": "p9_Im50.jpg",
+   "output": "helloKitty_card_49_king_of_cups.heic",
+   "sha256": "887e328dd519d7ee4fcdd2ae6f39e3aa68c2b4defbe8857414357f3194496148",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 49,
+   "imageName": "card_49_king_of_cups",
+   "source": "seq_48.jpg",
+   "output": "marseille_card_49_king_of_cups.heic",
+   "sha256": "1c9835848b37229db3628f857ff60b1d579edfd2de690033bf5dd78fe06619b3",
+   "width": 354,
+   "height": 662
+  },
+  {
+   "deck": "helloKitty",
+   "id": 50,
+   "imageName": "card_50_ace_of_swords",
+   "source": "p9_Im51.jpg",
+   "output": "helloKitty_card_50_ace_of_swords.heic",
+   "sha256": "ba942707c7196042225d261dafb0a8fa8fedfa7c502a2bab941ddacf573a5712",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 50,
+   "imageName": "card_50_ace_of_swords",
+   "source": "seq_51.jpg",
+   "output": "marseille_card_50_ace_of_swords.heic",
+   "sha256": "8b459101badb7e90b4455f3fb83a407e7897db47e31a34e93438cc6d1d54b90d",
+   "width": 354,
+   "height": 655
+  },
+  {
+   "deck": "helloKitty",
+   "id": 51,
+   "imageName": "card_51_two_of_swords",
+   "source": "p9_Im52.jpg",
+   "output": "helloKitty_card_51_two_of_swords.heic",
+   "sha256": "440d9af19dc7fe7dfe4eb00aa70e6a18a2b82bd7d3d10d32a9985da4a3ddbb3e",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 51,
+   "imageName": "card_51_two_of_swords",
+   "source": "seq_57.jpg",
+   "output": "marseille_card_51_two_of_swords.heic",
+   "sha256": "140c1bc138ce450dad4af40b7b6a66c424fe7ff9aeca0b005bb41d0fb9110c23",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 52,
+   "imageName": "card_52_three_of_swords",
+   "source": "p9_Im53.jpg",
+   "output": "helloKitty_card_52_three_of_swords.heic",
+   "sha256": "240bcb17e328c16abe76f1dbfa5dda44b7ec63db59501c73a7f871c0cc64e49f",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 52,
+   "imageName": "card_52_three_of_swords",
+   "source": "seq_55.jpg",
+   "output": "marseille_card_52_three_of_swords.heic",
+   "sha256": "0499b0d432b0de2b53fcb8796bf0a5b51ef42f7421a7bcd1870f0d73b65020ec",
+   "width": 354,
+   "height": 660
+  },
+  {
+   "deck": "helloKitty",
+   "id": 53,
+   "imageName": "card_53_four_of_swords",
+   "source": "p9_Im54.jpg",
+   "output": "helloKitty_card_53_four_of_swords.heic",
+   "sha256": "80b3947ab75ad17acf14c1e9c8864b8d14df393abaeaeff6b51da2778a2bc35d",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 53,
+   "imageName": "card_53_four_of_swords",
+   "source": "seq_28.jpg",
+   "output": "marseille_card_53_four_of_swords.heic",
+   "sha256": "77eff747d982f4d6a062b0703a34fd1268f8cddd454b1edf0b3c0894bf970840",
+   "width": 354,
+   "height": 653
+  },
+  {
+   "deck": "helloKitty",
+   "id": 54,
+   "imageName": "card_54_five_of_swords",
+   "source": "p10_Im55.jpg",
+   "output": "helloKitty_card_54_five_of_swords.heic",
+   "sha256": "2b3fab65ebc3b5438434ce443a9141c53c0f6001562ef498d9e668102488333b",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 54,
+   "imageName": "card_54_five_of_swords",
+   "source": "seq_32.jpg",
+   "output": "marseille_card_54_five_of_swords.heic",
+   "sha256": "2dbbec347f57789f165ff7074617d75bee79253cce7d1c716297110a62b7a12f",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 55,
+   "imageName": "card_55_six_of_swords",
+   "source": "p10_Im56.jpg",
+   "output": "helloKitty_card_55_six_of_swords.heic",
+   "sha256": "69e2f98a8e1df70aee41edc1651f752b2ca7169cf7b4398c7d7e5142f81976a6",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 55,
+   "imageName": "card_55_six_of_swords",
+   "source": "seq_56.jpg",
+   "output": "marseille_card_55_six_of_swords.heic",
+   "sha256": "3307cf096dbb774df5174b64f924e46d2933d0b142d1396d418f4d52b56a5fea",
+   "width": 354,
+   "height": 662
+  },
+  {
+   "deck": "helloKitty",
+   "id": 56,
+   "imageName": "card_56_seven_of_swords",
+   "source": "p10_Im57.jpg",
+   "output": "helloKitty_card_56_seven_of_swords.heic",
+   "sha256": "4b3dd7cc6b8ac62f2cfefc42919ca600c05831dbddf462ed04121d667fa34c34",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 56,
+   "imageName": "card_56_seven_of_swords",
+   "source": "seq_53.jpg",
+   "output": "marseille_card_56_seven_of_swords.heic",
+   "sha256": "ac8886ffa5bc45ee9364ee542a16668b0fdf53bedd7309e4c8ccfd8149178f5b",
+   "width": 354,
+   "height": 671
+  },
+  {
+   "deck": "helloKitty",
+   "id": 57,
+   "imageName": "card_57_eight_of_swords",
+   "source": "p10_Im58.jpg",
+   "output": "helloKitty_card_57_eight_of_swords.heic",
+   "sha256": "15ad2e950479b633b50892b13666eef9c13691f6737aa432506a5567be1d3ece",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 57,
+   "imageName": "card_57_eight_of_swords",
+   "source": "seq_58.jpg",
+   "output": "marseille_card_57_eight_of_swords.heic",
+   "sha256": "f39502f50a2bc7d7561d93c9b8cd86e65040181f50f9e422e300507435e7c584",
+   "width": 354,
+   "height": 660
+  },
+  {
+   "deck": "helloKitty",
+   "id": 58,
+   "imageName": "card_58_nine_of_swords",
+   "source": "p10_Im59.jpg",
+   "output": "helloKitty_card_58_nine_of_swords.heic",
+   "sha256": "6efeab63847fc70f96f7456df15457ad068b3cde4f27002f235244a99b04b55c",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 58,
+   "imageName": "card_58_nine_of_swords",
+   "source": "seq_52.jpg",
+   "output": "marseille_card_58_nine_of_swords.heic",
+   "sha256": "0469df0f6b2f6b647d7a8f71edd724f6e1af5d4fc327d97c220da312fcd071fb",
+   "width": 354,
+   "height": 656
+  },
+  {
+   "deck": "helloKitty",
+   "id": 59,
+   "imageName": "card_59_ten_of_swords",
+   "source": "p10_Im60.jpg",
+   "output": "helloKitty_card_59_ten_of_swords.heic",
+   "sha256": "333626ba5772841b3fb6e78b5d9c609823b260bf373d0e22b2d8413269bf194f",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 59,
+   "imageName": "card_59_ten_of_swords",
+   "source": "seq_59.jpg",
+   "output": "marseille_card_59_ten_of_swords.heic",
+   "sha256": "802e27ecb2eb22cbdd75ade310f72cc8e28b2cccc9f3de6ff52417a7b38f4758",
+   "width": 354,
+   "height": 665
+  },
+  {
+   "deck": "helloKitty",
+   "id": 60,
+   "imageName": "card_60_page_of_swords",
+   "source": "p11_Im61.jpg",
+   "output": "helloKitty_card_60_page_of_swords.heic",
+   "sha256": "e45271004e36c1d4f898006d590c9d5721a6be9409cfad865b70b2f17640f7cf",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 60,
+   "imageName": "card_60_page_of_swords",
+   "source": "seq_63.jpg",
+   "output": "marseille_card_60_page_of_swords.heic",
+   "sha256": "5d203b9c3ecbd449004e07f6a47fcd132e9cb1a2fef3869c882cad4b09e1ced9",
+   "width": 354,
+   "height": 661
+  },
+  {
+   "deck": "helloKitty",
+   "id": 61,
+   "imageName": "card_61_knight_of_swords",
+   "source": "p11_Im62.jpg",
+   "output": "helloKitty_card_61_knight_of_swords.heic",
+   "sha256": "e17422d4de8e9bec2d7b0706a3721a94a25e1ed45ced7fdd5828b33a763ff235",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 61,
+   "imageName": "card_61_knight_of_swords",
+   "source": "seq_60.jpg",
+   "output": "marseille_card_61_knight_of_swords.heic",
+   "sha256": "8bbc5375490c6a1f10af0f41122c7f361b21959251e38cbadb351b3c30f20842",
+   "width": 354,
+   "height": 661
+  },
+  {
+   "deck": "helloKitty",
+   "id": 62,
+   "imageName": "card_62_queen_of_swords",
+   "source": "p11_Im63.jpg",
+   "output": "helloKitty_card_62_queen_of_swords.heic",
+   "sha256": "217c1fa44323c7499a93862fbb0c02f4f94734f87004d6e80152e0bde74afde3",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 62,
+   "imageName": "card_62_queen_of_swords",
+   "source": "seq_61.jpg",
+   "output": "marseille_card_62_queen_of_swords.heic",
+   "sha256": "7ca8f1f5bd1c1ab13f75f1f22c15682aa308541a703062256a5d44ba4190c356",
+   "width": 354,
+   "height": 662
+  },
+  {
+   "deck": "helloKitty",
+   "id": 63,
+   "imageName": "card_63_king_of_swords",
+   "source": "p11_Im64.jpg",
+   "output": "helloKitty_card_63_king_of_swords.heic",
+   "sha256": "dfd764adbb980e4978a400dc6bf241f74b3152acf7c4ca6264befc4dcbd59b41",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 63,
+   "imageName": "card_63_king_of_swords",
+   "source": "seq_62.jpg",
+   "output": "marseille_card_63_king_of_swords.heic",
+   "sha256": "ed8dadc363da28e0a51dcdc71dca7bddae7a61cde4b11f230b8ce25965b40bd8",
+   "width": 354,
+   "height": 669
+  },
+  {
+   "deck": "helloKitty",
+   "id": 64,
+   "imageName": "card_64_ace_of_pentacles",
+   "source": "p11_Im65.jpg",
+   "output": "helloKitty_card_64_ace_of_pentacles.heic",
+   "sha256": "84fb9917b8d7cfc394a5cfa4a51961f4a8571aabbe28d710830d2f64c3cec93e",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 64,
+   "imageName": "card_64_ace_of_pentacles",
+   "source": "seq_65.jpg",
+   "output": "marseille_card_64_ace_of_pentacles.heic",
+   "sha256": "96e7adf0b96f210d7ab86896192af201054bb9fe063e130d9866155ea32d73e3",
+   "width": 354,
+   "height": 663
+  },
+  {
+   "deck": "helloKitty",
+   "id": 65,
+   "imageName": "card_65_two_of_pentacles",
+   "source": "p11_Im66.jpg",
+   "output": "helloKitty_card_65_two_of_pentacles.heic",
+   "sha256": "d18e22271b4c6501659379e56f7df8322174dd93e8737ac8a9f44bdbc503b33f",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 65,
+   "imageName": "card_65_two_of_pentacles",
+   "source": "seq_64.jpg",
+   "output": "marseille_card_65_two_of_pentacles.heic",
+   "sha256": "aafba28e34ee68cc4bd4bcab59f9a48f5909059a8a85600384332cb0a1bad056",
+   "width": 354,
+   "height": 662
+  },
+  {
+   "deck": "helloKitty",
+   "id": 66,
+   "imageName": "card_66_three_of_pentacles",
+   "source": "p12_Im67.jpg",
+   "output": "helloKitty_card_66_three_of_pentacles.heic",
+   "sha256": "6a2fcda972679619b59d4340fe9ae42427f3ffffe215ac66909a8bb07f2fd1c4",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 66,
+   "imageName": "card_66_three_of_pentacles",
+   "source": "seq_67.jpg",
+   "output": "marseille_card_66_three_of_pentacles.heic",
+   "sha256": "88981f381ab1c0d9b38b7b3d19f217ea6b987c3a14e175a226adf69a87a01558",
+   "width": 354,
+   "height": 657
+  },
+  {
+   "deck": "helloKitty",
+   "id": 67,
+   "imageName": "card_67_four_of_pentacles",
+   "source": "p12_Im68.jpg",
+   "output": "helloKitty_card_67_four_of_pentacles.heic",
+   "sha256": "de32aee14a01e69eeed50dd9a6322ad3340c364bc7675b6c1592a7083483bd48",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 67,
+   "imageName": "card_67_four_of_pentacles",
+   "source": "seq_66.jpg",
+   "output": "marseille_card_67_four_of_pentacles.heic",
+   "sha256": "ad40a833fa59549fbd97b67653694b61d9754128aa28b66194b61200e01d71c0",
+   "width": 354,
+   "height": 655
+  },
+  {
+   "deck": "helloKitty",
+   "id": 68,
+   "imageName": "card_68_five_of_pentacles",
+   "source": "p12_Im69.jpg",
+   "output": "helloKitty_card_68_five_of_pentacles.heic",
+   "sha256": "b2bee262cf46734ea86014863ba825bd5129c677b78c47889e20adfb5ab784ef",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 68,
+   "imageName": "card_68_five_of_pentacles",
+   "source": "seq_70.jpg",
+   "output": "marseille_card_68_five_of_pentacles.heic",
+   "sha256": "cc52fb0e6bbd2e729c969fddc0d771e367551f7ac38ebbf1f80350e4f7f4ea49",
+   "width": 354,
+   "height": 664
+  },
+  {
+   "deck": "helloKitty",
+   "id": 69,
+   "imageName": "card_69_six_of_pentacles",
+   "source": "p12_Im70.jpg",
+   "output": "helloKitty_card_69_six_of_pentacles.heic",
+   "sha256": "1e6fdfe945631be3705407ba5ed5d3d3e5270ab067cc4ab34be16750c7ff0f29",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 69,
+   "imageName": "card_69_six_of_pentacles",
+   "source": "seq_71.jpg",
+   "output": "marseille_card_69_six_of_pentacles.heic",
+   "sha256": "2297d2fbdc67a46a30870044ec7a21dbed6ebf0197b4fbd6af6344528bc54eb1",
+   "width": 354,
+   "height": 665
+  },
+  {
+   "deck": "helloKitty",
+   "id": 70,
+   "imageName": "card_70_seven_of_pentacles",
+   "source": "p12_Im71.jpg",
+   "output": "helloKitty_card_70_seven_of_pentacles.heic",
+   "sha256": "51b6e1c6c1b3d0c8605a31e28c22537a8a94bf8d28860de8e311879157c5e24a",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 70,
+   "imageName": "card_70_seven_of_pentacles",
+   "source": "seq_68.jpg",
+   "output": "marseille_card_70_seven_of_pentacles.heic",
+   "sha256": "48347982d8185f1ee6d93433baeece0cb74f65dd2f3411f73c5f8d1b6798ebb0",
+   "width": 354,
+   "height": 658
+  },
+  {
+   "deck": "helloKitty",
+   "id": 71,
+   "imageName": "card_71_eight_of_pentacles",
+   "source": "p12_Im72.jpg",
+   "output": "helloKitty_card_71_eight_of_pentacles.heic",
+   "sha256": "117e14b93ccdaca0a58b9bd80655e3ded0f066b1c0b5578e89b5d17fc8798cba",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 71,
+   "imageName": "card_71_eight_of_pentacles",
+   "source": "seq_69.jpg",
+   "output": "marseille_card_71_eight_of_pentacles.heic",
+   "sha256": "ad23596f2ef2f3a02837c96fbd4acbd9d2e4e974586f73609ef03277b306a520",
+   "width": 354,
+   "height": 659
+  },
+  {
+   "deck": "helloKitty",
+   "id": 72,
+   "imageName": "card_72_nine_of_pentacles",
+   "source": "p13_Im73.jpg",
+   "output": "helloKitty_card_72_nine_of_pentacles.heic",
+   "sha256": "d544c5fffd932b4336330009fd12de38a770ebe143f26ff01bb83ede41840c3e",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 72,
+   "imageName": "card_72_nine_of_pentacles",
+   "source": "seq_77.jpg",
+   "output": "marseille_card_72_nine_of_pentacles.heic",
+   "sha256": "1f6fb5861d8a033c75c2bf9a6aae15f2264352b001d3e14cd92b9888f223010d",
+   "width": 354,
+   "height": 663
+  },
+  {
+   "deck": "helloKitty",
+   "id": 73,
+   "imageName": "card_73_ten_of_pentacles",
+   "source": "p13_Im74.jpg",
+   "output": "helloKitty_card_73_ten_of_pentacles.heic",
+   "sha256": "dc4cedcbf736dd502b120c416e2cfdfa2eb052e8c2844f64fd96748230495119",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 73,
+   "imageName": "card_73_ten_of_pentacles",
+   "source": "seq_72.jpg",
+   "output": "marseille_card_73_ten_of_pentacles.heic",
+   "sha256": "b15827d78b98bf32b5077931aaf2cfbd9cfd15aa2fedb3dc064edaa687bd9bdd",
+   "width": 354,
+   "height": 667
+  },
+  {
+   "deck": "helloKitty",
+   "id": 74,
+   "imageName": "card_74_page_of_pentacles",
+   "source": "p13_Im75.jpg",
+   "output": "helloKitty_card_74_page_of_pentacles.heic",
+   "sha256": "b2b69f53498dc5f4cd1dc1d7dd2f5532d2f380e769e1a0712d344246d42faeb3",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 74,
+   "imageName": "card_74_page_of_pentacles",
+   "source": "seq_73.jpg",
+   "output": "marseille_card_74_page_of_pentacles.heic",
+   "sha256": "f5b154dfec2f1d1b0f5bcf7ae9b6bc5f3f28612743900a02a54050ef7d44a164",
+   "width": 354,
+   "height": 666
+  },
+  {
+   "deck": "helloKitty",
+   "id": 75,
+   "imageName": "card_75_knight_of_pentacles",
+   "source": "p13_Im76.jpg",
+   "output": "helloKitty_card_75_knight_of_pentacles.heic",
+   "sha256": "b9f90f537824d481fd9361abb80ccda7904bb95b4430aadb350da6f5c2262402",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 75,
+   "imageName": "card_75_knight_of_pentacles",
+   "source": "seq_74.jpg",
+   "output": "marseille_card_75_knight_of_pentacles.heic",
+   "sha256": "53a74c397f08f65f4fd9c81c6dd7c4115617ead844a682d433e020dade468e32",
+   "width": 354,
+   "height": 660
+  },
+  {
+   "deck": "helloKitty",
+   "id": 76,
+   "imageName": "card_76_queen_of_pentacles",
+   "source": "p13_Im77.jpg",
+   "output": "helloKitty_card_76_queen_of_pentacles.heic",
+   "sha256": "7c7a7584c87d8c2bb6b0e2a34cc91924a16963787a04c7fd9b1da709cde7f04a",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 76,
+   "imageName": "card_76_queen_of_pentacles",
+   "source": "seq_75.jpg",
+   "output": "marseille_card_76_queen_of_pentacles.heic",
+   "sha256": "0620107304e99324e980592e348863b8734c09e5c2d8a898eeb93d6ec6dced51",
+   "width": 354,
+   "height": 661
+  },
+  {
+   "deck": "helloKitty",
+   "id": 77,
+   "imageName": "card_77_king_of_pentacles",
+   "source": "p13_Im78.jpg",
+   "output": "helloKitty_card_77_king_of_pentacles.heic",
+   "sha256": "c70c3c4ae5cf044e0a9f58c576a2075b42f0047240256cafe15773b4c62e949b",
+   "width": 349,
+   "height": 512
+  },
+  {
+   "deck": "marseille",
+   "id": 77,
+   "imageName": "card_77_king_of_pentacles",
+   "source": "seq_76.jpg",
+   "output": "marseille_card_77_king_of_pentacles.heic",
+   "sha256": "9604ad86a55a02341b46a34287563a0983b64da2a347eae24e7decfaa4b9d992",
+   "width": 354,
+   "height": 661
+  }
+ ]
+}

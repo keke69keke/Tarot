@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+# AVISO (2026-09-26): este generador producia las cartas placeholder que resultaron estar
+# practicamente en blanco (56 de 78 identicas entre si). EL MAZO REAL YA NO SE GENERA AQUI:
+# los marseille_*.png del repositorio son las cartas del PDF aportado por el usuario, con
+# procedencia y huellas en scripts/deck-assets/deck-manifest.json.
+# Volver a ejecutar este script SOBRESCRIBE el mazo real con placeholders.
 """Genera las 78 imágenes del mazo Tarot de Marsella (estilo xilografía).
 Salida: TarotContent/Resources/marseille_<imageName>.png  (512x824)
 Paleta clásica de Marsella: crema, azul, rojo, oro, tinta oscura.

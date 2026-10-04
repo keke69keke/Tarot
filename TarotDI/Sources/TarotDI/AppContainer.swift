@@ -28,7 +28,7 @@ public protocol AppContainerProtocol: ObservableObject {
     var biometrics: BiometricService { get }
     var proactiveGuidance: ProactiveGuidanceService { get }
     var environmentOracle: EnvironmentOracleService { get }
-    var soulLinks: any TarotData.SoulLinksServiceProtocol { get }
+    var soulLinks: SoulLinkService { get }
     var cosmicBackground: CosmicBackgroundEngine { get }
 }
 
@@ -55,7 +55,7 @@ public final class AppContainer: AppContainerProtocol {
     @MainActor public let biometrics: BiometricService
     @MainActor public let proactiveGuidance: ProactiveGuidanceService
     @MainActor public let environmentOracle: EnvironmentOracleService
-    @MainActor public let soulLinks: any TarotData.SoulLinksServiceProtocol
+    @MainActor public let soulLinks: SoulLinkService
     @MainActor public let cosmicBackground: CosmicBackgroundEngine
 
     @MainActor
@@ -95,7 +95,7 @@ public final class AppContainer: AppContainerProtocol {
         biometrics = BiometricService()
         proactiveGuidance = ProactiveGuidanceService(journalRepository: journal, patternsService: patterns, notifications: notifications, settings: settings)
         environmentOracle = EnvironmentOracleService()
-        soulLinks = TarotData.SoulLinksService()
+        soulLinks = SoulLinkService(settings: settings, patternsService: patterns)
         cosmicBackground = CosmicBackgroundEngine(lunarService: lunar, planetaryService: planetary)
     }
 }

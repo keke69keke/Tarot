@@ -24,6 +24,11 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         static let natalBirthDate = "natalBirthDate"
         static let natalBirthTime = "natalBirthTime"
         static let natalPlace = "natalPlace"
+        // AI Provider
+        static let aiProvider = "aiProvider"
+        static let aiBaseURL = "aiBaseURL"
+        static let aiModelName = "aiModelName"
+        static let aiApiKey = "aiApiKey"
     }
     
     // MARK: - Properties
@@ -72,12 +77,15 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         let defaultActiveTabs = UserSettings().activeTabs
         var updatedActiveTabs = activeTabs.isEmpty ? defaultActiveTabs : activeTabs
         // Auto-migrate: asegurar que horoscope y chat siempre estén activos (migración v2)
-        let mandatoryTabs: [AppTab] = [.learn, .horoscope, .chat]
+        let mandatoryTabs = AppTab.mandatoryTabs
         for tab in mandatoryTabs where !updatedActiveTabs.contains(tab) {
             updatedActiveTabs.append(tab)
         }
         // Preserve user-defined tab order (do NOT sort by default order)
-        // Límite iOS: máximo 5 tabs activos (más de 5 → iOS muestra "Más")
+        // Límite de tabs activos. OJO: 8, no 5. La app no usa la barra del
+        // sistema (`TabView` + `.tabItem`), sino una barra propia con scroll
+        // horizontal (`SlidingTabBar`), así que no existe el desbordamiento a
+        // "Más" que justificaba el límite de 5 en versiones anteriores.
         let clamped = Self.clampTabs(active: updatedActiveTabs, inactive: inactiveTabs, mandatory: mandatoryTabs)
         let finalInactiveTabs = clamped.inactive
         updatedActiveTabs = clamped.active
@@ -88,6 +96,13 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         let natalBirthDate = userDefaults.object(forKey: Keys.natalBirthDate) as? Date
         let natalBirthTime = userDefaults.object(forKey: Keys.natalBirthTime) as? Date
         let natalPlace = userDefaults.string(forKey: Keys.natalPlace) ?? ""
+
+        // AI Provider
+        let aiProviderRaw = userDefaults.string(forKey: Keys.aiProvider) ?? AIProvider.openAI.rawValue
+        let aiProvider = AIProvider(rawValue: aiProviderRaw) ?? .openAI
+        let aiBaseURL = userDefaults.string(forKey: Keys.aiBaseURL) ?? ""
+        let aiModelName = userDefaults.string(forKey: Keys.aiModelName) ?? ""
+        let aiApiKey = keychain.read(Keys.aiApiKey) ?? ""
 
         return UserSettings(
             allowReversedCards: allowReversedCards,
@@ -104,7 +119,11 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
             biorhythmBirthDate: biorhythmBirthDate,
             natalBirthDate: natalBirthDate,
             natalBirthTime: natalBirthTime,
-            natalPlace: natalPlace
+            natalPlace: natalPlace,
+            aiProvider: aiProvider,
+            aiBaseURL: aiBaseURL,
+            aiModelName: aiModelName,
+            aiApiKey: aiApiKey
         )
     }
     
@@ -125,7 +144,7 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
 
         // Sanitiza al guardar: sin duplicados ni solapamientos (prevalece
         // `active`), tabs obligatorios siempre activos y límite respetado.
-        let mandatory: [AppTab] = [.learn, .horoscope, .chat]
+        let mandatory = AppTab.mandatoryTabs
         var activeTabsToSave = settings.activeTabs
         for tab in mandatory where !activeTabsToSave.contains(tab) {
             activeTabsToSave.append(tab)
@@ -139,6 +158,12 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
         userDefaults.set(activeTabsToSave.map { $0.rawValue }, forKey: Keys.activeTabs)
         userDefaults.set(inactiveTabsToSave.map { $0.rawValue }, forKey: Keys.inactiveTabs)
         _ = keychain.write(settings.openAIKey, for: Keys.openAIKey)
+
+        // AI Provider
+        userDefaults.set(settings.aiProvider.rawValue, forKey: Keys.aiProvider)
+        userDefaults.set(settings.aiBaseURL, forKey: Keys.aiBaseURL)
+        userDefaults.set(settings.aiModelName, forKey: Keys.aiModelName)
+        _ = keychain.write(settings.aiApiKey, for: Keys.aiApiKey)
     }
 
     public func saveValue(_ value: Any?, forKey key: String) {
@@ -159,7 +184,7 @@ public class UserDefaultsSettingsRepository: SettingsRepository {
     public static func clampTabs(
         active: [AppTab],
         inactive: [AppTab],
-        mandatory: [AppTab] = [.learn],
+        mandatory: [AppTab] = AppTab.mandatoryTabs,
         maxActive: Int = 8
     ) -> (active: [AppTab], inactive: [AppTab]) {
         var seen = Set<AppTab>()

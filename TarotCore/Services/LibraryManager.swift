@@ -240,8 +240,13 @@ public class LibraryManager: ObservableObject {
     }
 
     /// Persists the last-read page for a book so the next session resumes here.
+    /// Coincide por `id`: el registro guardado puede tener una `lastReadPage`
+    /// distinta a la copia con la que se abrió el lector, así que comparar la
+    /// estructura completa fallaría y el progreso no se guardaría más de una vez.
     public func updateReadingProgress(for book: ImportedBook, to page: Int) {
-        if let idx = importedBooks.firstIndex(of: book) {
+        guard page > 0 else { return }
+        if let idx = importedBooks.firstIndex(where: { $0.id == book.id }) {
+            guard importedBooks[idx].lastReadPage != page else { return }
             importedBooks[idx].lastReadPage = page
             saveBooks()
         }

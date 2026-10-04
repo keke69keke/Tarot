@@ -6,6 +6,7 @@ public enum ChatError: LocalizedError {
     case rateLimited
     case serverError(Int)
     case parseError
+    case appleModelUnavailable(String)
 
     public var errorDescription: String? {
         switch self {
@@ -17,6 +18,8 @@ public enum ChatError: LocalizedError {
             return "Error del servidor (\(code)). Intenta de nuevo."
         case .parseError:
             return "Error al procesar la respuesta. Intenta de nuevo."
+        case .appleModelUnavailable(let reason):
+            return "IA nativa de Apple no disponible: \(reason)."
         }
     }
 }

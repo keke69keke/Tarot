@@ -44,6 +44,75 @@ public final class SoulLinkService: ObservableObject {
         return max(0.0, min(1.0, similarity + variance))
     }
 
+
+    // MARK: - Local linking (nombre + fecha opcional)
+
+    /// Vincula un alma localmente. La resonancia se deriva de forma determinista
+    /// (nombres + fecha) para que sea estable entre sesiones.
+    @discardableResult
+    public func addLink(partnerName: String, birthDate: Date? = nil) -> SoulLink {
+        let clean = partnerName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let name = clean.isEmpty ? "Alma" : clean
+        let score = Self.resonance(owner: ownerName, partner: name, birthDate: birthDate, salt: 0)
+        let link = SoulLink(
+            partnerID: UUID().uuidString,
+            partnerName: name,
+            resonanceScore: score
+        )
+        activeLinks.append(link)
+        saveLinks()
+        return link
+    }
+
+    /// Recalcula la resonancia con una deriva determinista por día.
+    @discardableResult
+    public func synchronize(_ link: SoulLink) -> SoulLink {
+        guard let index = activeLinks.firstIndex(where: { $0.id == link.id }) else { return link }
+        let day = Calendar.current.ordinality(of: .day, in: .year, for: Date()) ?? 1
+        let score = Self.resonance(owner: ownerName, partner: link.partnerName, birthDate: nil, salt: day)
+        let updated = SoulLink(
+            id: link.id,
+            partnerID: link.partnerID,
+            partnerName: link.partnerName,
+            linkedAt: link.linkedAt,
+            resonanceScore: score
+        )
+        activeLinks[index] = updated
+        saveLinks()
+        return updated
+    }
+
+    /// Descripción legible del nivel de resonancia.
+    public func description(for score: Double) -> String {
+        if score > 0.9 { return "excepcional y trascendente" }
+        if score > 0.7 { return "profunda y armónica" }
+        if score > 0.5 { return "estándar y en crecimiento" }
+        return "compleja y en proceso de aprendizaje"
+    }
+
+    private var ownerName: String { "Tú" }
+
+    static func resonance(owner: String, partner: String, birthDate: Date?, salt: Int) -> Double {
+        var seed = 7
+        for scalar in ([owner, partner].sorted().joined(separator: "·")).unicodeScalars {
+            seed = (seed &* 31 &+ Int(scalar.value)) % 1_000_000
+        }
+        if let birthDate {
+            let c = Calendar.current.dateComponents([.year, .month, .day], from: birthDate)
+            seed = (seed &* 31 &+ (c.year ?? 0) &+ (c.month ?? 0) * 13 &+ (c.day ?? 0) * 7) % 1_000_000
+        }
+        seed = (seed &* 31 &+ salt * 17) % 1_000_000
+        let frac = Double(seed % 1000) / 1000.0
+        return min(0.99, max(0.35, 0.35 + frac * 0.64))
+    }
+
+    /// Hash estable para variar las lecturas sin aleatoriedad.
+    public static func stableHash(_ text: String) -> Int {
+        var seed = 7
+        for scalar in text.lowercased().unicodeScalars { seed = (seed &* 31 &+ Int(scalar.value)) % 1_000_000 }
+        return seed
+    }
+
     public func unlinkSoul(partnerID: String) {
         activeLinks.removeAll { $0.partnerID == partnerID }
         saveLinks()

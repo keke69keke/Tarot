@@ -28,14 +28,14 @@ public struct UserSettings {
     /// Whether daily push notifications are enabled (Requirement 4.6).
     public var notificationsEnabled: Bool = false
 
-    /// OpenAI API Key for AI chat feature (optional).
+    /// OpenAI API Key for AI chat feature (optional, legacy — preferir aiApiKey).
     public var openAIKey: String = ""
 
     /// Active tabs — Settings is fixed and cannot be removed
-    public var activeTabs: [AppTab] = [.reading, .horoscope, .library, .daily, .learn, .journal, .settings, .biorhythm, .natal, .soulLink]
+    public var activeTabs: [AppTab] = AppTab.defaultActiveTabs
 
     /// Inactive tabs hidden from the bottom navigation menu
-    public var inactiveTabs: [AppTab] = [.ask, .chat, .reference]
+    public var inactiveTabs: [AppTab] = AppTab.defaultInactiveTabs
 
     /// User display name used for personalized greetings in the UI.
     public var userName: String = ""
@@ -45,7 +45,23 @@ public struct UserSettings {
     public var natalBirthDate: Date? = nil
     public var natalBirthTime: Date? = nil
     public var natalPlace: String = ""
-    
+
+    // MARK: - AI Provider (cualquier modelo con API compatible)
+
+    /// Proveedor de IA seleccionado para Arcana.
+    public var aiProvider: AIProvider = .openAI
+
+    /// URL base del endpoint de chat completions.
+    /// Vacío → usa `aiProvider.defaultBaseURL`.
+    public var aiBaseURL: String = ""
+
+    /// Nombre del modelo enviado a la API (p.ej. "gpt-4o-mini", "llama3-70b-8192").
+    /// Vacío → usa `aiProvider.defaultModel`.
+    public var aiModelName: String = ""
+
+    /// API key del proveedor personalizado (guardada en Keychain).
+    public var aiApiKey: String = ""
+
     public init(
         allowReversedCards: Bool = true,
         selectedLanguage: Language = .spanish,
@@ -55,13 +71,17 @@ public struct UserSettings {
         dailyNotificationHour: Int = 8,
         notificationsEnabled: Bool = false,
         openAIKey: String = "",
-        activeTabs: [AppTab] = [.reading, .horoscope, .library, .daily, .learn, .journal, .settings, .biorhythm, .natal, .soulLink],
-        inactiveTabs: [AppTab] = [.ask, .chat, .reference],
+        activeTabs: [AppTab] = AppTab.defaultActiveTabs,
+        inactiveTabs: [AppTab] = AppTab.defaultInactiveTabs,
         userName: String = "",
         biorhythmBirthDate: Date? = nil,
         natalBirthDate: Date? = nil,
         natalBirthTime: Date? = nil,
-        natalPlace: String = ""
+        natalPlace: String = "",
+        aiProvider: AIProvider = .openAI,
+        aiBaseURL: String = "",
+        aiModelName: String = "",
+        aiApiKey: String = ""
     ) {
         self.allowReversedCards = allowReversedCards
         self.selectedLanguage = selectedLanguage
@@ -78,6 +98,90 @@ public struct UserSettings {
         self.natalBirthDate = natalBirthDate
         self.natalBirthTime = natalBirthTime
         self.natalPlace = natalPlace
+        self.aiProvider = aiProvider
+        self.aiBaseURL = aiBaseURL
+        self.aiModelName = aiModelName
+        self.aiApiKey = aiApiKey
+    }
+}
+
+// MARK: - AIProvider
+
+/// Proveedor de IA compatible con la API de OpenAI que impulsa el chat Arcana.
+/// Todos los proveedores usan el endpoint `/v1/chat/completions` con el mismo
+/// formato JSON, por lo que cualquier proveedor compatible con OpenAI funciona.
+public enum AIProvider: String, CaseIterable, Codable, Identifiable {
+    case openAI     = "openAI"
+    case groq       = "groq"
+    case mistral    = "mistral"
+    case ollama     = "ollama"
+    case lmStudio   = "lmStudio"
+    case custom     = "custom"
+
+    public var id: String { rawValue }
+
+    public var displayName: String {
+        switch self {
+        case .openAI:   return "OpenAI"
+        case .groq:     return "Groq"
+        case .mistral:  return "Mistral"
+        case .ollama:   return "Ollama (local)"
+        case .lmStudio: return "LM Studio (local)"
+        case .custom:   return "Personalizado"
+        }
+    }
+
+    public var systemImage: String {
+        switch self {
+        case .openAI:   return "brain.head.profile"
+        case .groq:     return "bolt.fill"
+        case .mistral:  return "wind"
+        case .ollama:   return "desktopcomputer"
+        case .lmStudio: return "laptopcomputer"
+        case .custom:   return "slider.horizontal.3"
+        }
+    }
+
+    /// URL base por defecto del endpoint de chat completions.
+    /// El service añade `/v1/chat/completions` al final.
+    public var defaultBaseURL: String {
+        switch self {
+        case .openAI:   return "https://api.openai.com"
+        case .groq:     return "https://api.groq.com/openai"
+        case .mistral:  return "https://api.mistral.ai"
+        case .ollama:   return "http://localhost:11434"
+        case .lmStudio: return "http://localhost:1234"
+        case .custom:   return ""
+        }
+    }
+
+    /// Modelo por defecto si el usuario no especifica uno.
+    public var defaultModel: String {
+        switch self {
+        case .openAI:   return "gpt-4o-mini"
+        case .groq:     return "llama3-70b-8192"
+        case .mistral:  return "mistral-small-latest"
+        case .ollama:   return "llama3"
+        case .lmStudio: return "local-model"
+        case .custom:   return ""
+        }
+    }
+
+    /// true si no requiere API key (proveedores locales).
+    public var isLocal: Bool {
+        self == .ollama || self == .lmStudio
+    }
+
+    /// Descripción corta para mostrar en la UI.
+    public var hint: String {
+        switch self {
+        case .openAI:   return "GPT-4o-mini · Necesita API key"
+        case .groq:     return "Llama3 ultra rápido · Necesita API key"
+        case .mistral:  return "Modelos Mistral · Necesita API key"
+        case .ollama:   return "Modelos locales con Ollama · Sin API key"
+        case .lmStudio: return "Modelos locales con LM Studio · Sin API key"
+        case .custom:   return "Cualquier endpoint compatible con OpenAI"
+        }
     }
 }
 
@@ -225,10 +329,40 @@ public enum DeckTextureStyle {
 
 /// Available navigation tabs in the app.
 public enum AppTab: String, CaseIterable, Codable, Identifiable, Hashable {
+    /// Tabs que la app mantiene siempre visibles (migración v2): estudio, horóscopo e IA.
+    public static let mandatoryTabs: [AppTab] = [.learn, .horoscope, .chat]
+
+    /// Tabs activos por defecto. Debe caber en `clampTabs(maxActive:)` (8) e
+    /// incluir siempre `mandatoryTabs` y `.settings`.
+    ///
+    /// Vive aquí, y no duplicado en `UserSettings`, para que el valor por defecto
+    /// no pueda desincronizarse entre la propiedad y el `init`.
+    public static let defaultActiveTabs: [AppTab] = [
+        .reading, .horoscope, .library, .daily, .learn, .journal, .chat, .settings
+    ]
+
+    /// Tabs ocultos por defecto, activables desde Ajustes.
+    ///
+    /// No incluye `.reference`: «Referencia» ya no es una entrada de menú, vive
+    /// como solapa dentro de «Aprender y Referencia» (`LearnAndReferenceView`) y
+    /// `ContentView` la filtra de la barra. Ofrecerla aquí sería un botón que no
+    /// hace nada: la añadiría a `activeTabs` sin que llegue a verse.
+    public static let defaultInactiveTabs: [AppTab] = [.ask, .biorhythm, .natal, .soulLink, .lunar]
+
     case reading = "reading"
     case ask = "ask"
     case horoscope = "horoscope"
     case library = "library"
+
+    /// Reservado: «Referencia» **no** es una entrada de menú.
+    ///
+    /// Vive como solapa dentro de «Aprender y Referencia» (`LearnAndReferenceView`),
+    /// y `ContentView.visibleTabs` filtra este caso de la barra. Se conserva el caso
+    /// porque (a) sigue siendo un destino valido — `tabContent` lo mapea a la solapa
+    /// de referencia, util para abrirla directamente —, (b) instalaciones antiguas
+    /// pueden tenerlo persistido en `activeTabs` y quitarlo invalidaria ese dato, y
+    /// (c) no se ofrece en Ajustes, asi que no hay forma de que el usuario lo active
+    /// y descubra que no hace nada.
     case reference = "reference"
     case daily = "daily"
     case learn = "learn"
@@ -238,6 +372,7 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable, Hashable {
     case biorhythm = "biorhythm"
     case natal = "natal"
     case soulLink = "soulLink"
+    case lunar = "lunar"
 
     public var id: String { rawValue }
     
@@ -249,13 +384,14 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable, Hashable {
         case .library: return "Biblioteca"
         case .reference: return "Referencia"
         case .daily: return "Hoy"
-        case .learn: return "Aprender"
+        case .learn: return "Aprender y Referencia"
         case .journal: return "Diario"
         case .settings: return "Ajustes"
         case .chat: return "Arcana IA"
         case .biorhythm: return "Biorritmo"
         case .natal: return "Hoja Natal"
         case .soulLink: return "Almas"
+        case .lunar: return "Fases lunares"
         }
     }
     
@@ -274,6 +410,7 @@ public enum AppTab: String, CaseIterable, Codable, Identifiable, Hashable {
         case .biorhythm: return "waveform"
         case .natal: return "star.circle"
         case .soulLink: return "person.2"
+        case .lunar: return "moon.stars"
         }
     }
 }

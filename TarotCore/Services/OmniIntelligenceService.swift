@@ -180,7 +180,23 @@ public final class OmniIntelligenceService: OmniIntelligenceProtocol {
     }
 
     // MARK: - Private API Logic
+
+    /// Orden de motores: 1) Apple Intelligence on-device (sin API key),
+    /// 2) OpenAI con la clave configurada, 3) respuesta local determinista.
     private func callOpenAI(userMessage: String, isSynthesis: Bool = false) async throws -> String {
+        if ArcanaIntelligenceRouter.appleAvailable {
+            let history: [ArcanaChatTurn] = isSynthesis ? [] : messages.dropLast().suffix(12).map {
+                ArcanaChatTurn(role: $0.role == .user ? "user" : "assistant", content: $0.content)
+            }
+            if let appleReply = await ArcanaIntelligenceRouter.tryApple(
+                systemPrompt: await getCurrentSystemPrompt(),
+                history: history,
+                userMessage: userMessage
+            ) {
+                return appleReply.text
+            }
+        }
+
         guard !apiKey.isEmpty, apiKey != "sk-..." else {
             return try await localTarotResponse(for: userMessage)
         }
